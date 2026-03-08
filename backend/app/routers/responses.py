@@ -11,7 +11,7 @@ from app.models.grade import Grade
 from app.models.xp_transaction import XPTransaction
 from app.models.user import User
 from app.services.grading_agent import generate_probe, grade_response, compute_xp
-from app.seed import TEST_USER_ID
+from app.middleware.auth import get_current_user
 
 router = APIRouter(prefix="/api/responses", tags=["responses"])
 
@@ -26,7 +26,11 @@ class ContinueRequest(BaseModel):
 
 
 @router.post("")
-async def submit_response(req: SubmitRequest, db: AsyncSession = Depends(get_db)):
+async def submit_response(
+    req: SubmitRequest,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
     scenario = await db.get(Scenario, UUID(req.scenario_id))
     if not scenario:
         raise HTTPException(status_code=404, detail="Scenario not found")
@@ -34,7 +38,7 @@ async def submit_response(req: SubmitRequest, db: AsyncSession = Depends(get_db)
     conversation = [{"role": "user", "content": req.answer_text}]
 
     response = Response(
-        user_id=TEST_USER_ID,
+        user_id=user.id,
         scenario_id=scenario.id,
         conversation=conversation,
         is_complete=False,
@@ -57,7 +61,10 @@ async def submit_response(req: SubmitRequest, db: AsyncSession = Depends(get_db)
 
 @router.post("/{response_id}/continue")
 async def continue_response(
-    response_id: UUID, req: ContinueRequest, db: AsyncSession = Depends(get_db)
+    response_id: UUID,
+    req: ContinueRequest,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
 ):
     response = await db.get(Response, response_id)
     if not response:
@@ -82,11 +89,10 @@ async def continue_response(
     )
     db.add(grade)
 
-    user = await db.get(User, TEST_USER_ID)
     xp_earned = compute_xp(grade_data["overall_score"], scenario.difficulty, user.streak_days)
 
     xp_tx = XPTransaction(
-        user_id=TEST_USER_ID,
+        user_id=user.id,
         amount=xp_earned,
         source="scenario",
         reference_id=response.id,

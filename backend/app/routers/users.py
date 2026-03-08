@@ -1,21 +1,19 @@
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.models.user import User
 from app.services.progression import get_unlocked_categories, get_level_title
 from app.constants import SCENARIO_CATEGORIES
-from app.seed import TEST_USER_ID
+from app.middleware.auth import get_current_user
 
 router = APIRouter(prefix="/api/users", tags=["users"])
 
 
 @router.get("/me")
-async def get_current_user(db: AsyncSession = Depends(get_db)):
-    user = await db.get(User, TEST_USER_ID)
-    if not user:
-        raise HTTPException(status_code=404, detail="User not found")
-
+async def get_current_user_profile(
+    user: User = Depends(get_current_user),
+):
     unlocked = get_unlocked_categories(user.level)
     title = get_level_title(user.level)
 
