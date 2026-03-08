@@ -6,11 +6,19 @@ from anthropic import AsyncAnthropic
 
 from app.config import settings
 from app.constants import DIFFICULTY_MULTIPLIER, XP_BASE
+from app.constants import (
+    MCQ_XP_CORRECT_GOOD,
+    MCQ_XP_CORRECT_WEAK,
+    MCQ_XP_WRONG,
+    MCQ_STREAK_BONUS,
+    MCQ_STREAK_MAX_BONUS,
+)
 from app.prompts.grading_rubric import (
     GRADING_SYSTEM_PROMPT,
     PROBE_TEMPLATE,
     GRADE_TEMPLATE,
 )
+from app.prompts.mcq_generation import MCQ_JUSTIFY_GRADE_TEMPLATE
 
 anthropic_client = AsyncAnthropic(api_key=settings.anthropic_api_key)
 
@@ -85,3 +93,50 @@ async def grade_response(
     )
 
     return parse_grade_json(message.content[0].text)
+
+
+async def grade_mcq_justification(
+    question: str,
+    chosen_key: str,
+    chosen_text: str,
+    correct_key: str,
+    correct_text: str,
+    justification: str,
+) -> dict:
+    """Grade the quality of an MCQ justification."""
+    prompt = MCQ_JUSTIFY_GRADE_TEMPLATE.format(
+        question=question,
+        chosen_key=chosen_key,
+        chosen_text=chosen_text,
+        correct_key=correct_key,
+        correct_text=correct_text,
+        justification=justification,
+    )
+
+    message = await anthropic_client.messages.create(
+        model="claude-sonnet-4-6",
+        max_tokens=256,
+        system=GRADING_SYSTEM_PROMPT,
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.0,
+    )
+
+    return _parse_json(message.content[0].text)
+
+
+def compute_mcq_xp(is_correct: bool, justification_quality: str, streak_count: int) -> int:
+    """Compute XP for an MCQ response.
+
+    streak_count: number of consecutive correct answers (0-based, before this answer).
+    """
+    if not is_correct:
+        return MCQ_XP_WRONG
+
+    if justification_quality == "good":
+        base = MCQ_XP_CORRECT_GOOD
+        streak_bonus = min(streak_count * MCQ_STREAK_BONUS, MCQ_STREAK_MAX_BONUS)
+    else:
+        base = MCQ_XP_CORRECT_WEAK
+        streak_bonus = min(streak_count * (MCQ_STREAK_BONUS // 2), MCQ_STREAK_MAX_BONUS // 2)
+
+    return base + streak_bonus
