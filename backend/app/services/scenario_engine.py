@@ -10,6 +10,10 @@ from app.prompts.scenario_generation import (
     SCENARIO_TEMPLATE,
     CATEGORY_DISPLAY,
 )
+from app.prompts.mcq_generation import (
+    MCQ_SYSTEM_PROMPT,
+    MCQ_TEMPLATE,
+)
 from app.services.rag import build_retrieval_query, retrieve_chunks
 
 anthropic_client = AsyncAnthropic(api_key=settings.anthropic_api_key)
@@ -55,5 +59,42 @@ async def generate_scenario(
         "category": category,
         "difficulty": difficulty,
         "content": scenario_data,
+        "context_chunks": [c["content"] for c in chunks],
+    }
+
+
+async def generate_mcq(
+    db,
+    category: str,
+    difficulty: str = "beginner",
+) -> dict:
+    """Generate a single MCQ using RAG context + Claude."""
+    query = build_retrieval_query(category, difficulty)
+    chunks = await retrieve_chunks(db, query, top_k=3)
+    rag_context = "\n\n---\n\n".join(c["content"] for c in chunks)
+
+    category_display = CATEGORY_DISPLAY.get(category, category.replace("_", " ").title())
+
+    prompt = MCQ_TEMPLATE.format(
+        difficulty=difficulty,
+        category_display=category_display,
+        rag_context=rag_context if rag_context else "No specific context available. Use general options trading knowledge.",
+    )
+
+    message = await anthropic_client.messages.create(
+        model="claude-sonnet-4-6",
+        max_tokens=512,
+        system=MCQ_SYSTEM_PROMPT,
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.8,
+    )
+
+    raw_text = message.content[0].text
+    mcq_data = parse_scenario_json(raw_text)
+
+    return {
+        "category": category,
+        "difficulty": difficulty,
+        "content": mcq_data,
         "context_chunks": [c["content"] for c in chunks],
     }
