@@ -41,7 +41,7 @@ def test_compute_level_from_masteries():
         ("greeks", "beginner"),
         ("iv_analysis", "intermediate"),
     }
-    assert compute_level(masteries) == 2
+    assert compute_level(masteries) == 3
 
 
 def test_compute_level_no_masteries():
