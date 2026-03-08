@@ -7,6 +7,7 @@ import ProfilePage from "./pages/ProfilePage";
 import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
+import LeaderboardPage from "./pages/LeaderboardPage";
 import api from "./api/client";
 
 function App() {
@@ -91,6 +92,16 @@ function AuthenticatedApp({
         >
           Skill Tree
         </Link>
+        <Link
+          to="/leaderboard"
+          className={`text-sm font-semibold transition-colors ${
+            location.pathname === "/leaderboard"
+              ? "text-cm-cyan"
+              : "text-cm-muted hover:text-cm-text"
+          }`}
+        >
+          Leaderboard
+        </Link>
         <button
           onClick={logout}
           className="ml-auto text-sm font-semibold text-cm-muted hover:text-cm-red transition-colors"
@@ -109,6 +120,7 @@ function AuthenticatedApp({
             }
           />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/leaderboard" element={<LeaderboardPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>
