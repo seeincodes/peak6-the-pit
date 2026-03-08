@@ -77,7 +77,7 @@ async def get_leaderboard(
 
         # Include users with 0 weekly XP at the bottom
         weekly_user_ids = {row.user_id for row in weekly_rows}
-        all_users_result = await db.execute(select(User))
+        all_users_result = await db.execute(select(User).order_by(User.display_name))
         all_users = all_users_result.scalars().all()
         for user in all_users:
             if user.id not in weekly_user_ids:

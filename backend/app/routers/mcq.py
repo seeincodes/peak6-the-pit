@@ -24,7 +24,7 @@ class GenerateMCQRequest(BaseModel):
 
 
 class SubmitMCQRequest(BaseModel):
-    scenario_id: str
+    scenario_id: UUID
     chosen_key: str = Field(pattern=r"^[A-D]$")
     justification: str = Field(max_length=MCQ_JUSTIFY_MAX_CHARS)
     streak_count: int = Field(default=0, ge=0)
@@ -69,7 +69,7 @@ async def submit(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    scenario = await db.get(Scenario, UUID(req.scenario_id))
+    scenario = await db.get(Scenario, req.scenario_id)
     if not scenario:
         raise HTTPException(status_code=404, detail="Scenario not found")
 
