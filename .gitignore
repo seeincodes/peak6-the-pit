@@ -20,5 +20,8 @@ dist/
 # Docker
 *.log
 
+# Plans
+docs/plans/
+
 # OS
 .DS_Store
