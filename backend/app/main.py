@@ -4,7 +4,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.routers import health, scenarios, responses, users, auth
+from app.routers import health, scenarios, responses, users, auth, mcq
 
 
 @asynccontextmanager
@@ -32,3 +32,4 @@ app.include_router(scenarios.router)
 app.include_router(responses.router)
 app.include_router(users.router)
 app.include_router(auth.router)
+app.include_router(mcq.router)
