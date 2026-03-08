@@ -7,7 +7,7 @@ import LevelUpModal from "../components/LevelUpModal";
 import QuickFirePage from "./QuickFirePage";
 import api from "../api/client";
 
-type Mode = "select" | "pick-mode" | "quickfire" | "deep-scenario" | "deep-probe" | "deep-grading" | "deep-result";
+type Mode = "select" | "pick-mode" | "quickfire" | "deep-streaming" | "deep-scenario" | "deep-probe" | "deep-grading" | "deep-result";
 
 interface ScenarioData {
   id: string;
@@ -45,18 +45,8 @@ export default function TrainingPage({
   const [gradeData, setGradeData] = useState<GradeData | null>(null);
   const [_prevLevel, setPrevLevel] = useState<number | null>(null);
   const [showLevelUp, setShowLevelUp] = useState(false);
+  const [streamingText, setStreamingText] = useState("");
   const queryClient = useQueryClient();
-
-  const generateMutation = useMutation({
-    mutationFn: async (params: { category: string; difficulty: string }) => {
-      const res = await api.post("/scenarios/generate", params);
-      return res.data as ScenarioData;
-    },
-    onSuccess: (data) => {
-      setScenario(data);
-      setMode("deep-scenario");
-    },
-  });
 
   const submitMutation = useMutation({
     mutationFn: async (answerText: string) => {
@@ -101,6 +91,53 @@ export default function TrainingPage({
     setResponseId(null);
     setProbeQuestion(null);
     setGradeData(null);
+    setStreamingText("");
+  };
+
+  const generateStreaming = async (params: { category: string; difficulty: string }) => {
+    setStreamingText("");
+    setMode("deep-streaming");
+
+    const token = localStorage.getItem("token");
+    const response = await fetch("/api/scenarios/generate-stream", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        ...(token ? { Authorization: `Bearer ${token}` } : {}),
+      },
+      body: JSON.stringify(params),
+    });
+
+    const reader = response.body!.getReader();
+    const decoder = new TextDecoder();
+    let buffer = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      if (done) break;
+
+      buffer += decoder.decode(value, { stream: true });
+      const lines = buffer.split("\n\n");
+      buffer = lines.pop() || "";
+
+      for (const line of lines) {
+        if (!line.startsWith("data: ")) continue;
+        const data = JSON.parse(line.slice(6));
+
+        if (data.type === "chunk") {
+          setStreamingText((prev) => prev + data.text);
+        } else if (data.type === "done") {
+          setScenario({
+            id: data.id,
+            category: params.category,
+            difficulty: params.difficulty,
+            content: data.content,
+          });
+          setMode("deep-scenario");
+          return;
+        }
+      }
+    }
   };
 
   const levelTitles: Record<number, string> = {
@@ -156,9 +193,8 @@ export default function TrainingPage({
             </button>
             <button
               onClick={() => {
-                generateMutation.mutate(selectedCat);
+                generateStreaming(selectedCat);
               }}
-              disabled={generateMutation.isPending}
               className="p-6 rounded-xl border border-cm-border bg-cm-card hover:border-cm-cyan/50 transition-all text-left"
             >
               <div className="text-2xl mb-2">&#x1F3AF;</div>
@@ -166,11 +202,6 @@ export default function TrainingPage({
               <div className="text-cm-muted text-xs mt-1">Open-ended + probe &bull; ~3-5 min &bull; 16-40 XP</div>
             </button>
           </div>
-          {generateMutation.isPending && (
-            <div className="text-center text-cm-cyan mt-6 animate-pulse">
-              Generating scenario...
-            </div>
-          )}
         </div>
       )}
 
@@ -181,6 +212,24 @@ export default function TrainingPage({
           difficulty={selectedCat.difficulty}
           onExit={reset}
         />
+      )}
+
+      {/* Deep Analysis — Streaming phase */}
+      {mode === "deep-streaming" && (
+        <div className="space-y-4">
+          <button onClick={reset} className="text-cm-muted text-sm hover:text-cm-text">
+            &larr; Cancel
+          </button>
+          <div className="rounded-xl border border-cm-border bg-cm-card/80 backdrop-blur-sm p-6">
+            <div className="text-cm-cyan text-xs font-semibold mb-3 animate-pulse">
+              Generating scenario...
+            </div>
+            <pre className="text-cm-text text-sm whitespace-pre-wrap font-mono leading-relaxed">
+              {streamingText}
+              <span className="animate-pulse text-cm-cyan">|</span>
+            </pre>
+          </div>
+        </div>
       )}
 
       {/* Deep Analysis — Scenario phase */}
