@@ -4,9 +4,10 @@ import ScenarioCard from "../components/ScenarioCard";
 import ResponseInput from "../components/ResponseInput";
 import GradeReveal from "../components/GradeReveal";
 import LevelUpModal from "../components/LevelUpModal";
+import QuickFirePage from "./QuickFirePage";
 import api from "../api/client";
 
-type Phase = "select" | "scenario" | "probe" | "grading" | "result";
+type Mode = "select" | "pick-mode" | "quickfire" | "deep-scenario" | "deep-probe" | "deep-grading" | "deep-result";
 
 interface ScenarioData {
   id: string;
@@ -36,7 +37,8 @@ export default function TrainingPage({
 }: {
   unlockedCategories: { category: string; difficulty: string }[];
 }) {
-  const [phase, setPhase] = useState<Phase>("select");
+  const [mode, setMode] = useState<Mode>("select");
+  const [selectedCat, setSelectedCat] = useState<{ category: string; difficulty: string } | null>(null);
   const [scenario, setScenario] = useState<ScenarioData | null>(null);
   const [responseId, setResponseId] = useState<string | null>(null);
   const [probeQuestion, setProbeQuestion] = useState<string | null>(null);
@@ -52,7 +54,7 @@ export default function TrainingPage({
     },
     onSuccess: (data) => {
       setScenario(data);
-      setPhase("scenario");
+      setMode("deep-scenario");
     },
   });
 
@@ -67,7 +69,7 @@ export default function TrainingPage({
     onSuccess: (data) => {
       setResponseId(data.response_id);
       setProbeQuestion(data.probe_question);
-      setPhase("probe");
+      setMode("deep-probe");
     },
   });
 
@@ -80,9 +82,8 @@ export default function TrainingPage({
     },
     onSuccess: (data) => {
       setGradeData(data);
-      setPhase("result");
+      setMode("deep-result");
 
-      // Check for level up
       const userData = queryClient.getQueryData<{ level: number }>(["user"]);
       if (userData && data.level > userData.level) {
         setPrevLevel(userData.level);
@@ -94,14 +95,14 @@ export default function TrainingPage({
   });
 
   const reset = () => {
-    setPhase("select");
+    setMode("select");
+    setSelectedCat(null);
     setScenario(null);
     setResponseId(null);
     setProbeQuestion(null);
     setGradeData(null);
   };
 
-  // Level titles for the modal
   const levelTitles: Record<number, string> = {
     1: "Initiate", 2: "Analyst", 3: "Strategist", 4: "Risk Manager",
     5: "Volatility Trader", 6: "Senior Strategist", 7: "Portfolio Lead",
@@ -110,15 +111,18 @@ export default function TrainingPage({
 
   return (
     <div className="max-w-3xl mx-auto p-6 space-y-6">
-      {phase === "select" && (
+      {/* Category selection */}
+      {mode === "select" && (
         <div>
           <h2 className="text-2xl font-bold text-cm-text mb-4">Select Scenario</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {unlockedCategories.map((cat) => (
               <button
                 key={`${cat.category}-${cat.difficulty}`}
-                onClick={() => generateMutation.mutate(cat)}
-                disabled={generateMutation.isPending}
+                onClick={() => {
+                  setSelectedCat(cat);
+                  setMode("pick-mode");
+                }}
                 className="p-4 rounded-xl border border-cm-border bg-cm-card hover:border-cm-cyan/50 hover:shadow-neon-cyan transition-all text-left"
               >
                 <div className="text-cm-text font-semibold text-sm">
@@ -128,6 +132,40 @@ export default function TrainingPage({
               </button>
             ))}
           </div>
+        </div>
+      )}
+
+      {/* Mode selection */}
+      {mode === "pick-mode" && selectedCat && (
+        <div>
+          <button onClick={() => setMode("select")} className="text-cm-muted text-sm hover:text-cm-text mb-4">
+            &larr; Back
+          </button>
+          <h2 className="text-xl font-bold text-cm-text mb-2">
+            {selectedCat.category.replace(/_/g, " ").toUpperCase()}
+            <span className="text-cm-muted text-sm ml-2 capitalize">{selectedCat.difficulty}</span>
+          </h2>
+          <div className="grid grid-cols-2 gap-4 mt-4">
+            <button
+              onClick={() => setMode("quickfire")}
+              className="p-6 rounded-xl border border-cm-border bg-cm-card hover:border-cm-amber/50 transition-all text-left"
+            >
+              <div className="text-2xl mb-2">&#x26A1;</div>
+              <div className="text-cm-text font-bold">Quick Fire</div>
+              <div className="text-cm-muted text-xs mt-1">MCQ + justify &bull; ~30s per Q &bull; 5-8 XP</div>
+            </button>
+            <button
+              onClick={() => {
+                generateMutation.mutate(selectedCat);
+              }}
+              disabled={generateMutation.isPending}
+              className="p-6 rounded-xl border border-cm-border bg-cm-card hover:border-cm-cyan/50 transition-all text-left"
+            >
+              <div className="text-2xl mb-2">&#x1F3AF;</div>
+              <div className="text-cm-text font-bold">Deep Analysis</div>
+              <div className="text-cm-muted text-xs mt-1">Open-ended + probe &bull; ~3-5 min &bull; 16-40 XP</div>
+            </button>
+          </div>
           {generateMutation.isPending && (
             <div className="text-center text-cm-cyan mt-6 animate-pulse">
               Generating scenario...
@@ -136,8 +174,21 @@ export default function TrainingPage({
         </div>
       )}
 
-      {phase === "scenario" && scenario && (
+      {/* Quick Fire mode */}
+      {mode === "quickfire" && selectedCat && (
+        <QuickFirePage
+          category={selectedCat.category}
+          difficulty={selectedCat.difficulty}
+          onExit={reset}
+        />
+      )}
+
+      {/* Deep Analysis — Scenario phase */}
+      {mode === "deep-scenario" && scenario && (
         <>
+          <button onClick={reset} className="text-cm-muted text-sm hover:text-cm-text">
+            &larr; Back
+          </button>
           <ScenarioCard
             category={scenario.category}
             difficulty={scenario.difficulty}
@@ -151,7 +202,8 @@ export default function TrainingPage({
         </>
       )}
 
-      {phase === "probe" && scenario && probeQuestion && (
+      {/* Deep Analysis — Probe phase */}
+      {mode === "deep-probe" && scenario && probeQuestion && (
         <>
           <ScenarioCard
             category={scenario.category}
@@ -170,7 +222,8 @@ export default function TrainingPage({
         </>
       )}
 
-      {phase === "result" && gradeData && (
+      {/* Deep Analysis — Result phase */}
+      {mode === "deep-result" && gradeData && (
         <>
           <GradeReveal
             dimensionScores={gradeData.grade.dimension_scores}
