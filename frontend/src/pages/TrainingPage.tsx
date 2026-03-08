@@ -41,7 +41,7 @@ export default function TrainingPage({
   const [responseId, setResponseId] = useState<string | null>(null);
   const [probeQuestion, setProbeQuestion] = useState<string | null>(null);
   const [gradeData, setGradeData] = useState<GradeData | null>(null);
-  const [prevLevel, setPrevLevel] = useState<number | null>(null);
+  const [_prevLevel, setPrevLevel] = useState<number | null>(null);
   const [showLevelUp, setShowLevelUp] = useState(false);
   const queryClient = useQueryClient();
 

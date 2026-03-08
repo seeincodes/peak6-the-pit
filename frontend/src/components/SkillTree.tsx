@@ -17,7 +17,7 @@ const HEX_POSITIONS: [number, number][] = [
   [2, 3],
 ];
 
-export default function SkillTree({ allCategories, unlockedCategories, level }: SkillTreeProps) {
+export default function SkillTree({ allCategories, unlockedCategories, level: _level }: SkillTreeProps) {
   const unlockedSet = new Set(
     unlockedCategories.map((c) => c.category)
   );

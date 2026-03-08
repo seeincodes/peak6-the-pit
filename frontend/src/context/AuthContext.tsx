@@ -1,0 +1,88 @@
+import { createContext, useContext, useState, useEffect, ReactNode } from "react";
+import api from "../api/client";
+
+interface AuthUser {
+  id: string;
+  email: string;
+  display_name: string;
+  level: number;
+  xp_total: number;
+}
+
+interface AuthContextType {
+  user: AuthUser | null;
+  token: string | null;
+  isLoading: boolean;
+  login: (email: string, password: string) => Promise<void>;
+  signup: (email: string, password: string, displayName: string) => Promise<void>;
+  logout: () => void;
+}
+
+const AuthContext = createContext<AuthContextType | null>(null);
+
+export function AuthProvider({ children }: { children: ReactNode }) {
+  const [user, setUser] = useState<AuthUser | null>(null);
+  const [token, setToken] = useState<string | null>(localStorage.getItem("token"));
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    if (token) {
+      api.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      localStorage.setItem("token", token);
+    } else {
+      delete api.defaults.headers.common["Authorization"];
+      localStorage.removeItem("token");
+    }
+  }, [token]);
+
+  useEffect(() => {
+    if (!token) {
+      setIsLoading(false);
+      return;
+    }
+    api.get("/users/me")
+      .then((res) => {
+        setUser({
+          id: res.data.id,
+          email: "",
+          display_name: res.data.display_name,
+          level: res.data.level,
+          xp_total: res.data.xp_total,
+        });
+      })
+      .catch(() => {
+        setToken(null);
+        setUser(null);
+      })
+      .finally(() => setIsLoading(false));
+  }, []);
+
+  const login = async (email: string, password: string) => {
+    const res = await api.post("/auth/login", { email, password });
+    setToken(res.data.token);
+    setUser(res.data.user);
+  };
+
+  const signup = async (email: string, password: string, displayName: string) => {
+    const res = await api.post("/auth/signup", { email, password, display_name: displayName });
+    setToken(res.data.token);
+    setUser(res.data.user);
+  };
+
+  const logout = () => {
+    setToken(null);
+    setUser(null);
+  };
+
+  return (
+    <AuthContext.Provider value={{ user, token, isLoading, login, signup, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
+}
+
+export function useAuth() {
+  const context = useContext(AuthContext);
+  if (!context) throw new Error("useAuth must be used within AuthProvider");
+  return context;
+}
