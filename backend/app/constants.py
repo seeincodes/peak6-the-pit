@@ -63,6 +63,14 @@ MASTERY_THRESHOLD = 3.5
 MASTERY_SCENARIO_COUNT = 5
 DIFFICULTY_MULTIPLIER = {"beginner": 1.0, "intermediate": 1.5, "advanced": 2.0}
 XP_BASE = 20
+
+# MCQ Quick Fire XP
+MCQ_XP_CORRECT_GOOD = 8
+MCQ_XP_CORRECT_WEAK = 5
+MCQ_XP_WRONG = 1
+MCQ_STREAK_BONUS = 2
+MCQ_STREAK_MAX_BONUS = 8
+MCQ_JUSTIFY_MAX_CHARS = 200
 RUBRIC_DIMENSIONS = ["reasoning", "terminology", "trade_logic", "risk_awareness"]
 
 SCENARIO_CATEGORIES = [
