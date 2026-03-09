@@ -22,12 +22,12 @@ export default function ScenarioCard({ category, difficulty, content }: Scenario
       aria-label="Scenario"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-xl border border-cm-border bg-cm-card/80 backdrop-blur-sm p-6 shadow-lg"
+      className="rounded-md border border-cm-border bg-cm-card p-6 shadow-card"
     >
       <div className="flex items-center justify-between mb-4">
         <span
           aria-label={`Category: ${category.replace(/_/g, " ")}`}
-          className="px-3 py-1 rounded-full text-xs font-semibold border"
+          className="px-3 py-1 rounded-md text-xs font-semibold border"
           style={{ color, borderColor: `${color}66`, backgroundColor: `${color}15` }}
         >
           {category.replace(/_/g, " ").toUpperCase()}

@@ -4,34 +4,32 @@ export default {
   theme: {
     extend: {
       colors: {
-        "cm-bg": "#0a0e17",
-        "cm-card": "#111827",
-        "cm-border": "#1e293b",
-        "cm-cyan": "#00f0ff",
-        "cm-emerald": "#10b981",
-        "cm-amber": "#f59e0b",
-        "cm-red": "#ef4444",
-        "cm-text": "#e2e8f0",
-        "cm-muted": "#94a3b8",
+        "cm-bg": "#0f0f1a",
+        "cm-card": "#1a1a2e",
+        "cm-border": "#2a2a4a",
+        "cm-primary": "#6C5CE7",
+        "cm-cyan": "#6C5CE7",
+        "cm-emerald": "#00C9A7",
+        "cm-amber": "#FBBF24",
+        "cm-red": "#FF6B6B",
+        "cm-text": "#E8E8F0",
+        "cm-muted": "#9494B8",
       },
       fontFamily: {
         sans: ['"Inter"', "system-ui", "sans-serif"],
         mono: ['"JetBrains Mono"', "monospace"],
       },
       boxShadow: {
-        "neon-cyan": "0 0 8px rgba(0, 240, 255, 0.15)",
-        "neon-emerald": "0 0 8px rgba(16, 185, 129, 0.15)",
+        "neon-cyan": "none",
+        "neon-emerald": "none",
+        "card": "0 2px 8px rgba(0, 0, 0, 0.3)",
+        "card-hover": "0 4px 16px rgba(0, 0, 0, 0.4)",
       },
       animation: {
-        "pulse-neon": "pulse-neon 2s ease-in-out infinite",
         "score-fill": "score-fill 1s ease-out forwards",
         "xp-float": "xp-float 1.5s ease-out forwards",
       },
       keyframes: {
-        "pulse-neon": {
-          "0%, 100%": { boxShadow: "0 0 5px rgba(0, 240, 255, 0.3)" },
-          "50%": { boxShadow: "0 0 20px rgba(0, 240, 255, 0.6)" },
-        },
         "score-fill": {
           "0%": { width: "0%" },
           "100%": { width: "var(--target-width)" },

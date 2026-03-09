@@ -10,7 +10,7 @@ body {
 
 /* Skip navigation link */
 .skip-link {
-  @apply absolute -top-10 left-4 bg-cm-cyan text-cm-bg px-4 py-2 rounded-lg font-semibold z-[100] transition-all;
+  @apply absolute -top-10 left-4 bg-cm-primary text-white px-4 py-2 rounded-md font-semibold z-[100] transition-all duration-500;
 }
 .skip-link:focus {
   @apply top-4;
@@ -18,7 +18,7 @@ body {
 
 /* Focus ring utility */
 .focus-ring {
-  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cm-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-cm-bg;
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cm-primary focus-visible:ring-offset-2 focus-visible:ring-offset-cm-bg;
 }
 
 /* Reduced motion */

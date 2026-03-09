@@ -78,7 +78,7 @@ function AuthenticatedApp({
         <Link
           to="/"
           aria-current={location.pathname === "/" ? "page" : undefined}
-          className={`text-sm font-semibold transition-colors focus-ring ${
+          className={`text-sm font-semibold transition-all duration-300 focus-ring ${
             location.pathname === "/" ? "text-cm-cyan" : "text-cm-muted hover:text-cm-text"
           }`}
         >
@@ -87,7 +87,7 @@ function AuthenticatedApp({
         <Link
           to="/profile"
           aria-current={location.pathname === "/profile" ? "page" : undefined}
-          className={`text-sm font-semibold transition-colors focus-ring ${
+          className={`text-sm font-semibold transition-all duration-300 focus-ring ${
             location.pathname === "/profile"
               ? "text-cm-cyan"
               : "text-cm-muted hover:text-cm-text"
@@ -98,7 +98,7 @@ function AuthenticatedApp({
         <Link
           to="/leaderboard"
           aria-current={location.pathname === "/leaderboard" ? "page" : undefined}
-          className={`text-sm font-semibold transition-colors focus-ring ${
+          className={`text-sm font-semibold transition-all duration-300 focus-ring ${
             location.pathname === "/leaderboard"
               ? "text-cm-cyan"
               : "text-cm-muted hover:text-cm-text"
@@ -108,7 +108,7 @@ function AuthenticatedApp({
         </Link>
         <button
           onClick={logout}
-          className="ml-auto text-sm font-semibold text-cm-muted hover:text-cm-red transition-colors focus-ring"
+          className="ml-auto text-sm font-semibold text-cm-muted hover:text-cm-red transition-all duration-300 focus-ring"
         >
           Logout
         </button>

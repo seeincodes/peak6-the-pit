@@ -201,7 +201,7 @@ export default function TrainingPage({
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 space-y-6">
+    <div className="max-w-3xl mx-auto p-8 space-y-6">
       {/* Category selection */}
       {mode === "select" && (
         <div>
@@ -214,7 +214,7 @@ export default function TrainingPage({
                   setSelectedCat(cat);
                   setMode("pick-mode");
                 }}
-                className="p-4 rounded-xl border border-cm-border bg-cm-card hover:border-cm-cyan/50 hover:shadow-neon-cyan transition-all text-left focus-ring"
+                className="p-4 rounded-md border border-cm-border bg-cm-card hover:border-cm-cyan/50 transition-all duration-300 text-left focus-ring"
               >
                 <div className="text-cm-text font-semibold text-sm">
                   {cat.category.replace(/_/g, " ").toUpperCase()}
@@ -239,7 +239,7 @@ export default function TrainingPage({
           <div className="grid grid-cols-2 gap-4 mt-4">
             <button
               onClick={startQuickFire}
-              className="p-6 rounded-xl border border-cm-border bg-cm-card hover:border-cm-amber/50 transition-all text-left focus-ring"
+              className="p-6 rounded-md border border-cm-border bg-cm-card hover:border-cm-amber transition-all duration-300 text-left focus-ring"
             >
               <div className="mb-2"><Zap size={24} className="text-cm-amber" aria-hidden="true" /></div>
               <div className="text-cm-text font-bold">Quick Fire</div>
@@ -249,7 +249,7 @@ export default function TrainingPage({
               onClick={() => {
                 generateStreaming(selectedCat);
               }}
-              className="p-6 rounded-xl border border-cm-border bg-cm-card hover:border-cm-cyan/50 transition-all text-left focus-ring"
+              className="p-6 rounded-md border border-cm-border bg-cm-card hover:border-cm-cyan transition-all duration-300 text-left focus-ring"
             >
               <div className="mb-2"><Target size={24} className="text-cm-cyan" aria-hidden="true" /></div>
               <div className="text-cm-text font-bold">Deep Analysis</div>
@@ -275,7 +275,7 @@ export default function TrainingPage({
           <button onClick={reset} className="text-cm-muted text-sm hover:text-cm-text flex items-center gap-1 focus-ring">
             <ArrowLeft size={16} aria-hidden="true" /> Cancel
           </button>
-          <div role="status" aria-live="polite" className="rounded-xl border border-cm-border bg-cm-card/80 backdrop-blur-sm p-6">
+          <div role="status" aria-live="polite" className="rounded-md border border-cm-border bg-cm-card p-6">
             <div className="text-cm-cyan text-xs font-semibold mb-3 animate-pulse">
               Generating scenario...
             </div>
@@ -314,7 +314,7 @@ export default function TrainingPage({
             difficulty={scenario.difficulty}
             content={scenario.content}
           />
-          <div className="rounded-xl border border-cm-amber/30 bg-cm-amber/5 p-4">
+          <div className="rounded-md border border-cm-amber/30 bg-cm-amber/5 p-4">
             <h3 className="text-cm-amber font-semibold text-sm mb-2">Follow-up Question</h3>
             <p className="text-cm-text text-sm">{probeQuestion}</p>
           </div>
@@ -338,7 +338,7 @@ export default function TrainingPage({
           <div className="text-center">
             <button
               onClick={reset}
-              className="px-8 py-3 rounded-xl bg-cm-cyan/20 border border-cm-cyan/50 text-cm-cyan font-bold hover:bg-cm-cyan/30 transition-all focus-ring"
+              className="px-8 py-3 rounded-md bg-cm-cyan/20 border border-cm-cyan/50 text-cm-cyan font-bold hover:bg-cm-cyan/30 transition-all focus-ring"
             >
               Next Scenario
             </button>

@@ -16,7 +16,7 @@ export default function StreakBadge({ count }: StreakBadgeProps) {
       initial={{ scale: 1.3 }}
       animate={{ scale: 1 }}
       aria-label={`${count} question streak, ${multiplier} XP multiplier`}
-      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-cm-amber/15 border border-cm-amber/40"
+      className="inline-flex items-center gap-1.5 px-3 py-1 rounded-md bg-cm-amber/15 border border-cm-amber/40"
     >
       <Flame size={14} className="text-cm-amber" aria-hidden="true" />
       <span className="text-cm-amber text-sm font-bold">{count}</span>

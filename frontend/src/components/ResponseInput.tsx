@@ -17,7 +17,7 @@ export default function ResponseInput({ onSubmit, placeholder, loading }: Respon
   };
 
   return (
-    <div className="rounded-xl border border-cm-border bg-cm-card/80 p-4">
+    <div className="rounded-md border border-cm-border bg-cm-card p-4">
       <label htmlFor="response-input" className="sr-only">Your analysis</label>
       <textarea
         id="response-input"
@@ -34,7 +34,7 @@ export default function ResponseInput({ onSubmit, placeholder, loading }: Respon
         <button
           onClick={handleSubmit}
           disabled={!text.trim() || loading}
-          className="px-6 py-2 rounded-lg bg-cm-cyan/20 border border-cm-cyan/50 text-cm-cyan font-semibold text-sm hover:bg-cm-cyan/30 transition-all disabled:opacity-40 disabled:cursor-not-allowed focus-ring"
+          className="px-6 py-2 rounded-md bg-cm-cyan/20 border border-cm-cyan/50 text-cm-cyan font-semibold text-sm hover:bg-cm-cyan/30 transition-all disabled:opacity-40 disabled:cursor-not-allowed focus-ring"
         >
           {loading ? "Analyzing..." : "Submit"}
         </button>

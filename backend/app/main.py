@@ -5,10 +5,17 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.routers import health, scenarios, scenarios_stream, responses, users, auth, mcq, leaderboard
+from app.services.mcq_pool import prewarm
 
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    # Pre-warm MCQ pool for instant Quick Fire load
+    await prewarm([
+        ("iv_analysis", "beginner"),
+        ("greeks", "beginner"),
+        ("order_flow", "beginner"),
+    ])
     yield
 
 

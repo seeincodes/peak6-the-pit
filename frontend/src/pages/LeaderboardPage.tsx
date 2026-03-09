@@ -40,7 +40,7 @@ export default function LeaderboardPage() {
             role="tab"
             aria-selected={period === p}
             onClick={() => setPeriod(p)}
-            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all focus-ring ${
+            className={`px-4 py-2 rounded-md text-sm font-semibold transition-all focus-ring ${
               period === p
                 ? "bg-cm-cyan/20 border border-cm-cyan/50 text-cm-cyan"
                 : "border border-cm-border text-cm-muted hover:text-cm-text"
@@ -65,7 +65,7 @@ export default function LeaderboardPage() {
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.05 }}
-              className={`flex items-center justify-between p-4 rounded-xl border transition-all ${
+              className={`flex items-center justify-between p-4 rounded-md border transition-all ${
                 entry.is_current_user
                   ? "border-cm-cyan/50 bg-cm-cyan/5"
                   : "border-cm-border bg-cm-card/50"

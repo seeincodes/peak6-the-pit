@@ -35,11 +35,11 @@ export default function MCQCard({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-xl border border-cm-border bg-cm-card/80 backdrop-blur-sm p-6 shadow-lg"
+      className="rounded-md border border-cm-border bg-cm-card p-6 shadow-card"
     >
       <div className="flex items-center justify-between mb-4">
         <span
-          className="px-3 py-1 rounded-full text-xs font-semibold border"
+          className="px-3 py-1 rounded-md text-xs font-semibold border"
           style={{ color, borderColor: `${color}66`, backgroundColor: `${color}15` }}
         >
           {category.replace(/_/g, " ").toUpperCase()}
@@ -69,7 +69,7 @@ export default function MCQCard({
             onClick={() => onSelect(choice.key)}
             disabled={disabled}
             aria-pressed={selectedKey === choice.key}
-            className={`w-full text-left p-3 rounded-lg border transition-all focus-ring ${
+            className={`w-full text-left p-3 rounded-md border transition-all focus-ring ${
               selectedKey === choice.key
                 ? "border-cm-cyan bg-cm-cyan/10 text-cm-text"
                 : "border-cm-border bg-cm-card hover:border-cm-cyan/40 text-cm-muted hover:text-cm-text"

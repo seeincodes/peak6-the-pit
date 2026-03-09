@@ -149,7 +149,7 @@ export default function QuickFirePage({
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-6 space-y-4">
+    <div className="max-w-3xl mx-auto p-8 space-y-4">
       {/* Header bar */}
       <div className="flex items-center justify-between">
         <button
@@ -200,14 +200,14 @@ export default function QuickFirePage({
                 placeholder="Brief justification (1-2 sentences)..."
                 maxLength={200}
                 rows={2}
-                className="w-full bg-cm-bg border border-cm-border rounded-lg px-4 py-3 text-cm-text text-sm placeholder-cm-muted/50 focus:outline-none focus:border-cm-cyan/50 resize-none"
+                className="w-full bg-cm-bg border border-cm-border rounded-md px-4 py-3 text-cm-text text-sm placeholder-cm-muted/50 focus:outline-none focus:border-cm-cyan/50 resize-none"
               />
               <div className="flex items-center justify-between">
                 <span className="text-cm-muted text-xs" aria-live="off">{justification.length}/200</span>
                 <button
                   onClick={() => submitMutation.mutate()}
                   disabled={!justification.trim() || submitMutation.isPending}
-                  className="px-4 py-2 rounded-lg bg-cm-cyan/20 border border-cm-cyan/50 text-cm-cyan text-sm font-bold hover:bg-cm-cyan/30 transition-all disabled:opacity-40 focus-ring"
+                  className="px-4 py-2 rounded-md bg-cm-cyan/20 border border-cm-cyan/50 text-cm-cyan text-sm font-bold hover:bg-cm-cyan/30 transition-all disabled:opacity-40 focus-ring"
                 >
                   {submitMutation.isPending ? "Grading..." : "Submit"}
                 </button>

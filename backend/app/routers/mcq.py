@@ -11,6 +11,7 @@ from app.models.grade import Grade
 from app.models.xp_transaction import XPTransaction
 from app.models.user import User
 from app.services.scenario_engine import generate_mcq
+from app.services.mcq_pool import get_from_pool, spawn_refill
 from app.services.grading_agent import grade_mcq_justification, compute_mcq_xp
 from app.constants import MCQ_JUSTIFY_MAX_CHARS
 from app.middleware.auth import get_current_user
@@ -36,7 +37,14 @@ async def generate(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    mcq_data = await generate_mcq(db, req.category, req.difficulty)
+    # Try pool first for instant response
+    mcq_data = await get_from_pool(req.category, req.difficulty)
+
+    if mcq_data is None:
+        mcq_data = await generate_mcq(db, req.category, req.difficulty)
+
+    # Spawn refill so next request is instant
+    spawn_refill(req.category, req.difficulty)
 
     scenario = Scenario(
         category=mcq_data["category"],

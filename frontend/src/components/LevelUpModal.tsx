@@ -42,7 +42,7 @@ export default function LevelUpModal({ show, level, title, newUnlocks, onClose }
             exit={{ scale: 0.5, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300 }}
             ref={modalRef}
-            className="bg-cm-card border border-cm-cyan rounded-2xl p-8 text-center max-w-md shadow-neon-cyan"
+            className="bg-cm-card border border-cm-cyan rounded-md p-8 text-center max-w-md"
             onClick={(e) => e.stopPropagation()}
           >
             <motion.div
@@ -76,7 +76,7 @@ export default function LevelUpModal({ show, level, title, newUnlocks, onClose }
             <button
               autoFocus
               onClick={onClose}
-              className="px-8 py-2 rounded-lg bg-cm-cyan text-cm-bg font-bold hover:bg-cm-cyan/80 transition-all focus-ring"
+              className="px-8 py-2 rounded-md bg-cm-cyan text-cm-bg font-bold hover:bg-cm-cyan/80 transition-all focus-ring"
             >
               Continue
             </button>

@@ -64,7 +64,7 @@ export default function SkillTree({ allCategories, unlockedCategories, level: _l
               )}
               <span
                 className="text-[8px] font-bold text-center leading-tight px-1"
-                style={{ color: isUnlocked ? color : "#94a3b8" }}
+                style={{ color: isUnlocked ? color : "#9494B8" }}
               >
                 {cat.replace(/_/g, "\n").toUpperCase()}
               </span>

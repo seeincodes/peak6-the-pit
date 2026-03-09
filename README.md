@@ -32,3 +32,23 @@ Seed the database with `python -m app.seed` from the backend directory. By defau
 |-------|----------|------|--------------|
 | demo@capman.dev | demo2026 | TA | Demo Trader |
 | admin@capman.dev | admin2026 | Admin | Admin User |
+
+## Testing
+
+### Backend (pytest)
+
+```bash
+cd backend && uv run pytest tests/ -v
+```
+
+Tests: auth, constants, grading agent, leaderboard, MCQ generation/grading/pool, progression, RAG, scenario engine.
+
+### Frontend (Vitest)
+
+```bash
+cd frontend && npm test -- --run
+```
+
+(Use `--reporter=verbose` for detailed output.)
+
+Tests: AuthContext, MCQCard, MCQFeedback, QuickFirePage, TrainingPage (prefetch).

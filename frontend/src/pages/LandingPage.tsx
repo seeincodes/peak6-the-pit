@@ -7,24 +7,18 @@ const features = [
     description:
       "Rapid-fire MCQ scenarios testing your options instincts under time pressure.",
     color: "cm-cyan",
-    borderColor: "border-cm-cyan/30",
-    bgColor: "bg-cm-cyan/5",
   },
   {
     title: "Deep Analysis",
     description:
       "Multi-step Socratic grading that probes your reasoning and trading thesis.",
     color: "cm-emerald",
-    borderColor: "border-cm-emerald/30",
-    bgColor: "bg-cm-emerald/5",
   },
   {
     title: "Leaderboard",
     description:
       "Compete with fellow traders. Climb the ranks. Earn XP and unlock new categories.",
     color: "cm-amber",
-    borderColor: "border-cm-amber/30",
-    bgColor: "bg-cm-amber/5",
   },
 ];
 
@@ -46,7 +40,7 @@ export default function LandingPage() {
     <main role="main" className="min-h-screen bg-cm-bg flex flex-col">
       {/* Hero Section */}
       <motion.section
-        className="flex-1 flex flex-col items-center justify-center px-6 py-20"
+        className="flex-1 flex flex-col items-center justify-center px-6 py-32"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
@@ -56,7 +50,7 @@ export default function LandingPage() {
           variants={itemVariants}
         >
           <span className="text-cm-text">The </span>
-          <span className="text-cm-cyan drop-shadow-[0_0_12px_rgba(0,240,255,0.2)]">
+          <span className="text-cm-cyan">
             Pit
           </span>
         </motion.h1>
@@ -78,13 +72,13 @@ export default function LandingPage() {
         <motion.div className="flex gap-4 mb-20" variants={itemVariants}>
           <Link
             to="/signup"
-            className="px-8 py-3 rounded-xl bg-cm-cyan text-cm-bg font-bold text-lg hover:bg-cm-cyan/80 transition-all shadow-neon-cyan focus-ring"
+            className="px-8 py-3 rounded-md bg-cm-cyan text-cm-bg font-bold text-lg hover:bg-cm-cyan/80 transition-all focus-ring"
           >
             Get Started
           </Link>
           <Link
             to="/login"
-            className="px-8 py-3 rounded-xl border border-cm-cyan/50 text-cm-cyan font-bold text-lg hover:bg-cm-cyan/10 transition-all focus-ring"
+            className="px-8 py-3 rounded-md border border-cm-cyan/50 text-cm-cyan font-bold text-lg hover:bg-cm-cyan/10 transition-all focus-ring"
           >
             Sign In
           </Link>
@@ -99,7 +93,7 @@ export default function LandingPage() {
           {features.map((feature) => (
             <motion.div
               key={feature.title}
-              className={`rounded-xl border ${feature.borderColor} ${feature.bgColor} p-6`}
+              className="rounded-md border border-cm-border bg-cm-card p-6"
               variants={itemVariants}
               whileHover={{ scale: 1.03, transition: { duration: 0.2 } }}
             >
