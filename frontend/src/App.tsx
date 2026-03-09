@@ -18,7 +18,7 @@ function App() {
   if (authLoading) {
     return (
       <div className="min-h-screen bg-cm-bg flex items-center justify-center">
-        <div className="text-cm-cyan animate-pulse text-xl font-mono">Loading...</div>
+        <div role="status" aria-live="polite" className="text-cm-cyan animate-pulse text-xl">Loading...</div>
       </div>
     );
   }
@@ -57,13 +57,14 @@ function AuthenticatedApp({
   if (isLoading) {
     return (
       <div className="min-h-screen bg-cm-bg flex items-center justify-center">
-        <div className="text-cm-cyan animate-pulse text-xl font-mono">Loading...</div>
+        <div role="status" aria-live="polite" className="text-cm-cyan animate-pulse text-xl">Loading...</div>
       </div>
     );
   }
 
   return (
     <div className="min-h-screen bg-cm-bg flex flex-col">
+      <a href="#main-content" className="skip-link">Skip to main content</a>
       {user && (
         <ProfileHUD
           displayName={user.display_name}
@@ -73,10 +74,11 @@ function AuthenticatedApp({
           streakDays={user.streak_days}
         />
       )}
-      <nav className="flex items-center gap-4 px-6 py-2 border-b border-cm-border">
+      <nav aria-label="Main navigation" className="flex items-center gap-4 px-6 py-2 border-b border-cm-border">
         <Link
           to="/"
-          className={`text-sm font-semibold transition-colors ${
+          aria-current={location.pathname === "/" ? "page" : undefined}
+          className={`text-sm font-semibold transition-colors focus-ring ${
             location.pathname === "/" ? "text-cm-cyan" : "text-cm-muted hover:text-cm-text"
           }`}
         >
@@ -84,7 +86,8 @@ function AuthenticatedApp({
         </Link>
         <Link
           to="/profile"
-          className={`text-sm font-semibold transition-colors ${
+          aria-current={location.pathname === "/profile" ? "page" : undefined}
+          className={`text-sm font-semibold transition-colors focus-ring ${
             location.pathname === "/profile"
               ? "text-cm-cyan"
               : "text-cm-muted hover:text-cm-text"
@@ -94,7 +97,8 @@ function AuthenticatedApp({
         </Link>
         <Link
           to="/leaderboard"
-          className={`text-sm font-semibold transition-colors ${
+          aria-current={location.pathname === "/leaderboard" ? "page" : undefined}
+          className={`text-sm font-semibold transition-colors focus-ring ${
             location.pathname === "/leaderboard"
               ? "text-cm-cyan"
               : "text-cm-muted hover:text-cm-text"
@@ -104,12 +108,12 @@ function AuthenticatedApp({
         </Link>
         <button
           onClick={logout}
-          className="ml-auto text-sm font-semibold text-cm-muted hover:text-cm-red transition-colors"
+          className="ml-auto text-sm font-semibold text-cm-muted hover:text-cm-red transition-colors focus-ring"
         >
           Logout
         </button>
       </nav>
-      <main className="flex-1">
+      <main id="main-content" className="flex-1">
         <Routes>
           <Route
             path="/"
