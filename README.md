@@ -1,6 +1,6 @@
 # CapMan AI
 
-Gamified scenario training & MTSS agent for PEAK6 Capital Management.
+Gamified scenario training & MTSS agent for options trading.
 
 ## Quick Start
 

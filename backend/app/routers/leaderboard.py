@@ -1,4 +1,4 @@
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, Depends, Query
 from sqlalchemy import select, func
@@ -15,7 +15,7 @@ router = APIRouter(prefix="/api/leaderboard", tags=["leaderboard"])
 
 def _start_of_week() -> datetime:
     """Return Monday 00:00 UTC of the current week."""
-    now = datetime.utcnow()
+    now = datetime.now(timezone.utc)
     monday = now - timedelta(days=now.weekday())
     return monday.replace(hour=0, minute=0, second=0, microsecond=0)
 

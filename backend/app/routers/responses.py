@@ -11,6 +11,7 @@ from app.models.grade import Grade
 from app.models.xp_transaction import XPTransaction
 from app.models.user import User
 from app.services.grading_agent import generate_probe, grade_response, compute_xp
+from app.services.badge_service import check_and_award_badges
 from app.middleware.auth import get_current_user
 
 router = APIRouter(prefix="/api/responses", tags=["responses"])
@@ -100,6 +101,8 @@ async def continue_response(
     db.add(xp_tx)
     user.xp_total += xp_earned
 
+    new_badges = await check_and_award_badges(user.id, db)
+
     await db.commit()
 
     return {
@@ -111,4 +114,5 @@ async def continue_response(
         "xp_earned": xp_earned,
         "xp_total": user.xp_total,
         "level": user.level,
+        "new_badges": new_badges,
     }

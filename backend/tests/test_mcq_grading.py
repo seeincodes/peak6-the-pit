@@ -24,5 +24,5 @@ def test_mcq_xp_correct_weak_with_streak():
 
 
 def test_mcq_xp_wrong():
-    assert compute_mcq_xp(False, "good", 5) == 1
-    assert compute_mcq_xp(False, "weak", 0) == 1
+    assert compute_mcq_xp(False, "good", 5) == 3  # MCQ_XP_WRONG_GOOD
+    assert compute_mcq_xp(False, "weak", 0) == 1  # MCQ_XP_WRONG_WEAK

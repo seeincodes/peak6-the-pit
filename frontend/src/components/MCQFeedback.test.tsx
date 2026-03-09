@@ -49,8 +49,8 @@ describe("MCQFeedback", () => {
   it("shows justification quality and note", () => {
     render(<MCQFeedback {...defaultProps} />);
 
-    expect(screen.getAllByText(/Your Reasoning:/).length).toBeGreaterThan(0);
-    expect(screen.getAllByText(/good/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Your Reasoning/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Strong/).length).toBeGreaterThan(0);
     expect(screen.getAllByText(/You correctly identified the vol sell/).length).toBeGreaterThan(0);
   });
 

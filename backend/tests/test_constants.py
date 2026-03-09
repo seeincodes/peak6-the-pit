@@ -9,7 +9,7 @@ from app.constants import (
     SCENARIO_CATEGORIES,
     MCQ_XP_CORRECT_GOOD,
     MCQ_XP_CORRECT_WEAK,
-    MCQ_XP_WRONG,
+    MCQ_XP_WRONG_WEAK,
 )
 
 
@@ -58,4 +58,4 @@ def test_scenario_categories():
 def test_mcq_xp_constants():
     assert MCQ_XP_CORRECT_GOOD == 8
     assert MCQ_XP_CORRECT_WEAK == 5
-    assert MCQ_XP_WRONG == 1
+    assert MCQ_XP_WRONG_WEAK == 1

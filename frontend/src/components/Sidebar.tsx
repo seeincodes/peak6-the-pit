@@ -2,11 +2,12 @@ import { Link, useLocation } from "react-router-dom";
 import { motion } from "framer-motion";
 import {
   Crosshair,
-  GitBranch,
+  User,
   Trophy,
   LogOut,
   Flame,
 } from "lucide-react";
+import { AVATAR_PRESETS } from "../constants/avatars";
 
 interface SidebarProps {
   user: {
@@ -15,6 +16,7 @@ interface SidebarProps {
     level_title: string;
     xp_total: number;
     streak_days: number;
+    avatar_id?: string;
   } | null;
   logout: () => void;
 }
@@ -23,7 +25,7 @@ const LEVEL_XP = [0, 0, 100, 250, 500, 800, 1200, 1700, 2300, 3000, 4000];
 
 const NAV_ITEMS = [
   { to: "/", icon: Crosshair, label: "Training", matchExact: true },
-  { to: "/profile", icon: GitBranch, label: "Skill Tree", matchExact: false },
+  { to: "/profile", icon: User, label: "Profile", matchExact: false },
   { to: "/leaderboard", icon: Trophy, label: "Leaderboard", matchExact: false },
 ];
 
@@ -131,10 +133,8 @@ export default function Sidebar({ user, logout }: SidebarProps) {
 
           {/* User avatar + name */}
           <div className="flex items-center gap-3 mb-2">
-            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cm-primary to-cm-emerald flex items-center justify-center shrink-0">
-              <span className="text-white font-bold text-xs">
-                {user.display_name.charAt(0).toUpperCase()}
-              </span>
+            <div className="w-8 h-8 rounded-full bg-cm-card-raised border border-cm-border flex items-center justify-center shrink-0 text-base">
+              {AVATAR_PRESETS[user.avatar_id || "default"] || "👤"}
             </div>
             <div className="min-w-0">
               <div className="text-sm font-medium text-cm-text truncate">

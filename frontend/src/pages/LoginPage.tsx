@@ -72,7 +72,7 @@ export default function LoginPage() {
                 required
                 aria-invalid={!!error}
                 className="w-full px-4 py-2.5 rounded bg-cm-bg border border-cm-border text-cm-text placeholder-cm-muted/50 focus:outline-none focus:border-cm-primary/50 transition-all duration-300 focus-ring"
-                placeholder="trader@peak6.com"
+                placeholder="trader@example.com"
               />
             </div>
 

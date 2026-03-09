@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import String, Integer, DateTime, CheckConstraint
 from sqlalchemy.dialects.postgresql import UUID
@@ -23,7 +23,7 @@ class User(Base):
     level: Mapped[int] = mapped_column(Integer, default=1)
     streak_days: Mapped[int] = mapped_column(Integer, default=0)
     last_active_at: Mapped[datetime | None] = mapped_column(DateTime, nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     __table_args__ = (
         CheckConstraint("role IN ('ta', 'intern', 'experienced', 'educator', 'admin')"),

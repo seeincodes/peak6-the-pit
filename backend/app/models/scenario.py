@@ -1,5 +1,5 @@
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import String, DateTime, CheckConstraint
 from sqlalchemy.dialects.postgresql import UUID, JSONB, ARRAY
@@ -18,7 +18,7 @@ class Scenario(Base):
     content: Mapped[dict] = mapped_column(JSONB, nullable=False)
     context_chunks: Mapped[list | None] = mapped_column(ARRAY(String), nullable=True)
     embedding = mapped_column(Vector(1536), nullable=True)
-    created_at: Mapped[datetime] = mapped_column(DateTime, default=datetime.utcnow)
+    created_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
 
     __table_args__ = (
         CheckConstraint("difficulty IN ('beginner', 'intermediate', 'advanced')"),

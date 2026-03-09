@@ -54,7 +54,7 @@ export default function LandingPage() {
           variants={itemVariants}
         >
           <span className="text-cm-lime text-xs font-semibold tracking-wide uppercase">
-            PEAK6 Training Platform
+            CapMan AI Training Platform
           </span>
         </motion.div>
 
@@ -127,7 +127,7 @@ export default function LandingPage() {
       {/* Footer */}
       <footer className="border-t border-cm-border py-4 text-center">
         <p className="text-cm-muted text-xs tracking-wide">
-          PEAK6 Capital Management &mdash; CapMan AI Training Platform
+          CapMan AI Training Platform
         </p>
       </footer>
     </main>

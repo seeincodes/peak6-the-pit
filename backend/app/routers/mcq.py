@@ -14,6 +14,7 @@ from app.services.scenario_engine import generate_mcq
 from app.services.mcq_pool import get_from_pool, spawn_refill
 from app.services.grading_agent import grade_mcq_justification, compute_mcq_xp
 from app.constants import MCQ_JUSTIFY_MAX_CHARS
+from app.services.badge_service import check_and_award_badges
 from app.middleware.auth import get_current_user
 
 router = APIRouter(prefix="/api/mcq", tags=["mcq"])
@@ -141,6 +142,8 @@ async def submit(
     db.add(xp_tx)
     user.xp_total += xp_earned
 
+    new_badges = await check_and_award_badges(user.id, db)
+
     await db.commit()
 
     return {
@@ -152,4 +155,5 @@ async def submit(
         "xp_earned": xp_earned,
         "xp_total": user.xp_total,
         "level": user.level,
+        "new_badges": new_badges,
     }

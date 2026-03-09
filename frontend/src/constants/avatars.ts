@@ -1,0 +1,15 @@
+export const AVATAR_PRESETS: Record<string, string> = {
+  default: "👤",
+  bull: "🐂",
+  bear: "🐻",
+  rocket: "🚀",
+  chart: "📈",
+  diamond: "💎",
+  fire: "🔥",
+  lightning: "⚡",
+  shield: "🛡️",
+  star: "⭐",
+  crown: "👑",
+  target: "🎯",
+  brain: "🧠",
+};
