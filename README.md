@@ -24,7 +24,7 @@ Seed the database with `python -m app.seed` from the backend directory. By defau
 | alex@capman.dev | alex123 | TA | Alex Chen |
 | maria@capman.dev | maria123 | TA | Maria Santos |
 | james@capman.dev | james123 | Intern | James Kim |
-| priya@capman.dev | priya123 | TA | Priya Patel |
+| priya@capman.dev | priya123 | TA | Priya Patel (most advanced) |
 
 ### Production (`SEED_PROD=true`)
 
@@ -32,6 +32,7 @@ Seed the database with `python -m app.seed` from the backend directory. By defau
 |-------|----------|------|--------------|
 | demo@capman.dev | demo2026 | TA | Demo Trader |
 | admin@capman.dev | admin2026 | Admin | Admin User |
+| advanced@capman.dev | advanced2026 | TA | Advanced Demo |
 
 ## Testing
 

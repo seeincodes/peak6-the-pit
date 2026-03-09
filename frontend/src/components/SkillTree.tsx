@@ -2,7 +2,7 @@ import { useRef, useState, useEffect } from "react";
 import { createPortal } from "react-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Lock, Check } from "lucide-react";
-import { categoryColors } from "../theme/colors";
+import { categoryColors, categoryDisplay } from "../theme/colors";
 
 interface SkillTreeProps {
   allCategories: string[];
@@ -10,25 +10,44 @@ interface SkillTreeProps {
   level: number;
 }
 
-// Tree structure: root -> branches -> leaves. Order matches unlock progression.
+// Tree structure: root -> branches -> leaves. Order matches unlock progression (levels 1-7+).
 const TREE_LAYERS: string[][] = [
-  ["iv_analysis"],
-  ["greeks", "order_flow"],
-  ["macro", "term_structure", "skew", "correlation", "event_vol", "tail_risk"],
-  ["position_sizing", "trade_structuring", "vol_surface", "microstructure", "risk_management", "capman_tooling"],
+  // Level 1
+  ["iv_analysis", "realized_vol"],
+  // Level 2-3
+  ["greeks", "order_flow", "fundamentals", "technical_analysis", "sentiment"],
+  // Level 4-5
+  ["macro", "term_structure", "fixed_income", "seasonality", "skew", "correlation", "event_vol", "tail_risk", "commodities", "geopolitical"],
+  // Level 6
+  ["position_sizing", "trade_structuring", "crypto", "alt_data"],
+  // Level 7
+  ["vol_surface", "microstructure", "risk_management", "capman_tooling", "exotic_structures", "portfolio_mgmt"],
 ];
 
 // Parent indices for each layer (parent row, parent col in that row)
 const PARENT_LINKS: { layer: number; parentCol: number }[][] = [
   [],
-  [{ layer: 0, parentCol: 0 }, { layer: 0, parentCol: 0 }],
+  // Layer 1 → Layer 0
   [
-    { layer: 1, parentCol: 0 }, { layer: 1, parentCol: 0 },
-    { layer: 1, parentCol: 1 }, { layer: 1, parentCol: 1 }, { layer: 1, parentCol: 1 }, { layer: 1, parentCol: 1 },
+    { layer: 0, parentCol: 0 }, { layer: 0, parentCol: 0 },
+    { layer: 0, parentCol: 1 }, { layer: 0, parentCol: 1 }, { layer: 0, parentCol: 1 },
   ],
+  // Layer 2 → Layer 1
   [
-    { layer: 2, parentCol: 0 }, { layer: 2, parentCol: 0 },
-    { layer: 2, parentCol: 2 }, { layer: 2, parentCol: 2 }, { layer: 2, parentCol: 2 }, { layer: 2, parentCol: 2 },
+    { layer: 1, parentCol: 0 }, { layer: 1, parentCol: 0 }, { layer: 1, parentCol: 2 }, { layer: 1, parentCol: 4 },
+    { layer: 1, parentCol: 0 }, { layer: 1, parentCol: 1 }, { layer: 1, parentCol: 1 }, { layer: 1, parentCol: 1 },
+    { layer: 1, parentCol: 3 }, { layer: 1, parentCol: 4 },
+  ],
+  // Layer 3 → Layer 2
+  [
+    { layer: 2, parentCol: 0 }, { layer: 2, parentCol: 4 },
+    { layer: 2, parentCol: 9 }, { layer: 2, parentCol: 3 },
+  ],
+  // Layer 4 → Layer 3
+  [
+    { layer: 3, parentCol: 0 }, { layer: 3, parentCol: 0 },
+    { layer: 3, parentCol: 1 }, { layer: 3, parentCol: 1 },
+    { layer: 3, parentCol: 1 }, { layer: 3, parentCol: 0 },
   ],
 ];
 
@@ -36,9 +55,10 @@ const NODE_SIZE = 72;
 const LAYER_GAP = 44;
 const NODE_GAP = 12;
 
-// Short display labels for categories that are too long
+// Short display labels for skill tree nodes
 const DISPLAY_LABELS: Record<string, string> = {
   iv_analysis: "IV\nANALYSIS",
+  realized_vol: "REALIZED\nVOL",
   greeks: "GREEKS",
   order_flow: "ORDER\nFLOW",
   macro: "MACRO",
@@ -53,6 +73,17 @@ const DISPLAY_LABELS: Record<string, string> = {
   microstructure: "MICRO\nSTRUCT",
   risk_management: "RISK\nMGMT",
   capman_tooling: "CM\nTOOLING",
+  sentiment: "SENTI-\nMENT",
+  technical_analysis: "TECH\nANALYSIS",
+  fixed_income: "FIXED\nINCOME",
+  seasonality: "SEASON-\nALITY",
+  exotic_structures: "EXOTIC\nSTRUCT",
+  fundamentals: "FUNDA-\nMENTALS",
+  commodities: "COMMOD-\nITIES",
+  crypto: "CRYPTO",
+  geopolitical: "GEO-\nPOLITICAL",
+  alt_data: "ALT\nDATA",
+  portfolio_mgmt: "PORT-\nFOLIO",
 };
 
 export default function SkillTree({ allCategories, unlockedCategories, level: _level }: SkillTreeProps) {
@@ -303,7 +334,7 @@ export default function SkillTree({ allCategories, unlockedCategories, level: _l
                 />
 
                 <div className="text-xs font-semibold text-cm-text leading-snug">
-                  {activeNode.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+                  {categoryDisplay[activeNode] || activeNode.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
                 </div>
                 <div className="flex items-center gap-1.5 mt-1.5">
                   {unlockedSet.has(activeNode) ? (

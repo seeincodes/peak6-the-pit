@@ -7,7 +7,8 @@ import ResponseInput from "../components/ResponseInput";
 import GradeReveal from "../components/GradeReveal";
 import LevelUpModal from "../components/LevelUpModal";
 import api from "../api/client";
-import { categoryDisplay } from "../theme/colors";
+import { categoryDisplay, categoryColors } from "../theme/colors";
+import { Star } from "lucide-react";
 
 type Mode = "select" | "deep-streaming" | "deep-scenario" | "deep-probe" | "deep-grading" | "deep-result" | "deep-error";
 
@@ -173,26 +174,101 @@ export default function TrainingPage({
 
   return (
     <div className="cm-page max-w-3xl space-y-6">
-      {/* Category selection → goes straight to Deep Analysis */}
+      {/* Category selection — grouped by skill with difficulty routes */}
       {mode === "select" && (
         <div>
           <h2 className="cm-title mb-4">Select Scenario</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-            {unlockedCategories.map((cat) => (
-              <button
-                key={`${cat.category}-${cat.difficulty}`}
-                onClick={() => {
+          <div className="space-y-3">
+            {(() => {
+              const grouped = new Map<string, string[]>();
+              for (const cat of unlockedCategories) {
+                const existing = grouped.get(cat.category) || [];
+                existing.push(cat.difficulty);
+                grouped.set(cat.category, existing);
+              }
+              const diffOrder = ["beginner", "intermediate", "advanced"];
+              return Array.from(grouped.entries()).map(([category, difficulties]) => {
+                const color = categoryColors[category] || "#4D34EF";
+                const sorted = difficulties.sort((a, b) => diffOrder.indexOf(a) - diffOrder.indexOf(b));
+                const startRoute = (difficulty: string) => {
+                  const cat = { category, difficulty };
                   setSelectedCat(cat);
                   generateStreaming(cat);
-                }}
-                className="cm-surface-interactive p-4"
-              >
-                <div className="text-cm-text font-semibold text-sm">
-                  {categoryDisplay[cat.category] || cat.category.replace(/_/g, " ")}
-                </div>
-                <div className="text-cm-muted text-xs mt-1 capitalize">{cat.difficulty}</div>
-              </button>
-            ))}
+                };
+
+                if (sorted.length === 1) {
+                  const diffLevel = sorted[0] === "beginner" ? 1 : sorted[0] === "intermediate" ? 2 : 3;
+                  return (
+                    <button
+                      key={category}
+                      onClick={() => startRoute(sorted[0])}
+                      className="cm-surface-interactive p-4 w-full text-left flex items-center justify-between"
+                      style={{ borderColor: `${color}40` }}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="w-2 h-2 rounded-full flex-shrink-0"
+                          style={{ backgroundColor: color }}
+                        />
+                        <span className="text-cm-text font-semibold text-sm">
+                          {categoryDisplay[category] || category.replace(/_/g, " ")}
+                        </span>
+                      </div>
+                      <div className="flex items-center gap-2">
+                        <span className="capitalize text-cm-muted text-xs">{sorted[0]}</span>
+                        <span className="flex items-center gap-0.5">
+                          {[1, 2, 3].map((i) => (
+                            <Star
+                              key={i}
+                              size={10}
+                              className={i <= diffLevel ? "text-cm-amber fill-cm-amber" : "text-cm-amber/30"}
+                            />
+                          ))}
+                        </span>
+                      </div>
+                    </button>
+                  );
+                }
+
+                return (
+                  <div key={category} className="cm-surface p-4">
+                    <div className="flex items-center gap-2 mb-3">
+                      <span
+                        className="w-2 h-2 rounded-full flex-shrink-0"
+                        style={{ backgroundColor: color }}
+                      />
+                      <span className="text-cm-text font-semibold text-sm">
+                        {categoryDisplay[category] || category.replace(/_/g, " ")}
+                      </span>
+                    </div>
+                    <div className="flex gap-2">
+                      {sorted.map((difficulty) => {
+                        const diffLevel = difficulty === "beginner" ? 1 : difficulty === "intermediate" ? 2 : 3;
+                        return (
+                          <button
+                            key={difficulty}
+                            onClick={() => startRoute(difficulty)}
+                            className="cm-surface-interactive px-3 py-2 flex-1 flex items-center justify-center gap-2 text-xs"
+                            style={{ borderColor: `${color}40` }}
+                          >
+                            <span className="capitalize text-cm-text">{difficulty}</span>
+                            <span className="flex items-center gap-0.5">
+                              {[1, 2, 3].map((i) => (
+                                <Star
+                                  key={i}
+                                  size={10}
+                                  className={i <= diffLevel ? "text-cm-amber fill-cm-amber" : "text-cm-amber/30"}
+                                />
+                              ))}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              });
+            })()}
           </div>
         </div>
       )}

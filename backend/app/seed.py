@@ -59,10 +59,10 @@ TEST_USERS = [
         "password": "priya123",
         "display_name": "Priya Patel",
         "role": "ta",
-        "ta_phase": 1,
-        "xp_total": 180,
-        "level": 2,
-        "streak_days": 0,
+        "ta_phase": 4,
+        "xp_total": 3200,
+        "level": 10,
+        "streak_days": 15,
     },
 ]
 
@@ -88,6 +88,17 @@ PROD_USERS = [
         "xp_total": 0,
         "level": 1,
         "streak_days": 0,
+    },
+    {
+        "id": uuid.UUID("00000000-0000-0000-0000-000000000012"),
+        "email": "advanced@capman.dev",
+        "password": "advanced2026",
+        "display_name": "Advanced Demo",
+        "role": "ta",
+        "ta_phase": 4,
+        "xp_total": 3500,
+        "level": 10,
+        "streak_days": 21,
     },
 ]
 

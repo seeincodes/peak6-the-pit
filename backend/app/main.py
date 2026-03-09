@@ -8,6 +8,8 @@ from app.routers import health, scenarios, scenarios_stream, responses, users, a
 from app.services.mcq_pool import prewarm
 from app.services.rag import prewarm_embeddings
 from app.services.badge_seeder import seed_badges
+from app.services.badge_service import check_and_award_badges
+from app.models.user import User
 from app.database import async_session
 
 
@@ -25,6 +27,17 @@ async def lifespan(app: FastAPI):
         count = await seed_badges(db)
         if count:
             print(f"Seeded {count} new badges")
+    # Award any earned badges to existing users (covers seed users)
+    async with async_session() as db:
+        from sqlalchemy import select
+        users = (await db.execute(select(User))).scalars().all()
+        total_awarded = 0
+        for u in users:
+            awarded = await check_and_award_badges(u.id, db)
+            total_awarded += len(awarded)
+        if total_awarded:
+            await db.commit()
+            print(f"Awarded {total_awarded} badges to existing users")
     yield
 
 
