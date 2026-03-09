@@ -9,7 +9,8 @@ from app.constants import DIFFICULTY_MULTIPLIER, XP_BASE
 from app.constants import (
     MCQ_XP_CORRECT_GOOD,
     MCQ_XP_CORRECT_WEAK,
-    MCQ_XP_WRONG,
+    MCQ_XP_WRONG_GOOD,
+    MCQ_XP_WRONG_WEAK,
     MCQ_STREAK_BONUS,
     MCQ_STREAK_MAX_BONUS,
 )
@@ -127,10 +128,16 @@ async def grade_mcq_justification(
 def compute_mcq_xp(is_correct: bool, justification_quality: str, streak_count: int) -> int:
     """Compute XP for an MCQ response.
 
+    XP rewards both correctness and reasoning quality:
+    - Correct + good reasoning: 8 XP base + streak bonus
+    - Correct + weak reasoning: 5 XP base + reduced streak bonus
+    - Wrong + good reasoning: 3 XP (partial credit for sound thinking)
+    - Wrong + weak reasoning: 1 XP
+
     streak_count: number of consecutive correct answers (0-based, before this answer).
     """
     if not is_correct:
-        return MCQ_XP_WRONG
+        return MCQ_XP_WRONG_GOOD if justification_quality == "good" else MCQ_XP_WRONG_WEAK
 
     if justification_quality == "good":
         base = MCQ_XP_CORRECT_GOOD

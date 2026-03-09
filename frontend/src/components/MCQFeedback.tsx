@@ -53,9 +53,20 @@ export default function MCQFeedback({
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
         aria-live="polite"
-        className="text-center mb-4"
+        className="mb-4"
       >
-        <span className="text-cm-lime font-bold text-lg">+{xpEarned} XP</span>
+        <div className="text-center mb-3">
+          <span className="text-cm-lime font-bold text-lg">+{xpEarned} XP</span>
+        </div>
+        <div className="flex justify-center gap-3 text-xs">
+          <span className={isCorrect ? "text-cm-emerald" : "text-cm-red"}>
+            Answer: {isCorrect ? "Correct" : "Wrong"}
+          </span>
+          <span className="text-cm-border">|</span>
+          <span className={justificationQuality === "good" ? "text-cm-emerald" : "text-cm-muted"}>
+            Reasoning: {justificationQuality === "good" ? "Strong" : "Weak"}
+          </span>
+        </div>
       </motion.div>
 
       <div className="space-y-3 mb-4">
@@ -65,9 +76,7 @@ export default function MCQFeedback({
         </div>
 
         <div className="border-t border-cm-border pt-3">
-          <h4 className="text-cm-amber text-xs font-semibold mb-1">
-            Your Reasoning: <span className={justificationQuality === "good" ? "text-cm-emerald" : "text-cm-muted"}>{justificationQuality}</span>
-          </h4>
+          <h4 className="text-cm-amber text-xs font-semibold mb-1">Your Reasoning</h4>
           <p className="text-cm-muted text-sm">{justificationNote}</p>
         </div>
       </div>

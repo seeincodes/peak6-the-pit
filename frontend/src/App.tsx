@@ -1,7 +1,7 @@
-import { Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "./context/AuthContext";
-import ProfileHUD from "./components/ProfileHUD";
+import Sidebar from "./components/Sidebar";
 import TrainingPage from "./pages/TrainingPage";
 import ProfilePage from "./pages/ProfilePage";
 import LandingPage from "./pages/LandingPage";
@@ -12,7 +12,6 @@ import api from "./api/client";
 
 function App() {
   const { user: authUser, isLoading: authLoading, logout } = useAuth();
-  const location = useLocation();
 
   // Show loading spinner while auth state is being determined
   if (authLoading) {
@@ -36,15 +35,13 @@ function App() {
   }
 
   // Authenticated — show protected layout
-  return <AuthenticatedApp logout={logout} location={location} />;
+  return <AuthenticatedApp logout={logout} />;
 }
 
 function AuthenticatedApp({
   logout,
-  location,
 }: {
   logout: () => void;
-  location: ReturnType<typeof useLocation>;
 }) {
   const { data: user, isLoading } = useQuery({
     queryKey: ["user"],
@@ -63,57 +60,10 @@ function AuthenticatedApp({
   }
 
   return (
-    <div className="min-h-screen bg-cm-bg flex flex-col">
+    <div className="min-h-screen bg-cm-bg flex">
       <a href="#main-content" className="skip-link">Skip to main content</a>
-      {user && (
-        <ProfileHUD
-          displayName={user.display_name}
-          level={user.level}
-          levelTitle={user.level_title}
-          xpTotal={user.xp_total}
-          streakDays={user.streak_days}
-        />
-      )}
-      <nav aria-label="Main navigation" className="flex items-center gap-4 px-8 py-3 border-b border-cm-border">
-        <Link
-          to="/"
-          aria-current={location.pathname === "/" ? "page" : undefined}
-          className={`text-sm font-semibold transition-all duration-300 focus-ring ${
-            location.pathname === "/" ? "text-cm-primary" : "text-cm-muted hover:text-cm-text"
-          }`}
-        >
-          Training
-        </Link>
-        <Link
-          to="/profile"
-          aria-current={location.pathname === "/profile" ? "page" : undefined}
-          className={`text-sm font-semibold transition-all duration-300 focus-ring ${
-            location.pathname === "/profile"
-              ? "text-cm-primary"
-              : "text-cm-muted hover:text-cm-text"
-          }`}
-        >
-          Skill Tree
-        </Link>
-        <Link
-          to="/leaderboard"
-          aria-current={location.pathname === "/leaderboard" ? "page" : undefined}
-          className={`text-sm font-semibold transition-all duration-300 focus-ring ${
-            location.pathname === "/leaderboard"
-              ? "text-cm-primary"
-              : "text-cm-muted hover:text-cm-text"
-          }`}
-        >
-          Leaderboard
-        </Link>
-        <button
-          onClick={logout}
-          className="ml-auto text-sm font-semibold text-cm-muted hover:text-cm-red transition-all duration-300 focus-ring"
-        >
-          Logout
-        </button>
-      </nav>
-      <main id="main-content" className="flex-1">
+      <Sidebar user={user} logout={logout} />
+      <main id="main-content" className="flex-1 min-h-screen ml-[220px]">
         <Routes>
           <Route
             path="/"
