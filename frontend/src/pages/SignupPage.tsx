@@ -43,7 +43,7 @@ export default function SignupPage() {
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-1">
             <span className="text-cm-text">The </span>
-            <span className="text-cm-cyan">
+            <span className="text-cm-primary">
               Pit
             </span>
           </h1>
@@ -72,7 +72,7 @@ export default function SignupPage() {
                 onChange={(e) => setDisplayName(e.target.value)}
                 required
                 aria-invalid={!!error}
-                className="w-full px-4 py-2.5 rounded-md bg-cm-bg border border-cm-border text-cm-text placeholder-cm-muted/50 focus:outline-none focus:border-cm-cyan/50 transition-all duration-300 focus-ring"
+                className="w-full px-4 py-2.5 rounded-md bg-cm-bg border border-cm-border text-cm-text placeholder-cm-muted/50 focus:outline-none focus:border-cm-primary/50 transition-all duration-300 focus-ring"
                 placeholder="TradingAce"
               />
             </div>
@@ -88,7 +88,7 @@ export default function SignupPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 aria-invalid={!!error}
-                className="w-full px-4 py-2.5 rounded-md bg-cm-bg border border-cm-border text-cm-text placeholder-cm-muted/50 focus:outline-none focus:border-cm-cyan/50 transition-all duration-300 focus-ring"
+                className="w-full px-4 py-2.5 rounded-md bg-cm-bg border border-cm-border text-cm-text placeholder-cm-muted/50 focus:outline-none focus:border-cm-primary/50 transition-all duration-300 focus-ring"
                 placeholder="trader@peak6.com"
               />
             </div>
@@ -105,7 +105,7 @@ export default function SignupPage() {
                 required
                 minLength={6}
                 aria-invalid={!!error}
-                className="w-full px-4 py-2.5 rounded-md bg-cm-bg border border-cm-border text-cm-text placeholder-cm-muted/50 focus:outline-none focus:border-cm-cyan/50 transition-all duration-300 focus-ring"
+                className="w-full px-4 py-2.5 rounded-md bg-cm-bg border border-cm-border text-cm-text placeholder-cm-muted/50 focus:outline-none focus:border-cm-primary/50 transition-all duration-300 focus-ring"
                 placeholder="Min. 6 characters"
               />
             </div>
@@ -114,7 +114,7 @@ export default function SignupPage() {
               type="submit"
               disabled={loading}
               aria-busy={loading}
-              className="w-full py-3 rounded-md bg-cm-cyan text-cm-bg font-bold text-sm hover:bg-cm-cyan/80 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 focus-ring"
+              className="w-full py-3 rounded bg-cm-primary text-white font-bold text-sm hover:bg-cm-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 focus-ring"
             >
               {loading ? (
                 <span className="animate-pulse">Creating account...</span>
@@ -126,7 +126,7 @@ export default function SignupPage() {
 
           <p className="mt-6 text-center text-cm-muted text-sm">
             Already have an account?{" "}
-            <Link to="/login" className="text-cm-cyan hover:underline font-semibold transition-all duration-300 focus-ring rounded">
+            <Link to="/login" className="text-cm-primary hover:underline font-semibold transition-all duration-300 focus-ring rounded">
               Sign In
             </Link>
           </p>

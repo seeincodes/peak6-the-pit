@@ -14,7 +14,7 @@ interface ScenarioCardProps {
 }
 
 export default function ScenarioCard({ category, difficulty, content }: ScenarioCardProps) {
-  const color = categoryColors[category] || "#00f0ff";
+  const color = categoryColors[category] || "#4D34EF";
   const difficultyLevel = difficulty === "beginner" ? 1 : difficulty === "intermediate" ? 2 : 3;
 
   return (

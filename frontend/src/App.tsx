@@ -18,7 +18,7 @@ function App() {
   if (authLoading) {
     return (
       <div className="min-h-screen bg-cm-bg flex items-center justify-center">
-        <div role="status" aria-live="polite" className="text-cm-cyan animate-pulse text-xl">Loading...</div>
+        <div role="status" aria-live="polite" className="text-cm-primary animate-pulse text-xl">Loading...</div>
       </div>
     );
   }
@@ -57,7 +57,7 @@ function AuthenticatedApp({
   if (isLoading) {
     return (
       <div className="min-h-screen bg-cm-bg flex items-center justify-center">
-        <div role="status" aria-live="polite" className="text-cm-cyan animate-pulse text-xl">Loading...</div>
+        <div role="status" aria-live="polite" className="text-cm-primary animate-pulse text-xl">Loading...</div>
       </div>
     );
   }
@@ -74,12 +74,12 @@ function AuthenticatedApp({
           streakDays={user.streak_days}
         />
       )}
-      <nav aria-label="Main navigation" className="flex items-center gap-4 px-6 py-2 border-b border-cm-border">
+      <nav aria-label="Main navigation" className="flex items-center gap-4 px-8 py-3 border-b border-cm-border">
         <Link
           to="/"
           aria-current={location.pathname === "/" ? "page" : undefined}
           className={`text-sm font-semibold transition-all duration-300 focus-ring ${
-            location.pathname === "/" ? "text-cm-cyan" : "text-cm-muted hover:text-cm-text"
+            location.pathname === "/" ? "text-cm-primary" : "text-cm-muted hover:text-cm-text"
           }`}
         >
           Training
@@ -89,7 +89,7 @@ function AuthenticatedApp({
           aria-current={location.pathname === "/profile" ? "page" : undefined}
           className={`text-sm font-semibold transition-all duration-300 focus-ring ${
             location.pathname === "/profile"
-              ? "text-cm-cyan"
+              ? "text-cm-primary"
               : "text-cm-muted hover:text-cm-text"
           }`}
         >
@@ -100,7 +100,7 @@ function AuthenticatedApp({
           aria-current={location.pathname === "/leaderboard" ? "page" : undefined}
           className={`text-sm font-semibold transition-all duration-300 focus-ring ${
             location.pathname === "/leaderboard"
-              ? "text-cm-cyan"
+              ? "text-cm-primary"
               : "text-cm-muted hover:text-cm-text"
           }`}
         >

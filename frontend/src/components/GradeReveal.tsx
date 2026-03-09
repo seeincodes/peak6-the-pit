@@ -15,10 +15,10 @@ const dimensionLabels: Record<string, string> = {
 };
 
 const dimensionColors: Record<string, string> = {
-  reasoning: "#00f0ff",
-  terminology: "#8b5cf6",
-  trade_logic: "#10b981",
-  risk_awareness: "#f59e0b",
+  reasoning: "#4D34EF",
+  terminology: "#A78BFA",
+  trade_logic: "#34D399",
+  risk_awareness: "#FCD34D",
 };
 
 export default function GradeReveal({
@@ -41,7 +41,7 @@ export default function GradeReveal({
           className="inline-flex items-center gap-3"
           aria-label={`Overall score: ${overallScore.toFixed(1)} out of 5`}
         >
-          <span className="text-5xl font-bold text-cm-cyan">{overallScore.toFixed(1)}</span>
+          <span className="text-5xl font-bold text-cm-primary">{overallScore.toFixed(1)}</span>
           <span className="text-cm-muted text-xl">/ 5.0</span>
         </motion.div>
       </div>
@@ -53,7 +53,7 @@ export default function GradeReveal({
         role="status"
         className="text-center mb-6"
       >
-        <span className="text-cm-emerald font-bold text-lg">+{xpEarned} XP</span>
+        <span className="text-cm-lime font-bold text-lg">+{xpEarned} XP</span>
       </motion.div>
 
       <div className="space-y-3 mb-6">
@@ -73,7 +73,7 @@ export default function GradeReveal({
             >
               <motion.div
                 className="h-full rounded-sm"
-                style={{ backgroundColor: dimensionColors[dim] || "#00f0ff" }}
+                style={{ backgroundColor: dimensionColors[dim] || "#4D34EF" }}
                 initial={{ width: 0 }}
                 animate={{ width: `${(score / 5) * 100}%` }}
                 transition={{ delay: 0.5 + i * 0.15, duration: 0.6, ease: "easeOut" }}

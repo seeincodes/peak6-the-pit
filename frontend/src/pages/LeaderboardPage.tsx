@@ -29,7 +29,7 @@ export default function LeaderboardPage() {
   });
 
   return (
-    <div className="max-w-2xl mx-auto p-6">
+    <div className="max-w-2xl mx-auto p-8">
       <h2 className="text-2xl font-bold text-cm-text mb-4">Leaderboard</h2>
 
       {/* Period tabs */}
@@ -42,7 +42,7 @@ export default function LeaderboardPage() {
             onClick={() => setPeriod(p)}
             className={`px-4 py-2 rounded-md text-sm font-semibold transition-all focus-ring ${
               period === p
-                ? "bg-cm-cyan/20 border border-cm-cyan/50 text-cm-cyan"
+                ? "bg-cm-primary text-white border border-cm-primary"
                 : "border border-cm-border text-cm-muted hover:text-cm-text"
             }`}
           >
@@ -52,7 +52,7 @@ export default function LeaderboardPage() {
       </div>
 
       {isLoading && (
-        <div role="status" aria-live="polite" className="text-cm-cyan animate-pulse text-center py-12">Loading...</div>
+        <div role="status" aria-live="polite" className="text-cm-primary animate-pulse text-center py-12">Loading...</div>
       )}
 
       {data && (
@@ -67,7 +67,7 @@ export default function LeaderboardPage() {
               transition={{ delay: i * 0.05 }}
               className={`flex items-center justify-between p-4 rounded-md border transition-all ${
                 entry.is_current_user
-                  ? "border-cm-cyan/50 bg-cm-cyan/5"
+                  ? "border-cm-primary/50 bg-cm-primary/5"
                   : "border-cm-border bg-cm-card/50"
               }`}
             >
@@ -92,13 +92,13 @@ export default function LeaderboardPage() {
                     <span aria-label={`Rank ${entry.rank}`}>#{entry.rank}</span>
                   )}
                 </span>
-                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cm-cyan to-cm-emerald flex items-center justify-center text-cm-bg font-bold text-sm">
+                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cm-primary to-cm-emerald flex items-center justify-center text-white font-bold text-sm">
                   {entry.display_name.charAt(0).toUpperCase()}
                 </div>
                 <div>
                   <div className="text-sm font-semibold text-cm-text">
                     {entry.display_name}
-                    {entry.is_current_user && <span className="text-cm-cyan text-xs ml-2">(you)</span>}
+                    {entry.is_current_user && <span className="text-cm-primary text-xs ml-2">(you)</span>}
                   </div>
                   <div className="text-xs text-cm-muted">
                     Lv{entry.level} {entry.level_title}
@@ -110,7 +110,7 @@ export default function LeaderboardPage() {
                 {entry.streak_days > 0 && (
                   <span className="text-cm-amber text-xs">{entry.streak_days}d</span>
                 )}
-                <span className="text-cm-emerald font-bold text-sm">
+                <span className="text-cm-lime font-bold text-sm">
                   {entry.xp.toLocaleString()} XP
                 </span>
               </div>

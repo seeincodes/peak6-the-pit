@@ -23,14 +23,14 @@ export default function ProfileHUD({
   const neededXP = nextLevelXP - currentLevelXP;
 
   return (
-    <header role="banner" className="flex items-center justify-between px-8 py-4 border-b border-cm-border bg-cm-card/50 backdrop-blur-sm">
+    <header role="banner" className="flex items-center justify-between px-8 py-4 border-b border-cm-border bg-cm-card">
       <div className="flex items-center gap-4">
-        <div aria-hidden="true" className="w-10 h-10 rounded-full bg-gradient-to-br from-cm-cyan to-cm-emerald flex items-center justify-center text-cm-bg font-bold">
+        <div aria-hidden="true" className="w-10 h-10 rounded-full bg-gradient-to-br from-cm-primary to-cm-emerald flex items-center justify-center text-white font-bold">
           {displayName.charAt(0).toUpperCase()}
         </div>
         <div>
           <div className="text-sm font-semibold text-cm-text">{displayName}</div>
-          <div className="text-xs text-cm-cyan">{levelTitle}</div>
+          <div className="text-xs text-cm-primary">{levelTitle}</div>
         </div>
       </div>
 

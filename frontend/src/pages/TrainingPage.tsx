@@ -214,7 +214,7 @@ export default function TrainingPage({
                   setSelectedCat(cat);
                   setMode("pick-mode");
                 }}
-                className="p-4 rounded-md border border-cm-border bg-cm-card hover:border-cm-cyan/50 transition-all duration-300 text-left focus-ring"
+                className="p-4 rounded border border-cm-border bg-cm-card hover:border-cm-primary/50 transition-all duration-300 text-left focus-ring"
               >
                 <div className="text-cm-text font-semibold text-sm">
                   {cat.category.replace(/_/g, " ").toUpperCase()}
@@ -249,9 +249,9 @@ export default function TrainingPage({
               onClick={() => {
                 generateStreaming(selectedCat);
               }}
-              className="p-6 rounded-md border border-cm-border bg-cm-card hover:border-cm-cyan transition-all duration-300 text-left focus-ring"
+              className="p-6 rounded border border-cm-border bg-cm-card hover:border-cm-primary transition-all duration-300 text-left focus-ring"
             >
-              <div className="mb-2"><Target size={24} className="text-cm-cyan" aria-hidden="true" /></div>
+              <div className="mb-2"><Target size={24} className="text-cm-primary" aria-hidden="true" /></div>
               <div className="text-cm-text font-bold">Deep Analysis</div>
               <div className="text-cm-muted text-xs mt-1">Open-ended + probe &bull; ~3-5 min &bull; 16-40 XP</div>
             </button>
@@ -276,12 +276,12 @@ export default function TrainingPage({
             <ArrowLeft size={16} aria-hidden="true" /> Cancel
           </button>
           <div role="status" aria-live="polite" className="rounded-md border border-cm-border bg-cm-card p-6">
-            <div className="text-cm-cyan text-xs font-semibold mb-3 animate-pulse">
+            <div className="text-cm-primary text-xs font-semibold mb-3 animate-pulse">
               Generating scenario...
             </div>
             <pre className="text-cm-text text-sm whitespace-pre-wrap font-mono leading-relaxed">
               {streamingText}
-              <span className="animate-pulse text-cm-cyan">|</span>
+              <span className="animate-pulse text-cm-primary">|</span>
             </pre>
           </div>
         </div>
@@ -338,7 +338,7 @@ export default function TrainingPage({
           <div className="text-center">
             <button
               onClick={reset}
-              className="px-8 py-3 rounded-md bg-cm-cyan/20 border border-cm-cyan/50 text-cm-cyan font-bold hover:bg-cm-cyan/30 transition-all focus-ring"
+              className="px-8 py-3 rounded bg-cm-primary text-white font-bold hover:bg-cm-primary/90 transition-all focus-ring"
             >
               Next Scenario
             </button>

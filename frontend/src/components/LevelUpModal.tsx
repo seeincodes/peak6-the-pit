@@ -42,7 +42,7 @@ export default function LevelUpModal({ show, level, title, newUnlocks, onClose }
             exit={{ scale: 0.5, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300 }}
             ref={modalRef}
-            className="bg-cm-card border border-cm-cyan rounded-md p-8 text-center max-w-md"
+            className="bg-cm-card border border-cm-primary rounded-md p-8 text-center max-w-md"
             onClick={(e) => e.stopPropagation()}
           >
             <motion.div
@@ -51,9 +51,9 @@ export default function LevelUpModal({ show, level, title, newUnlocks, onClose }
               transition={{ delay: 0.2, type: "spring" }}
               className="mb-4 flex justify-center"
             >
-              <ArrowUpCircle size={48} className="text-cm-cyan" aria-hidden="true" />
+              <ArrowUpCircle size={48} className="text-cm-lime" aria-hidden="true" />
             </motion.div>
-            <h2 id="levelup-title" className="text-3xl font-bold text-cm-cyan mb-2">LEVEL UP!</h2>
+            <h2 id="levelup-title" className="text-3xl font-bold text-cm-lime mb-2">LEVEL UP!</h2>
             <p className="text-cm-text text-xl mb-1">Level {level}</p>
             <p className="text-cm-amber font-semibold mb-6">{title}</p>
 
@@ -64,7 +64,7 @@ export default function LevelUpModal({ show, level, title, newUnlocks, onClose }
                   {newUnlocks.map((cat) => (
                     <span
                       key={cat}
-                      className="px-3 py-1 rounded-full text-xs font-semibold bg-cm-cyan/15 border border-cm-cyan/40 text-cm-cyan"
+                      className="px-3 py-1 rounded text-xs font-semibold bg-cm-primary/15 border border-cm-primary/40 text-cm-primary"
                     >
                       {cat.replace(/_/g, " ").toUpperCase()}
                     </span>
@@ -76,7 +76,7 @@ export default function LevelUpModal({ show, level, title, newUnlocks, onClose }
             <button
               autoFocus
               onClick={onClose}
-              className="px-8 py-2 rounded-md bg-cm-cyan text-cm-bg font-bold hover:bg-cm-cyan/80 transition-all focus-ring"
+              className="px-8 py-2 rounded bg-cm-primary text-white font-bold hover:bg-cm-primary/90 transition-all focus-ring"
             >
               Continue
             </button>

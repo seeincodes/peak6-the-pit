@@ -30,7 +30,7 @@ export default function SkillTree({ allCategories, unlockedCategories, level: _l
         {allCategories.map((cat, i) => {
         const pos = HEX_POSITIONS[i] || [0, 0];
         const isUnlocked = unlockedSet.has(cat);
-        const color = categoryColors[cat] || "#00f0ff";
+        const color = categoryColors[cat] || "#4D34EF";
         const x = pos[0] * (HEX_SIZE + HEX_GAP);
         const y = pos[1] * (HEX_SIZE + HEX_GAP);
 
@@ -46,8 +46,8 @@ export default function SkillTree({ allCategories, unlockedCategories, level: _l
               width: HEX_SIZE,
               height: HEX_SIZE,
               clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)",
-              backgroundColor: isUnlocked ? `${color}30` : "#111827",
-              border: `2px solid ${isUnlocked ? color : "#1e293b"}`,
+              backgroundColor: isUnlocked ? `${color}30` : "#16163a",
+              border: `2px solid ${isUnlocked ? color : "#2e2e5a"}`,
             }}
             initial={{ scale: 0 }}
             animate={{
@@ -64,7 +64,7 @@ export default function SkillTree({ allCategories, unlockedCategories, level: _l
               )}
               <span
                 className="text-[8px] font-bold text-center leading-tight px-1"
-                style={{ color: isUnlocked ? color : "#9494B8" }}
+                style={{ color: isUnlocked ? color : "#A0A0C0" }}
               >
                 {cat.replace(/_/g, "\n").toUpperCase()}
               </span>

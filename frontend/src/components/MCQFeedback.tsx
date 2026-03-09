@@ -43,7 +43,7 @@ export default function MCQFeedback({
         </motion.div>
         {!isCorrect && (
           <div className="text-cm-muted text-sm mt-1">
-            Correct answer: <span className="text-cm-cyan font-mono">{correctKey}</span>
+            Correct answer: <span className="text-cm-primary font-mono">{correctKey}</span>
           </div>
         )}
       </div>
@@ -55,7 +55,7 @@ export default function MCQFeedback({
         aria-live="polite"
         className="text-center mb-4"
       >
-        <span className="text-cm-emerald font-bold text-lg">+{xpEarned} XP</span>
+        <span className="text-cm-lime font-bold text-lg">+{xpEarned} XP</span>
       </motion.div>
 
       <div className="space-y-3 mb-4">
@@ -76,7 +76,7 @@ export default function MCQFeedback({
         <button
           ref={nextRef}
           onClick={onNext}
-          className="px-6 py-2 rounded-md bg-cm-cyan/20 border border-cm-cyan/50 text-cm-cyan font-bold hover:bg-cm-cyan/30 transition-all focus-ring"
+          className="px-6 py-2 rounded bg-cm-primary text-white font-bold hover:bg-cm-primary/90 transition-all focus-ring"
         >
           Next Question
         </button>

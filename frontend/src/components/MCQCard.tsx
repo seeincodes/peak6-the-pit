@@ -28,7 +28,7 @@ export default function MCQCard({
   disabled,
   selectedKey,
 }: MCQCardProps) {
-  const color = categoryColors[category] || "#00f0ff";
+  const color = categoryColors[category] || "#4D34EF";
   const difficultyLevel = difficulty === "beginner" ? 1 : difficulty === "intermediate" ? 2 : 3;
 
   return (
@@ -71,11 +71,11 @@ export default function MCQCard({
             aria-pressed={selectedKey === choice.key}
             className={`w-full text-left p-3 rounded-md border transition-all focus-ring ${
               selectedKey === choice.key
-                ? "border-cm-cyan bg-cm-cyan/10 text-cm-text"
-                : "border-cm-border bg-cm-card hover:border-cm-cyan/40 text-cm-muted hover:text-cm-text"
+                ? "border-cm-primary bg-cm-primary/10 text-cm-text"
+                : "border-cm-border bg-cm-card hover:border-cm-primary/40 text-cm-muted hover:text-cm-text"
             } ${disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}`}
           >
-            <span className="font-mono text-cm-cyan mr-3">{choice.key}.</span>
+            <span className="font-mono text-cm-primary mr-3">{choice.key}.</span>
             <span className="text-sm">{choice.text}</span>
           </button>
         ))}

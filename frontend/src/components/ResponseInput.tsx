@@ -34,7 +34,7 @@ export default function ResponseInput({ onSubmit, placeholder, loading }: Respon
         <button
           onClick={handleSubmit}
           disabled={!text.trim() || loading}
-          className="px-6 py-2 rounded-md bg-cm-cyan/20 border border-cm-cyan/50 text-cm-cyan font-semibold text-sm hover:bg-cm-cyan/30 transition-all disabled:opacity-40 disabled:cursor-not-allowed focus-ring"
+          className="px-6 py-2 rounded bg-cm-primary text-white font-semibold text-sm hover:bg-cm-primary/90 transition-all disabled:opacity-40 disabled:cursor-not-allowed focus-ring"
         >
           {loading ? "Analyzing..." : "Submit"}
         </button>
