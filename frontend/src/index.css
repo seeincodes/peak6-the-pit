@@ -2,8 +2,30 @@
 @tailwind components;
 @tailwind utilities;
 
-@import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500;600;700&display=swap');
 
 body {
-  @apply bg-cm-bg text-cm-text font-mono antialiased;
+  @apply bg-cm-bg text-cm-text font-sans antialiased;
+}
+
+/* Skip navigation link */
+.skip-link {
+  @apply absolute -top-10 left-4 bg-cm-cyan text-cm-bg px-4 py-2 rounded-lg font-semibold z-[100] transition-all;
+}
+.skip-link:focus {
+  @apply top-4;
+}
+
+/* Focus ring utility */
+.focus-ring {
+  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cm-cyan focus-visible:ring-offset-2 focus-visible:ring-offset-cm-bg;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
 }

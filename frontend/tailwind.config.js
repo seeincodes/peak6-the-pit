@@ -12,14 +12,15 @@ export default {
         "cm-amber": "#f59e0b",
         "cm-red": "#ef4444",
         "cm-text": "#e2e8f0",
-        "cm-muted": "#64748b",
+        "cm-muted": "#94a3b8",
       },
       fontFamily: {
+        sans: ['"Inter"', "system-ui", "sans-serif"],
         mono: ['"JetBrains Mono"', "monospace"],
       },
       boxShadow: {
-        "neon-cyan": "0 0 15px rgba(0, 240, 255, 0.3)",
-        "neon-emerald": "0 0 15px rgba(16, 185, 129, 0.3)",
+        "neon-cyan": "0 0 8px rgba(0, 240, 255, 0.15)",
+        "neon-emerald": "0 0 8px rgba(16, 185, 129, 0.15)",
       },
       animation: {
         "pulse-neon": "pulse-neon 2s ease-in-out infinite",
