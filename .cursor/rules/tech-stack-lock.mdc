@@ -1,0 +1,74 @@
+---
+description: Enforce the locked technology stack decisions from Pre-Search
+globs: ["**/*"]
+alwaysApply: true
+---
+
+# Technology Stack Lock
+
+All technology decisions below were made during pre-search and are locked. Do not switch technologies without explicit user approval and a documented reason in `MEMO.md`.
+
+## Locked Decisions
+
+### Backend Framework: FastAPI
+- **Locked:** FastAPI with Python 3.11+
+- **Do NOT switch to:** Django, Flask, Express.js, or any non-Python framework
+- **Reason:** Python required for Atlas integration; FastAPI provides async + WebSocket + auto-docs
+
+### Database: PostgreSQL + pgvector
+- **Locked:** PostgreSQL 16+ with pgvector extension for RAG embeddings
+- **Do NOT switch to:** MongoDB, MySQL, SQLite, or standalone vector databases (Pinecone, Weaviate, Qdrant)
+- **Migration note:** If corpus exceeds 100K chunks, evaluate dedicated vector DB at that point
+
+### ORM: SQLAlchemy 2.0 + Alembic
+- **Locked:** SQLAlchemy 2.0 async mode with Alembic migrations
+- **Do NOT switch to:** Django ORM, Tortoise ORM, raw SQL, Prisma
+
+### Cache / Pub-Sub: Redis
+- **Locked:** Redis 7+ for caching and WebSocket pub/sub
+- **Do NOT switch to:** Memcached, in-memory caching only
+
+### Frontend Framework: React + TypeScript + Vite
+- **Locked:** React 18+ with TypeScript, built with Vite
+- **Do NOT switch to:** Next.js, Vue, Svelte, Angular, or plain JavaScript
+- **Note:** No SSR needed — this is a SPA
+
+### Styling: TailwindCSS
+- **Locked:** TailwindCSS 3+
+- **Do NOT switch to:** CSS Modules, styled-components, Emotion, Material UI
+
+### Charts: Recharts
+- **Locked:** Recharts for data visualization (skill radar, trajectory charts)
+- **Do NOT switch to:** Chart.js, D3 directly, Victory, Nivo
+
+### Primary LLM: Claude API (Anthropic)
+- **Locked:** Claude API for scenario generation and grading
+- **Do NOT switch to:** GPT-4, Gemini, or open-source models without benchmarking
+- **Note:** Abstraction layer should allow swap if needed
+
+### Embedding Model: OpenAI text-embedding-3-small
+- **Locked:** OpenAI embedding API for RAG vector generation
+- **Do NOT switch to:** Claude embeddings, self-hosted models
+- **Note:** Embedding model is decoupled from grading LLM by design
+
+### Authentication: JWT (PyJWT)
+- **Locked:** Stateless JWT authentication with role claims
+- **Do NOT switch to:** Session-based auth, OAuth (unless partner requires SSO)
+
+### Containerization: Docker + Docker Compose
+- **Locked:** Docker for development and deployment
+- **Do NOT switch to:** Podman, bare-metal, or VM-based deployment
+
+### Cloud: AWS
+- **Locked:** AWS (ECS + RDS + ElastiCache) for production deployment
+- **Do NOT switch to:** GCP, Azure, Heroku, Vercel
+
+## Adding New Dependencies
+
+Before adding any new package or library:
+
+1. Check if the functionality exists in an already-locked dependency
+2. Verify the package is actively maintained (last release < 6 months)
+3. Confirm license compatibility (MIT, Apache 2.0, BSD preferred)
+4. Add to the appropriate section in `TECH_STACK.md`
+5. Document rationale if the package is non-obvious

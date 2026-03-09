@@ -1,0 +1,53 @@
+---
+description: Protect environment files from accidental modification or exposure
+globs: [".env", ".env.*", ".env.local", ".env.production"]
+alwaysApply: true
+---
+
+# Environment File Protection Rules
+
+## Never Do
+- Never modify `.env` files without explicit user confirmation
+- Never commit `.env` files to version control
+- Never display API key values in output, logs, or code comments
+- Never hardcode secrets or credentials in source files
+- Never copy real API keys into test fixtures or documentation
+
+## Required Environment Variables
+
+```bash
+# Database
+DATABASE_URL=
+
+# Redis
+REDIS_URL=
+
+# LLM APIs
+ANTHROPIC_API_KEY=
+OPENAI_API_KEY=
+
+# Auth
+JWT_SECRET_KEY=
+
+# Atlas (optional)
+ATLAS_API_URL=
+ATLAS_API_KEY=
+ATLAS_ENABLED=
+
+# Application
+APP_ENV=
+APP_PORT=
+FRONTEND_URL=
+CORS_ORIGINS=
+
+# Logging
+LOG_LEVEL=
+```
+
+## Adding New Environment Variables
+
+1. Add the variable to `.env` with an empty value and a comment explaining its purpose
+2. Add the variable to `TECH_STACK.md` under the Environment Variables section
+3. Add validation in the application config loader (fail fast on missing required vars)
+4. Update Docker Compose `environment` section if applicable
+5. Never assign default values for secrets in code — require explicit configuration

@@ -1,0 +1,62 @@
+---
+description: Log errors and fixes to ERROR_FIX_LOG.md when resolving issues
+globs: ["**/*"]
+alwaysApply: false
+---
+
+# Error Resolution Logging Rules
+
+## When to Log
+
+Log to `ERROR_FIX_LOG.md` when resolving:
+
+- **Build failures:** Docker build errors, dependency conflicts, compilation issues
+- **Runtime errors:** Python tracebacks, unhandled exceptions, crashes
+- **API errors:** Claude/OpenAI API failures, Atlas integration errors, HTTP 5xx responses
+- **Database errors:** Migration failures, connection issues, query errors, pgvector problems
+- **Deployment errors:** AWS configuration issues, container orchestration failures
+- **RAG pipeline errors:** Embedding failures, retrieval quality issues, ingestion problems
+- **WebSocket errors:** Connection drops, state desync, real-time feature failures
+- **Any issue that took more than 5 minutes to diagnose**
+
+## When NOT to Log
+
+- Simple typos or syntax errors caught immediately by linter
+- Expected test failures during TDD red phase
+- Linter warnings that don't cause runtime issues
+- IDE configuration issues
+
+## Log Format
+
+Use the template in `ERROR_FIX_LOG.md`:
+
+```markdown
+### [CATEGORY-NNN] Short Description
+- **Date:** YYYY-MM-DD
+- **Error:** Exact error message or behavior
+- **Context:** What triggered it
+- **Root Cause:** Why it happened
+- **Fix:** What resolved it
+- **Prevention:** How to avoid recurrence
+```
+
+## Category Prefixes
+
+| Prefix | Area |
+|---|---|
+| `RAG` | RAG pipeline, embeddings, vector search, document ingestion |
+| `LLM` | Claude/OpenAI API calls, prompt engineering, grading output |
+| `DB` | PostgreSQL, pgvector, SQLAlchemy, Alembic migrations |
+| `AUTH` | JWT, authentication, role-based access |
+| `WS` | WebSocket connections, real-time features |
+| `API` | FastAPI endpoints, request/response handling |
+| `UI` | React frontend, TailwindCSS, Recharts |
+| `GAME` | XP system, leaderboard, matchmaking |
+| `MTSS` | MTSS classification, God View dashboard |
+| `ATLAS` | Atlas integration hooks |
+| `DOCKER` | Docker, Docker Compose, container configuration |
+| `DEPLOY` | AWS deployment, CI/CD, environment config |
+
+## Numbering
+
+Increment within each category: `RAG-001`, `RAG-002`, `LLM-001`, etc.
