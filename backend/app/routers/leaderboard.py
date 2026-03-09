@@ -14,10 +14,11 @@ router = APIRouter(prefix="/api/leaderboard", tags=["leaderboard"])
 
 
 def _start_of_week() -> datetime:
-    """Return Monday 00:00 UTC of the current week."""
+    """Return Monday 00:00 UTC of the current week (naive for DB comparison)."""
     now = datetime.now(timezone.utc)
     monday = now - timedelta(days=now.weekday())
-    return monday.replace(hour=0, minute=0, second=0, microsecond=0)
+    naive = monday.replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
+    return naive
 
 
 @router.get("")

@@ -1,11 +1,11 @@
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 
 from sqlalchemy import Boolean, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.database import Base
+from app.database import Base, utc_now_naive
 
 
 class Response(Base):
@@ -16,4 +16,4 @@ class Response(Base):
     scenario_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("scenarios.id"))
     conversation: Mapped[dict] = mapped_column(JSONB, nullable=False)
     is_complete: Mapped[bool] = mapped_column(Boolean, default=False)
-    submitted_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+    submitted_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now_naive)

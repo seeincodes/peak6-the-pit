@@ -1,11 +1,11 @@
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 
 from sqlalchemy import String, Integer, DateTime, ForeignKey, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.database import Base
+from app.database import Base, utc_now_naive
 
 
 class Badge(Base):
@@ -27,7 +27,7 @@ class UserBadge(Base):
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), nullable=False)
     badge_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("badges.id"), nullable=False)
-    awarded_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+    awarded_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now_naive)
 
     __table_args__ = (
         UniqueConstraint("user_id", "badge_id"),

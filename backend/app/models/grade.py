@@ -1,11 +1,11 @@
 import uuid
-from datetime import datetime, timezone
+from datetime import datetime
 
 from sqlalchemy import String, Numeric, Text, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
-from app.database import Base
+from app.database import Base, utc_now_naive
 
 
 class Grade(Base):
@@ -18,4 +18,4 @@ class Grade(Base):
     feedback: Mapped[str] = mapped_column(Text, nullable=False)
     confidence: Mapped[float | None] = mapped_column(Numeric(3, 2), nullable=True)
     graded_by: Mapped[str] = mapped_column(String(20), default="ai")
-    graded_at: Mapped[datetime] = mapped_column(DateTime, default=lambda: datetime.now(timezone.utc))
+    graded_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now_naive)
