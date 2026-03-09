@@ -48,7 +48,7 @@ async def submit_response(
     await db.commit()
     await db.refresh(response)
 
-    probe = await generate_probe(scenario.content, req.answer_text)
+    probe = await generate_probe(scenario.content, req.answer_text, category=scenario.category, difficulty=scenario.difficulty)
 
     conversation.append({"role": "assistant", "content": probe["probe_question"]})
     response.conversation = conversation
@@ -76,7 +76,7 @@ async def continue_response(
     conversation = list(response.conversation)
     conversation.append({"role": "user", "content": req.answer_text})
 
-    grade_data = await grade_response(scenario.content, conversation)
+    grade_data = await grade_response(scenario.content, conversation, category=scenario.category, difficulty=scenario.difficulty)
 
     response.conversation = conversation
     response.is_complete = True

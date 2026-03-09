@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Star } from "lucide-react";
-import { categoryColors } from "../theme/colors";
+import { categoryColors, categoryDisplay } from "../theme/colors";
 
 interface ScenarioCardProps {
   category: string;
@@ -26,11 +26,11 @@ export default function ScenarioCard({ category, difficulty, content }: Scenario
     >
       <div className="flex items-center justify-between mb-4">
         <span
-          aria-label={`Category: ${category.replace(/_/g, " ")}`}
+          aria-label={`Category: ${categoryDisplay[category] || category.replace(/_/g, " ")}`}
           className="cm-chip"
           style={{ color, borderColor: `${color}66`, backgroundColor: `${color}15` }}
         >
-          {category.replace(/_/g, " ").toUpperCase()}
+          {categoryDisplay[category] || category.replace(/_/g, " ")}
         </span>
         <span className="flex items-center gap-0.5" aria-label={`Difficulty: ${difficulty}`}>
           {[1, 2, 3].map((i) => (

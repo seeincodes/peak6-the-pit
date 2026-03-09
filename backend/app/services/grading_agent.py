@@ -5,6 +5,8 @@ import re
 from anthropic import AsyncAnthropic
 
 from app.config import settings
+from app.database import async_session as session_factory
+from app.services.rag import build_retrieval_query, retrieve_chunks
 from app.constants import DIFFICULTY_MULTIPLIER, XP_BASE
 from app.constants import (
     MCQ_XP_CORRECT_GOOD,
@@ -46,16 +48,31 @@ def compute_xp(overall_score: float, difficulty: str, streak_days: int) -> int:
     return base + streak_bonus
 
 
+async def _get_grading_context(category: str, difficulty: str) -> str:
+    """Retrieve RAG context for grading based on scenario category."""
+    query = build_retrieval_query(category, difficulty)
+    async with session_factory() as db:
+        chunks = await retrieve_chunks(db, query, top_k=3)
+    if not chunks:
+        return "No specific reference material available."
+    return "\n\n---\n\n".join(c["content"] for c in chunks)
+
+
 async def generate_probe(
     scenario_content: dict,
     user_response: str,
+    category: str = "",
+    difficulty: str = "beginner",
 ) -> dict:
     """Generate a Socratic follow-up question."""
+    rag_context = await _get_grading_context(category, difficulty) if category else "No specific reference material available."
+
     prompt = PROBE_TEMPLATE.format(
         title=scenario_content["title"],
         setup=scenario_content["setup"],
         question=scenario_content["question"],
         user_response=user_response,
+        rag_context=rag_context,
     )
 
     message = await anthropic_client.messages.create(
@@ -72,8 +89,12 @@ async def generate_probe(
 async def grade_response(
     scenario_content: dict,
     conversation: list[dict],
+    category: str = "",
+    difficulty: str = "beginner",
 ) -> dict:
     """Grade the full conversation (response + probe answer)."""
+    rag_context = await _get_grading_context(category, difficulty) if category else "No specific reference material available."
+
     conversation_text = "\n\n".join(
         f"**{turn['role'].title()}:** {turn['content']}" for turn in conversation
     )
@@ -83,6 +104,7 @@ async def grade_response(
         setup=scenario_content["setup"],
         question=scenario_content["question"],
         conversation_text=conversation_text,
+        rag_context=rag_context,
     )
 
     message = await anthropic_client.messages.create(

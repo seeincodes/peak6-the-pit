@@ -14,6 +14,10 @@ Setup: {setup}
 Question: {question}
 </scenario>
 
+<reference_material>
+{rag_context}
+</reference_material>
+
 Their response:
 <response>
 {user_response}
@@ -42,6 +46,10 @@ Title: {title}
 Setup: {setup}
 Question: {question}
 </scenario>
+
+<reference_material>
+{rag_context}
+</reference_material>
 
 Conversation:
 {conversation_text}

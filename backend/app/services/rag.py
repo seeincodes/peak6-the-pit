@@ -76,7 +76,7 @@ async def embed_text(text_content: str) -> list[float]:
         )
         entry = row.scalar_one_or_none()
         if entry is not None:
-            embedding = list(entry.embedding)
+            embedding = [float(x) for x in entry.embedding]
             _embedding_cache[text_content] = embedding
             return embedding
 
@@ -103,7 +103,7 @@ async def prewarm_embeddings() -> None:
         result = await db.execute(select(EmbeddingCache))
         rows = result.scalars().all()
         for row in rows:
-            _embedding_cache[row.query_text] = list(row.embedding)
+            _embedding_cache[row.query_text] = [float(x) for x in row.embedding]
     loaded = len(_embedding_cache)
 
     # Compute any missing embeddings (writes through to DB)

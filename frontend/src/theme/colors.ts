@@ -12,6 +12,24 @@ export const colors = {
   muted: "#A0A0C0",
 } as const;
 
+export const categoryDisplay: Record<string, string> = {
+  iv_analysis: "Implied Volatility (IV) Analysis",
+  greeks: "Options Greeks (Delta, Gamma, Theta, Vega)",
+  order_flow: "Order Flow Analysis",
+  macro: "Macroeconomic Indicators",
+  term_structure: "Volatility Term Structure",
+  skew: "Implied Volatility (IV) Skew",
+  correlation: "Correlation & Dispersion",
+  event_vol: "Event Volatility",
+  tail_risk: "Tail Risk",
+  position_sizing: "Position Sizing",
+  trade_structuring: "Trade Structuring",
+  vol_surface: "Volatility Surface",
+  microstructure: "Market Microstructure",
+  risk_management: "Risk Management (VaR)",
+  capman_tooling: "CapMan Tooling (Atlas)",
+};
+
 export const categoryColors: Record<string, string> = {
   iv_analysis: "#4D34EF",
   greeks: "#A78BFA",

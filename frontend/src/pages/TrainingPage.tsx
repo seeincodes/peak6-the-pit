@@ -7,6 +7,7 @@ import ResponseInput from "../components/ResponseInput";
 import GradeReveal from "../components/GradeReveal";
 import LevelUpModal from "../components/LevelUpModal";
 import api from "../api/client";
+import { categoryDisplay } from "../theme/colors";
 
 type Mode = "select" | "deep-streaming" | "deep-scenario" | "deep-probe" | "deep-grading" | "deep-result" | "deep-error";
 
@@ -187,7 +188,7 @@ export default function TrainingPage({
                 className="cm-surface-interactive p-4"
               >
                 <div className="text-cm-text font-semibold text-sm">
-                  {cat.category.replace(/_/g, " ").toUpperCase()}
+                  {categoryDisplay[cat.category] || cat.category.replace(/_/g, " ")}
                 </div>
                 <div className="text-cm-muted text-xs mt-1 capitalize">{cat.difficulty}</div>
               </button>
@@ -214,7 +215,7 @@ export default function TrainingPage({
               </div>
               {selectedCat && (
                 <div className="text-cm-muted text-xs">
-                  {selectedCat.category.replace(/_/g, " ").toUpperCase()} &middot;{" "}
+                  {categoryDisplay[selectedCat.category] || selectedCat.category.replace(/_/g, " ")} &middot;{" "}
                   {selectedCat.difficulty}
                 </div>
               )}
