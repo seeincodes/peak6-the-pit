@@ -23,9 +23,9 @@ export default function ProfileHUD({
   const neededXP = nextLevelXP - currentLevelXP;
 
   return (
-    <header className="flex items-center justify-between px-6 py-3 border-b border-cm-border bg-cm-card/50 backdrop-blur-sm">
+    <header role="banner" className="flex items-center justify-between px-6 py-3 border-b border-cm-border bg-cm-card/50 backdrop-blur-sm">
       <div className="flex items-center gap-4">
-        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-cm-cyan to-cm-emerald flex items-center justify-center text-cm-bg font-bold">
+        <div aria-hidden="true" className="w-10 h-10 rounded-full bg-gradient-to-br from-cm-cyan to-cm-emerald flex items-center justify-center text-cm-bg font-bold">
           {displayName.charAt(0).toUpperCase()}
         </div>
         <div>
@@ -38,7 +38,7 @@ export default function ProfileHUD({
 
       <div className="flex items-center gap-2">
         {streakDays > 0 && (
-          <div className="flex items-center gap-1 px-3 py-1 rounded-full bg-cm-amber/10 border border-cm-amber/30">
+          <div aria-label={`${streakDays} day streak`} className="flex items-center gap-1 px-3 py-1 rounded-full bg-cm-amber/10 border border-cm-amber/30">
             <span className="text-cm-amber text-sm">
               {streakDays}d streak
             </span>

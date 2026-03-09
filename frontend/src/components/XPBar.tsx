@@ -12,7 +12,14 @@ export default function XPBar({ current, nextLevel, level }: XPBarProps) {
   return (
     <div className="flex items-center gap-3">
       <span className="text-cm-cyan font-bold text-sm">LVL {level}</span>
-      <div className="relative w-48 h-3 bg-cm-card rounded-full border border-cm-border overflow-hidden">
+      <div
+        role="progressbar"
+        aria-valuenow={current}
+        aria-valuemin={0}
+        aria-valuemax={nextLevel}
+        aria-label={`Level ${level} progress: ${current} of ${nextLevel} XP`}
+        className="relative w-48 h-3 bg-cm-card rounded-full border border-cm-border overflow-hidden"
+      >
         <motion.div
           className="absolute inset-y-0 left-0 bg-gradient-to-r from-cm-cyan to-cm-emerald rounded-full"
           initial={{ width: 0 }}
