@@ -17,12 +17,13 @@ TICKERS = {
     "CL=F": "WTI Crude Oil",
     "DX-Y.NYB": "US Dollar Index (DXY)",
     "BTC-USD": "Bitcoin",
+    "ETH-USD": "Ethereum",
 }
 
 # Tickers displayed as yield % rather than price
 _YIELD_TICKERS = {"^TNX", "^IRX"}
 # Tickers displayed with $ prefix
-_DOLLAR_TICKERS = {"^GSPC", "GC=F", "CL=F", "BTC-USD"}
+_DOLLAR_TICKERS = {"^GSPC", "GC=F", "CL=F", "BTC-USD", "ETH-USD"}
 
 FALLBACK = "Live market data temporarily unavailable."
 
