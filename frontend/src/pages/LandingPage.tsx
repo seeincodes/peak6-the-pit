@@ -43,7 +43,7 @@ const itemVariants = {
 
 export default function LandingPage() {
   return (
-    <div className="min-h-screen bg-cm-bg flex flex-col">
+    <main role="main" className="min-h-screen bg-cm-bg flex flex-col">
       {/* Hero Section */}
       <motion.section
         className="flex-1 flex flex-col items-center justify-center px-6 py-20"
@@ -56,7 +56,7 @@ export default function LandingPage() {
           variants={itemVariants}
         >
           <span className="text-cm-text">The </span>
-          <span className="text-cm-cyan drop-shadow-[0_0_20px_rgba(0,240,255,0.4)]">
+          <span className="text-cm-cyan drop-shadow-[0_0_12px_rgba(0,240,255,0.2)]">
             Pit
           </span>
         </motion.h1>
@@ -78,19 +78,20 @@ export default function LandingPage() {
         <motion.div className="flex gap-4 mb-20" variants={itemVariants}>
           <Link
             to="/signup"
-            className="px-8 py-3 rounded-xl bg-cm-cyan text-cm-bg font-bold text-lg hover:bg-cm-cyan/80 transition-all shadow-neon-cyan"
+            className="px-8 py-3 rounded-xl bg-cm-cyan text-cm-bg font-bold text-lg hover:bg-cm-cyan/80 transition-all shadow-neon-cyan focus-ring"
           >
             Get Started
           </Link>
           <Link
             to="/login"
-            className="px-8 py-3 rounded-xl border border-cm-cyan/50 text-cm-cyan font-bold text-lg hover:bg-cm-cyan/10 transition-all"
+            className="px-8 py-3 rounded-xl border border-cm-cyan/50 text-cm-cyan font-bold text-lg hover:bg-cm-cyan/10 transition-all focus-ring"
           >
             Sign In
           </Link>
         </motion.div>
 
         {/* Feature Cards */}
+        <h2 className="sr-only">Features</h2>
         <motion.div
           className="grid grid-cols-1 sm:grid-cols-3 gap-6 max-w-4xl w-full"
           variants={containerVariants}
@@ -119,6 +120,6 @@ export default function LandingPage() {
           PEAK6 Capital Management &mdash; CapMan AI Training Platform
         </p>
       </footer>
-    </div>
+    </main>
   );
 }

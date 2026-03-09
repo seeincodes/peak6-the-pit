@@ -42,7 +42,7 @@ export default function LoginPage() {
         <div className="text-center mb-8">
           <h1 className="text-4xl font-bold mb-1">
             <span className="text-cm-text">The </span>
-            <span className="text-cm-cyan drop-shadow-[0_0_15px_rgba(0,240,255,0.4)]">
+            <span className="text-cm-cyan drop-shadow-[0_0_8px_rgba(0,240,255,0.2)]">
               Pit
             </span>
           </h1>
@@ -54,36 +54,40 @@ export default function LoginPage() {
           <h2 className="text-xl font-bold text-cm-text mb-6">Sign In</h2>
 
           {error && (
-            <div className="mb-4 p-3 rounded-lg bg-cm-red/10 border border-cm-red/30 text-cm-red text-sm">
+            <div role="alert" aria-live="assertive" className="mb-4 p-3 rounded-lg bg-cm-red/10 border border-cm-red/30 text-cm-red text-sm">
               {error}
             </div>
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="block text-cm-muted text-xs font-semibold mb-1.5 uppercase tracking-wide">
+              <label htmlFor="login-email" className="block text-cm-muted text-xs font-semibold mb-1.5 uppercase tracking-wide">
                 Email
               </label>
               <input
+                id="login-email"
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
-                className="w-full px-4 py-2.5 rounded-lg bg-cm-bg border border-cm-border text-cm-text placeholder-cm-muted/50 focus:outline-none focus:border-cm-cyan/50 focus:shadow-neon-cyan transition-all"
+                aria-invalid={!!error}
+                className="w-full px-4 py-2.5 rounded-lg bg-cm-bg border border-cm-border text-cm-text placeholder-cm-muted/50 focus:outline-none focus:border-cm-cyan/50 focus:shadow-neon-cyan transition-all focus-ring"
                 placeholder="trader@peak6.com"
               />
             </div>
 
             <div>
-              <label className="block text-cm-muted text-xs font-semibold mb-1.5 uppercase tracking-wide">
+              <label htmlFor="login-password" className="block text-cm-muted text-xs font-semibold mb-1.5 uppercase tracking-wide">
                 Password
               </label>
               <input
+                id="login-password"
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
                 required
-                className="w-full px-4 py-2.5 rounded-lg bg-cm-bg border border-cm-border text-cm-text placeholder-cm-muted/50 focus:outline-none focus:border-cm-cyan/50 focus:shadow-neon-cyan transition-all"
+                aria-invalid={!!error}
+                className="w-full px-4 py-2.5 rounded-lg bg-cm-bg border border-cm-border text-cm-text placeholder-cm-muted/50 focus:outline-none focus:border-cm-cyan/50 focus:shadow-neon-cyan transition-all focus-ring"
                 placeholder="Enter your password"
               />
             </div>
@@ -91,7 +95,8 @@ export default function LoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full py-3 rounded-lg bg-cm-cyan text-cm-bg font-bold text-sm hover:bg-cm-cyan/80 disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              aria-busy={loading}
+              className="w-full py-3 rounded-lg bg-cm-cyan text-cm-bg font-bold text-sm hover:bg-cm-cyan/80 disabled:opacity-50 disabled:cursor-not-allowed transition-all focus-ring"
             >
               {loading ? (
                 <span className="animate-pulse">Signing in...</span>
@@ -103,7 +108,7 @@ export default function LoginPage() {
 
           <p className="mt-6 text-center text-cm-muted text-sm">
             Don&apos;t have an account?{" "}
-            <Link to="/signup" className="text-cm-cyan hover:underline font-semibold">
+            <Link to="/signup" className="text-cm-cyan hover:underline font-semibold focus-ring rounded">
               Sign Up
             </Link>
           </p>
