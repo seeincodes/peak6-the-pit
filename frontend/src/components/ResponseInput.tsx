@@ -18,11 +18,13 @@ export default function ResponseInput({ onSubmit, placeholder, loading }: Respon
 
   return (
     <div className="rounded-xl border border-cm-border bg-cm-card/80 p-4">
+      <label htmlFor="response-input" className="sr-only">Your analysis</label>
       <textarea
+        id="response-input"
         value={text}
         onChange={(e) => setText(e.target.value)}
         placeholder={placeholder || "Type your analysis..."}
-        className="w-full h-32 bg-transparent text-cm-text placeholder-cm-muted resize-none outline-none text-sm leading-relaxed font-mono"
+        className="w-full h-32 bg-transparent text-cm-text placeholder-cm-muted resize-none outline-none text-sm leading-relaxed focus-ring"
         onKeyDown={(e) => {
           if (e.key === "Enter" && e.metaKey) handleSubmit();
         }}
@@ -32,7 +34,7 @@ export default function ResponseInput({ onSubmit, placeholder, loading }: Respon
         <button
           onClick={handleSubmit}
           disabled={!text.trim() || loading}
-          className="px-6 py-2 rounded-lg bg-cm-cyan/20 border border-cm-cyan/50 text-cm-cyan font-semibold text-sm hover:bg-cm-cyan/30 transition-all disabled:opacity-40 disabled:cursor-not-allowed"
+          className="px-6 py-2 rounded-lg bg-cm-cyan/20 border border-cm-cyan/50 text-cm-cyan font-semibold text-sm hover:bg-cm-cyan/30 transition-all disabled:opacity-40 disabled:cursor-not-allowed focus-ring"
         >
           {loading ? "Analyzing..." : "Submit"}
         </button>

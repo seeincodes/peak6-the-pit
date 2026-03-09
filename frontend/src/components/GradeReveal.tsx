@@ -39,6 +39,7 @@ export default function GradeReveal({
           animate={{ scale: 1 }}
           transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
           className="inline-flex items-center gap-3"
+          aria-label={`Overall score: ${overallScore.toFixed(1)} out of 5`}
         >
           <span className="text-5xl font-bold text-cm-cyan">{overallScore.toFixed(1)}</span>
           <span className="text-cm-muted text-xl">/ 5.0</span>
@@ -49,6 +50,7 @@ export default function GradeReveal({
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
+        role="status"
         className="text-center mb-6"
       >
         <span className="text-cm-emerald font-bold text-lg">+{xpEarned} XP</span>
@@ -61,7 +63,14 @@ export default function GradeReveal({
               <span className="text-cm-muted">{dimensionLabels[dim] || dim}</span>
               <span className="text-cm-text font-semibold">{score}/5</span>
             </div>
-            <div className="h-2 bg-cm-bg rounded-full overflow-hidden">
+            <div
+              className="h-2 bg-cm-bg rounded-full overflow-hidden"
+              role="progressbar"
+              aria-valuenow={score}
+              aria-valuemin={0}
+              aria-valuemax={5}
+              aria-label={`${dimensionLabels[dim] || dim}: ${score} out of 5`}
+            >
               <motion.div
                 className="h-full rounded-full"
                 style={{ backgroundColor: dimensionColors[dim] || "#00f0ff" }}

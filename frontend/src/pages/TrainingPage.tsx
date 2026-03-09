@@ -1,11 +1,23 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { Zap, Target, ArrowLeft } from "lucide-react";
 import ScenarioCard from "../components/ScenarioCard";
 import ResponseInput from "../components/ResponseInput";
 import GradeReveal from "../components/GradeReveal";
 import LevelUpModal from "../components/LevelUpModal";
 import QuickFirePage from "./QuickFirePage";
 import api from "../api/client";
+
+interface MCQData {
+  id: string;
+  category: string;
+  difficulty: string;
+  content: {
+    context: string;
+    question: string;
+    choices: { key: string; text: string }[];
+  };
+}
 
 type Mode = "select" | "pick-mode" | "quickfire" | "deep-streaming" | "deep-scenario" | "deep-probe" | "deep-grading" | "deep-result";
 
@@ -39,6 +51,8 @@ export default function TrainingPage({
 }) {
   const [mode, setMode] = useState<Mode>("select");
   const [selectedCat, setSelectedCat] = useState<{ category: string; difficulty: string } | null>(null);
+  const [prefetchedMCQs, setPrefetchedMCQs] = useState<Record<string, MCQData>>({});
+  const [mcqForQuickFire, setMcqForQuickFire] = useState<MCQData | null>(null);
   const [scenario, setScenario] = useState<ScenarioData | null>(null);
   const [responseId, setResponseId] = useState<string | null>(null);
   const [probeQuestion, setProbeQuestion] = useState<string | null>(null);
@@ -87,11 +101,51 @@ export default function TrainingPage({
   const reset = () => {
     setMode("select");
     setSelectedCat(null);
+    setMcqForQuickFire(null);
     setScenario(null);
     setResponseId(null);
     setProbeQuestion(null);
     setGradeData(null);
     setStreamingText("");
+  };
+
+  // Prefetch MCQs for all categories on mount — ready before user even selects
+  const categoriesKey = unlockedCategories.map((c) => `${c.category}-${c.difficulty}`).sort().join(",");
+  useEffect(() => {
+    if (!unlockedCategories.length) return;
+    let cancelled = false;
+    unlockedCategories.forEach((cat) => {
+      const key = `${cat.category}-${cat.difficulty}`;
+      api
+        .post("/mcq/generate", { category: cat.category, difficulty: cat.difficulty })
+        .then((res) => {
+          if (!cancelled) {
+            setPrefetchedMCQs((prev) => ({ ...prev, [key]: res.data }));
+          }
+        })
+        .catch(() => {});
+    });
+    return () => {
+      cancelled = true;
+    };
+  }, [categoriesKey]);
+
+  const startQuickFire = () => {
+    if (!selectedCat) return;
+    const key = `${selectedCat.category}-${selectedCat.difficulty}`;
+    const mcq = prefetchedMCQs[key];
+    setMcqForQuickFire(mcq ?? null);
+    setPrefetchedMCQs((prev) => {
+      const next = { ...prev };
+      delete next[key];
+      return next;
+    });
+    setMode("quickfire");
+    // Refill pool for next time they pick this category
+    api
+      .post("/mcq/generate", { category: selectedCat.category, difficulty: selectedCat.difficulty })
+      .then((res) => setPrefetchedMCQs((prev) => ({ ...prev, [key]: res.data })))
+      .catch(() => {});
   };
 
   const generateStreaming = async (params: { category: string; difficulty: string }) => {
@@ -160,7 +214,7 @@ export default function TrainingPage({
                   setSelectedCat(cat);
                   setMode("pick-mode");
                 }}
-                className="p-4 rounded-xl border border-cm-border bg-cm-card hover:border-cm-cyan/50 hover:shadow-neon-cyan transition-all text-left"
+                className="p-4 rounded-xl border border-cm-border bg-cm-card hover:border-cm-cyan/50 hover:shadow-neon-cyan transition-all text-left focus-ring"
               >
                 <div className="text-cm-text font-semibold text-sm">
                   {cat.category.replace(/_/g, " ").toUpperCase()}
@@ -175,8 +229,8 @@ export default function TrainingPage({
       {/* Mode selection */}
       {mode === "pick-mode" && selectedCat && (
         <div>
-          <button onClick={() => setMode("select")} className="text-cm-muted text-sm hover:text-cm-text mb-4">
-            &larr; Back
+          <button onClick={() => setMode("select")} className="text-cm-muted text-sm hover:text-cm-text mb-4 flex items-center gap-1 focus-ring">
+            <ArrowLeft size={16} aria-hidden="true" /> Back
           </button>
           <h2 className="text-xl font-bold text-cm-text mb-2">
             {selectedCat.category.replace(/_/g, " ").toUpperCase()}
@@ -184,10 +238,10 @@ export default function TrainingPage({
           </h2>
           <div className="grid grid-cols-2 gap-4 mt-4">
             <button
-              onClick={() => setMode("quickfire")}
-              className="p-6 rounded-xl border border-cm-border bg-cm-card hover:border-cm-amber/50 transition-all text-left"
+              onClick={startQuickFire}
+              className="p-6 rounded-xl border border-cm-border bg-cm-card hover:border-cm-amber/50 transition-all text-left focus-ring"
             >
-              <div className="text-2xl mb-2">&#x26A1;</div>
+              <div className="mb-2"><Zap size={24} className="text-cm-amber" aria-hidden="true" /></div>
               <div className="text-cm-text font-bold">Quick Fire</div>
               <div className="text-cm-muted text-xs mt-1">MCQ + justify &bull; ~30s per Q &bull; 5-8 XP</div>
             </button>
@@ -195,9 +249,9 @@ export default function TrainingPage({
               onClick={() => {
                 generateStreaming(selectedCat);
               }}
-              className="p-6 rounded-xl border border-cm-border bg-cm-card hover:border-cm-cyan/50 transition-all text-left"
+              className="p-6 rounded-xl border border-cm-border bg-cm-card hover:border-cm-cyan/50 transition-all text-left focus-ring"
             >
-              <div className="text-2xl mb-2">&#x1F3AF;</div>
+              <div className="mb-2"><Target size={24} className="text-cm-cyan" aria-hidden="true" /></div>
               <div className="text-cm-text font-bold">Deep Analysis</div>
               <div className="text-cm-muted text-xs mt-1">Open-ended + probe &bull; ~3-5 min &bull; 16-40 XP</div>
             </button>
@@ -211,16 +265,17 @@ export default function TrainingPage({
           category={selectedCat.category}
           difficulty={selectedCat.difficulty}
           onExit={reset}
+          initialMCQ={mcqForQuickFire}
         />
       )}
 
       {/* Deep Analysis — Streaming phase */}
       {mode === "deep-streaming" && (
         <div className="space-y-4">
-          <button onClick={reset} className="text-cm-muted text-sm hover:text-cm-text">
-            &larr; Cancel
+          <button onClick={reset} className="text-cm-muted text-sm hover:text-cm-text flex items-center gap-1 focus-ring">
+            <ArrowLeft size={16} aria-hidden="true" /> Cancel
           </button>
-          <div className="rounded-xl border border-cm-border bg-cm-card/80 backdrop-blur-sm p-6">
+          <div role="status" aria-live="polite" className="rounded-xl border border-cm-border bg-cm-card/80 backdrop-blur-sm p-6">
             <div className="text-cm-cyan text-xs font-semibold mb-3 animate-pulse">
               Generating scenario...
             </div>
@@ -235,8 +290,8 @@ export default function TrainingPage({
       {/* Deep Analysis — Scenario phase */}
       {mode === "deep-scenario" && scenario && (
         <>
-          <button onClick={reset} className="text-cm-muted text-sm hover:text-cm-text">
-            &larr; Back
+          <button onClick={reset} className="text-cm-muted text-sm hover:text-cm-text flex items-center gap-1 focus-ring">
+            <ArrowLeft size={16} aria-hidden="true" /> Back
           </button>
           <ScenarioCard
             category={scenario.category}
@@ -283,7 +338,7 @@ export default function TrainingPage({
           <div className="text-center">
             <button
               onClick={reset}
-              className="px-8 py-3 rounded-xl bg-cm-cyan/20 border border-cm-cyan/50 text-cm-cyan font-bold hover:bg-cm-cyan/30 transition-all"
+              className="px-8 py-3 rounded-xl bg-cm-cyan/20 border border-cm-cyan/50 text-cm-cyan font-bold hover:bg-cm-cyan/30 transition-all focus-ring"
             >
               Next Scenario
             </button>
