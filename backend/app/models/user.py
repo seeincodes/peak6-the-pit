@@ -16,6 +16,8 @@ class User(Base):
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     display_name: Mapped[str] = mapped_column(String(100), nullable=False)
     role: Mapped[str] = mapped_column(String(20), nullable=False)
+    avatar_id: Mapped[str] = mapped_column(String(50), default="default")
+    bio: Mapped[str | None] = mapped_column(String(200), nullable=True)
     ta_phase: Mapped[int | None] = mapped_column(Integer, nullable=True)
     xp_total: Mapped[int] = mapped_column(Integer, default=0)
     level: Mapped[int] = mapped_column(Integer, default=1)
