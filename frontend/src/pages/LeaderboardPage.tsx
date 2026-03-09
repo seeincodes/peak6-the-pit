@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
+import { Trophy } from "lucide-react";
 import api from "../api/client";
 
 type Period = "all_time" | "weekly";
@@ -32,12 +33,14 @@ export default function LeaderboardPage() {
       <h2 className="text-2xl font-bold text-cm-text mb-4">Leaderboard</h2>
 
       {/* Period tabs */}
-      <div className="flex gap-2 mb-6">
+      <div className="flex gap-2 mb-6" role="tablist">
         {(["all_time", "weekly"] as Period[]).map((p) => (
           <button
             key={p}
+            role="tab"
+            aria-selected={period === p}
             onClick={() => setPeriod(p)}
-            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all ${
+            className={`px-4 py-2 rounded-lg text-sm font-semibold transition-all focus-ring ${
               period === p
                 ? "bg-cm-cyan/20 border border-cm-cyan/50 text-cm-cyan"
                 : "border border-cm-border text-cm-muted hover:text-cm-text"
@@ -49,14 +52,16 @@ export default function LeaderboardPage() {
       </div>
 
       {isLoading && (
-        <div className="text-cm-cyan animate-pulse text-center py-12">Loading...</div>
+        <div role="status" aria-live="polite" className="text-cm-cyan animate-pulse text-center py-12">Loading...</div>
       )}
 
       {data && (
-        <div className="space-y-2">
+        <div className="space-y-2" role="list">
           {data.entries.map((entry, i) => (
             <motion.div
               key={entry.user_id}
+              role="listitem"
+              aria-label={entry.is_current_user ? "Your ranking" : undefined}
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ delay: i * 0.05 }}
@@ -67,13 +72,25 @@ export default function LeaderboardPage() {
               }`}
             >
               <div className="flex items-center gap-4">
-                <span className={`w-8 text-center font-bold ${
+                <span className={`w-8 text-center font-bold flex items-center justify-center ${
                   entry.rank === 1 ? "text-cm-amber text-lg" :
                   entry.rank === 2 ? "text-cm-muted text-lg" :
                   entry.rank === 3 ? "text-cm-amber/60 text-lg" :
                   "text-cm-muted text-sm"
                 }`}>
-                  {entry.rank <= 3 ? ["\u{1F947}", "\u{1F948}", "\u{1F949}"][entry.rank - 1] : `#${entry.rank}`}
+                  {entry.rank <= 3 ? (
+                    <Trophy
+                      size={18}
+                      className={
+                        entry.rank === 1 ? "text-cm-amber" :
+                        entry.rank === 2 ? "text-cm-muted" :
+                        "text-cm-amber/60"
+                      }
+                      aria-label={`Rank ${entry.rank}`}
+                    />
+                  ) : (
+                    <span aria-label={`Rank ${entry.rank}`}>#{entry.rank}</span>
+                  )}
                 </span>
                 <div className="w-8 h-8 rounded-full bg-gradient-to-br from-cm-cyan to-cm-emerald flex items-center justify-center text-cm-bg font-bold text-sm">
                   {entry.display_name.charAt(0).toUpperCase()}

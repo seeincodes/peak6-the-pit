@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Lock, Check } from "lucide-react";
 import { categoryColors } from "../theme/colors";
 
 interface SkillTreeProps {
@@ -23,8 +24,10 @@ export default function SkillTree({ allCategories, unlockedCategories, level: _l
   );
 
   return (
-    <div className="relative" style={{ width: 5 * (HEX_SIZE + HEX_GAP), height: 4 * (HEX_SIZE + HEX_GAP) + HEX_SIZE }}>
-      {allCategories.map((cat, i) => {
+    <>
+      <h3 className="sr-only">Skill tree: {unlockedCategories.length} of {allCategories.length} categories unlocked</h3>
+      <div className="relative" style={{ width: 5 * (HEX_SIZE + HEX_GAP), height: 4 * (HEX_SIZE + HEX_GAP) + HEX_SIZE }}>
+        {allCategories.map((cat, i) => {
         const pos = HEX_POSITIONS[i] || [0, 0];
         const isUnlocked = unlockedSet.has(cat);
         const color = categoryColors[cat] || "#00f0ff";
@@ -34,6 +37,8 @@ export default function SkillTree({ allCategories, unlockedCategories, level: _l
         return (
           <motion.div
             key={cat}
+            role="img"
+            aria-label={`${cat.replace(/_/g, " ")} - ${isUnlocked ? "Unlocked" : "Locked"}`}
             className="absolute flex items-center justify-center cursor-default"
             style={{
               left: x,
@@ -50,17 +55,24 @@ export default function SkillTree({ allCategories, unlockedCategories, level: _l
               boxShadow: isUnlocked ? `0 0 12px ${color}50` : "none",
             }}
             transition={{ delay: i * 0.05 }}
-            title={cat.replace(/_/g, " ")}
           >
-            <span
-              className="text-[8px] font-bold text-center leading-tight px-1"
-              style={{ color: isUnlocked ? color : "#64748b" }}
-            >
-              {cat.replace(/_/g, "\n").toUpperCase()}
-            </span>
+            <div className="flex flex-col items-center justify-center">
+              {isUnlocked ? (
+                <Check size={10} style={{ color }} aria-hidden="true" />
+              ) : (
+                <Lock size={10} className="text-cm-muted" aria-hidden="true" />
+              )}
+              <span
+                className="text-[8px] font-bold text-center leading-tight px-1"
+                style={{ color: isUnlocked ? color : "#94a3b8" }}
+              >
+                {cat.replace(/_/g, "\n").toUpperCase()}
+              </span>
+            </div>
           </motion.div>
         );
       })}
-    </div>
+      </div>
+    </>
   );
 }
