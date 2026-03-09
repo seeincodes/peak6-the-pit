@@ -1,6 +1,6 @@
 """Authentication service — password hashing, JWT tokens."""
 import bcrypt
-from datetime import datetime, timedelta, timezone
+import datetime
 from uuid import UUID
 
 from jose import jwt, JWTError
@@ -20,7 +20,9 @@ def verify_password(password: str, hashed: str) -> bool:
 
 
 def create_access_token(user_id: UUID) -> str:
-    expire = datetime.now(timezone.utc) + timedelta(minutes=settings.jwt_expiration_minutes)
+    expire = datetime.datetime.now(datetime.timezone.utc) + datetime.timedelta(
+        minutes=settings.jwt_expiration_minutes
+    )
     payload = {"sub": str(user_id), "exp": expire}
     return jwt.encode(payload, settings.jwt_secret_key, algorithm=settings.jwt_algorithm)
 
