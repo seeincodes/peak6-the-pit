@@ -20,7 +20,7 @@ export default function ProfilePage() {
   const avatarEmoji = AVATAR_PRESETS[user.avatar_id] || AVATAR_PRESETS.default;
 
   return (
-    <div className="max-w-4xl mx-auto p-8 space-y-8">
+    <div className="max-w-4xl mx-auto px-4 py-6 sm:p-8 space-y-6 sm:space-y-8">
       {/* Profile Header */}
       {editing ? (
         <ProfileEditor
@@ -56,17 +56,24 @@ export default function ProfilePage() {
         </div>
       )}
 
-      {/* Badges */}
-      <BadgeGrid />
+      {/* Badges & Skill Tree — combined card */}
+      <div className="rounded-xl border border-cm-border bg-cm-card/50 p-4 sm:p-6">
+        {/* Badges section */}
+        <BadgeGrid />
 
-      {/* Skill Tree */}
-      <div>
-        <h3 className="text-lg font-bold text-cm-text mb-4">Skill Tree</h3>
-        <div className="flex items-center gap-4 mb-4 text-xs text-cm-muted">
-          <span className="flex items-center gap-1"><Check size={12} className="text-cm-emerald" /> Unlocked</span>
-          <span className="flex items-center gap-1"><Lock size={12} /> Locked</span>
-        </div>
-        <div className="flex justify-center">
+        {/* Divider */}
+        <div className="my-8 border-t border-cm-border" />
+
+        {/* Skill Tree section */}
+        <div>
+          <h3 className="text-xl font-bold text-cm-text mb-2">Skill Tree</h3>
+          <p className="text-sm text-cm-muted mb-6">
+            Unlock categories by leveling up. Master each area to progress.
+          </p>
+          <div className="flex items-center gap-6 mb-6 text-sm text-cm-muted">
+            <span className="flex items-center gap-2"><Check size={14} className="text-cm-emerald shrink-0" /> Unlocked</span>
+            <span className="flex items-center gap-2"><Lock size={14} className="shrink-0" /> Locked</span>
+          </div>
           <SkillTree
             allCategories={user.all_categories}
             unlockedCategories={user.unlocked_categories}

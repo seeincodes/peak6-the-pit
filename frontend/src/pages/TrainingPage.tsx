@@ -201,7 +201,7 @@ export default function TrainingPage({
   };
 
   return (
-    <div className="max-w-3xl mx-auto p-8 space-y-6">
+    <div className="max-w-3xl mx-auto px-4 py-6 sm:p-8 space-y-6">
       {/* Category selection */}
       {mode === "select" && (
         <div>

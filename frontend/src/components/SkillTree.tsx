@@ -1,4 +1,6 @@
-import { motion } from "framer-motion";
+import { useRef, useState, useEffect } from "react";
+import { createPortal } from "react-dom";
+import { motion, AnimatePresence } from "framer-motion";
 import { Lock, Check } from "lucide-react";
 import { categoryColors } from "../theme/colors";
 
@@ -8,71 +10,311 @@ interface SkillTreeProps {
   level: number;
 }
 
-const HEX_SIZE = 52;
-const HEX_GAP = 8;
-
-const HEX_POSITIONS: [number, number][] = [
-  [0, 0], [1, 0], [2, 0], [3, 0], [4, 0],
-  [0.5, 1], [1.5, 1], [2.5, 1], [3.5, 1],
-  [0, 2], [1, 2], [2, 2], [3, 2], [4, 2],
-  [2, 3],
+// Tree structure: root -> branches -> leaves. Order matches unlock progression.
+const TREE_LAYERS: string[][] = [
+  ["iv_analysis"],
+  ["greeks", "order_flow"],
+  ["macro", "term_structure", "skew", "correlation", "event_vol", "tail_risk"],
+  ["position_sizing", "trade_structuring", "vol_surface", "microstructure", "risk_management", "capman_tooling"],
 ];
 
+// Parent indices for each layer (parent row, parent col in that row)
+const PARENT_LINKS: { layer: number; parentCol: number }[][] = [
+  [],
+  [{ layer: 0, parentCol: 0 }, { layer: 0, parentCol: 0 }],
+  [
+    { layer: 1, parentCol: 0 }, { layer: 1, parentCol: 0 },
+    { layer: 1, parentCol: 1 }, { layer: 1, parentCol: 1 }, { layer: 1, parentCol: 1 }, { layer: 1, parentCol: 1 },
+  ],
+  [
+    { layer: 2, parentCol: 0 }, { layer: 2, parentCol: 0 },
+    { layer: 2, parentCol: 2 }, { layer: 2, parentCol: 2 }, { layer: 2, parentCol: 2 }, { layer: 2, parentCol: 2 },
+  ],
+];
+
+const NODE_SIZE = 72;
+const LAYER_GAP = 44;
+const NODE_GAP = 12;
+
+// Short display labels for categories that are too long
+const DISPLAY_LABELS: Record<string, string> = {
+  iv_analysis: "IV\nANALYSIS",
+  greeks: "GREEKS",
+  order_flow: "ORDER\nFLOW",
+  macro: "MACRO",
+  term_structure: "TERM\nSTRUCT",
+  skew: "SKEW",
+  correlation: "CORREL",
+  event_vol: "EVENT\nVOL",
+  tail_risk: "TAIL\nRISK",
+  position_sizing: "POS\nSIZING",
+  trade_structuring: "TRADE\nSTRUCT",
+  vol_surface: "VOL\nSURFACE",
+  microstructure: "MICRO\nSTRUCT",
+  risk_management: "RISK\nMGMT",
+  capman_tooling: "CM\nTOOLING",
+};
+
 export default function SkillTree({ allCategories, unlockedCategories, level: _level }: SkillTreeProps) {
-  const unlockedSet = new Set(
-    unlockedCategories.map((c) => c.category)
-  );
+  const unlockedSet = new Set(unlockedCategories.map((c) => c.category));
+
+  const displayLayers = TREE_LAYERS.map((layer) =>
+    layer.filter((c) => allCategories.includes(c))
+  ).filter((l) => l.length > 0);
+
+  const maxLayerWidth = Math.max(...displayLayers.map((l) => l.length), 1);
+  const contentWidth = maxLayerWidth * NODE_SIZE + (maxLayerWidth - 1) * NODE_GAP;
+  const contentHeight = displayLayers.length * (NODE_SIZE + LAYER_GAP) - LAYER_GAP;
+
+  const nodePositions: { cat: string; x: number; y: number; layer: number; col: number }[] = [];
+  displayLayers.forEach((layer, li) => {
+    const layerWidth = layer.length * NODE_SIZE + (layer.length - 1) * NODE_GAP;
+    const offsetX = (contentWidth - layerWidth) / 2;
+    layer.forEach((cat, ci) => {
+      const x = offsetX + ci * (NODE_SIZE + NODE_GAP);
+      const y = li * (NODE_SIZE + LAYER_GAP);
+      nodePositions.push({ cat, x, y, layer: li, col: ci });
+    });
+  });
+
+  // Tap-to-expand popover state
+  const [activeNode, setActiveNode] = useState<string | null>(null);
+  const [popoverRect, setPopoverRect] = useState<DOMRect | null>(null);
+  const difficultyMap = new Map(unlockedCategories.map((c) => [c.category, c.difficulty]));
+
+  const handleNodeTap = (cat: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (activeNode === cat) {
+      setActiveNode(null);
+      setPopoverRect(null);
+    } else {
+      setActiveNode(cat);
+      setPopoverRect((e.currentTarget as HTMLElement).getBoundingClientRect());
+    }
+  };
+
+  const dismissPopover = () => {
+    setActiveNode(null);
+    setPopoverRect(null);
+  };
+
+  // Auto-scale to fit available width on smaller screens
+  const wrapperRef = useRef<HTMLDivElement>(null);
+  const [scale, setScale] = useState(1);
+
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+    const observer = new ResizeObserver(([entry]) => {
+      const available = entry.contentRect.width;
+      // Account for padding (p-6=24 on mobile, p-8=32 on sm+)
+      const padding = available > 640 ? 64 : 48;
+      const needed = contentWidth + padding;
+      setScale(Math.min(1, (available) / needed));
+    });
+    observer.observe(el);
+    return () => observer.disconnect();
+  }, [contentWidth]);
+
+  const scaledHeight = contentHeight * scale;
+  const scaledPadY = scale < 1 ? 24 * scale : 0;
 
   return (
     <>
-      <h3 className="sr-only">Skill tree: {unlockedCategories.length} of {allCategories.length} categories unlocked</h3>
-      <div className="relative" style={{ width: 5 * (HEX_SIZE + HEX_GAP), height: 4 * (HEX_SIZE + HEX_GAP) + HEX_SIZE }}>
-        {allCategories.map((cat, i) => {
-        const pos = HEX_POSITIONS[i] || [0, 0];
-        const isUnlocked = unlockedSet.has(cat);
-        const color = categoryColors[cat] || "#4D34EF";
-        const x = pos[0] * (HEX_SIZE + HEX_GAP);
-        const y = pos[1] * (HEX_SIZE + HEX_GAP);
-
-        return (
-          <motion.div
-            key={cat}
-            role="img"
-            aria-label={`${cat.replace(/_/g, " ")} - ${isUnlocked ? "Unlocked" : "Locked"}`}
-            className="absolute flex items-center justify-center cursor-default"
-            style={{
-              left: x,
-              top: y,
-              width: HEX_SIZE,
-              height: HEX_SIZE,
-              clipPath: "polygon(50% 0%, 100% 25%, 100% 75%, 50% 100%, 0% 75%, 0% 25%)",
-              backgroundColor: isUnlocked ? `${color}30` : "#16163a",
-              border: `2px solid ${isUnlocked ? color : "#2e2e5a"}`,
-            }}
-            initial={{ scale: 0 }}
-            animate={{
-              scale: 1,
-              boxShadow: isUnlocked ? `0 0 12px ${color}50` : "none",
-            }}
-            transition={{ delay: i * 0.05 }}
+      <h3 className="sr-only">
+        Skill tree: {unlockedCategories.length} of {allCategories.length} categories unlocked
+      </h3>
+      <div
+        ref={wrapperRef}
+        className="relative rounded-2xl w-full"
+        style={{
+          background:
+            "radial-gradient(ellipse 80% 80% at 50% 0%, rgba(77, 52, 239, 0.12) 0%, transparent 60%)",
+          height: scaledHeight + scaledPadY * 2 + 48,
+        }}
+      >
+        {/* Scaled content — shrinks to fit on mobile */}
+        <div
+          className="absolute left-1/2 p-6 sm:p-8"
+          style={{
+            transform: `translateX(-50%) scale(${scale})`,
+            transformOrigin: "top center",
+          }}
+        >
+        {/* Inner content area — SVG and nodes share this coordinate space */}
+        <div className="relative" style={{ width: contentWidth, height: contentHeight }}>
+          {/* SVG connecting lines — drawn first so they appear behind nodes */}
+          <svg
+            className="absolute inset-0 pointer-events-none"
+            width={contentWidth}
+            height={contentHeight}
+            style={{ overflow: "visible" }}
           >
-            <div className="flex flex-col items-center justify-center">
-              {isUnlocked ? (
-                <Check size={10} style={{ color }} aria-hidden="true" />
-              ) : (
-                <Lock size={10} className="text-cm-muted" aria-hidden="true" />
-              )}
-              <span
-                className="text-[8px] font-bold text-center leading-tight px-1"
-                style={{ color: isUnlocked ? color : "#A0A0C0" }}
+            {displayLayers.map((layer, layerIdx) =>
+              layer.map((_cat, colIdx) => {
+                const link = PARENT_LINKS[layerIdx]?.[colIdx];
+                if (!link) return null;
+
+                const childPos = nodePositions.find(
+                  (n) => n.layer === layerIdx && n.col === colIdx
+                );
+                const parentPos = nodePositions.find(
+                  (n) => n.layer === link.layer && n.col === link.parentCol
+                );
+                if (!childPos || !parentPos) return null;
+
+                const isPathUnlocked = unlockedSet.has(parentPos.cat) || unlockedSet.has(childPos.cat);
+                const parentCx = parentPos.x + NODE_SIZE / 2;
+                const parentBottom = parentPos.y + NODE_SIZE;
+                const childCx = childPos.x + NODE_SIZE / 2;
+                const childTop = childPos.y;
+                const midY = (parentBottom + childTop) / 2;
+
+                return (
+                  <path
+                    key={`${layerIdx}-${colIdx}`}
+                    d={`M ${parentCx} ${parentBottom} C ${parentCx} ${midY}, ${childCx} ${midY}, ${childCx} ${childTop}`}
+                    fill="none"
+                    stroke={isPathUnlocked ? "rgba(77, 52, 239, 0.4)" : "#2e2e5a"}
+                    strokeWidth={1.5}
+                    strokeDasharray={isPathUnlocked ? "none" : "4 4"}
+                  />
+                );
+              })
+            )}
+          </svg>
+
+          {/* Nodes */}
+          {nodePositions.map(({ cat, x, y }, i) => {
+            const isUnlocked = unlockedSet.has(cat);
+            const color = categoryColors[cat] || "#4D34EF";
+
+            return (
+              <motion.div
+                key={cat}
+                role="button"
+                tabIndex={0}
+                aria-label={`${cat.replace(/_/g, " ")} - ${isUnlocked ? "Unlocked" : "Locked"}`}
+                onClick={(e) => handleNodeTap(cat, e)}
+                className={`absolute flex items-center justify-center cursor-pointer select-none ${activeNode === cat ? "ring-2 ring-cm-primary/60 ring-offset-1 ring-offset-transparent" : ""}`}
+                style={{
+                  left: x,
+                  top: y,
+                  width: NODE_SIZE,
+                  height: NODE_SIZE,
+                  borderRadius: "12px",
+                  background: isUnlocked
+                    ? `linear-gradient(135deg, ${color}35 0%, ${color}15 100%)`
+                    : "linear-gradient(135deg, #1a1a3a 0%, #12122a 100%)",
+                  border: `2px solid ${isUnlocked ? `${color}99` : "#2e2e5a"}`,
+                  boxShadow: isUnlocked
+                    ? `0 0 16px ${color}40, inset 0 1px 0 rgba(255,255,255,0.08)`
+                    : "inset 0 2px 4px rgba(0,0,0,0.3)",
+                }}
+                initial={{ scale: 0, opacity: 0 }}
+                animate={{ scale: 1, opacity: 1 }}
+                whileHover={
+                  isUnlocked
+                    ? {
+                        scale: 1.08,
+                        boxShadow: `0 0 24px ${color}60, 0 0 8px ${color}40, inset 0 1px 0 rgba(255,255,255,0.12)`,
+                      }
+                    : undefined
+                }
+                transition={{
+                  delay: i * 0.03,
+                  type: "spring",
+                  stiffness: 300,
+                  damping: 22,
+                }}
               >
-                {cat.replace(/_/g, "\n").toUpperCase()}
-              </span>
-            </div>
-          </motion.div>
-        );
-      })}
+                <div className="flex flex-col items-center justify-center gap-0.5 px-1 overflow-hidden">
+                  {isUnlocked ? (
+                    <Check size={14} style={{ color }} aria-hidden="true" strokeWidth={2.5} />
+                  ) : (
+                    <Lock size={14} className="text-cm-muted" aria-hidden="true" strokeWidth={2} />
+                  )}
+                  <span
+                    className="text-[9px] font-bold text-center leading-[1.15] whitespace-pre-line max-w-full"
+                    style={{ color: isUnlocked ? color : "#A0A0C0" }}
+                    title={cat.replace(/_/g, " ")}
+                  >
+                    {DISPLAY_LABELS[cat] || cat.replace(/_/g, " ").toUpperCase()}
+                  </span>
+                </div>
+              </motion.div>
+            );
+          })}
+        </div>
+        </div>
       </div>
+
+      {/* Tap-to-expand popover (portaled to body for correct z-index) */}
+      {createPortal(
+        <AnimatePresence>
+          {activeNode && popoverRect && (
+            <>
+              {/* Dismiss backdrop */}
+              <div className="fixed inset-0 z-[9998]" onClick={dismissPopover} />
+
+              <motion.div
+                initial={{ opacity: 0, y: 4 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 4 }}
+                transition={{ duration: 0.15 }}
+                className="fixed z-[9999] px-3.5 py-3 bg-cm-card border border-cm-border rounded-xl shadow-2xl"
+                style={{
+                  left: Math.max(12, Math.min(
+                    popoverRect.left + popoverRect.width / 2 - 88,
+                    window.innerWidth - 188
+                  )),
+                  ...(popoverRect.top > window.innerHeight / 2
+                    ? { bottom: window.innerHeight - popoverRect.top + 8 }
+                    : { top: popoverRect.bottom + 8 }),
+                  width: 176,
+                }}
+              >
+                {/* Arrow nub */}
+                <div
+                  className="absolute w-2.5 h-2.5 bg-cm-card border-cm-border rotate-45"
+                  style={{
+                    left: Math.max(16, Math.min(
+                      popoverRect.left + popoverRect.width / 2 - Math.max(12, Math.min(popoverRect.left + popoverRect.width / 2 - 88, window.innerWidth - 188)) - 4,
+                      152
+                    )),
+                    ...(popoverRect.top > window.innerHeight / 2
+                      ? { bottom: -5, borderBottom: "1px solid", borderRight: "1px solid" }
+                      : { top: -5, borderTop: "1px solid", borderLeft: "1px solid" }),
+                  }}
+                />
+
+                <div className="text-xs font-semibold text-cm-text leading-snug">
+                  {activeNode.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
+                </div>
+                <div className="flex items-center gap-1.5 mt-1.5">
+                  {unlockedSet.has(activeNode) ? (
+                    <>
+                      <Check size={12} className="text-cm-emerald shrink-0" />
+                      <span className="text-[11px] text-cm-emerald font-medium">Unlocked</span>
+                    </>
+                  ) : (
+                    <>
+                      <Lock size={12} className="text-cm-muted shrink-0" />
+                      <span className="text-[11px] text-cm-muted">Locked</span>
+                    </>
+                  )}
+                </div>
+                {difficultyMap.has(activeNode) && (
+                  <div className="text-[10px] text-cm-primary mt-1 capitalize">
+                    {difficultyMap.get(activeNode)} difficulty
+                  </div>
+                )}
+              </motion.div>
+            </>
+          )}
+        </AnimatePresence>,
+        document.body
+      )}
     </>
   );
 }

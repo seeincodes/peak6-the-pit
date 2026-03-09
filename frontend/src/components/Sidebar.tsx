@@ -1,11 +1,14 @@
 import { Link, useLocation } from "react-router-dom";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import {
   Crosshair,
   User,
   Trophy,
   LogOut,
   Flame,
+  ChevronLeft,
+  ChevronRight,
+  X,
 } from "lucide-react";
 import { AVATAR_PRESETS } from "../constants/avatars";
 
@@ -19,6 +22,10 @@ interface SidebarProps {
     avatar_id?: string;
   } | null;
   logout: () => void;
+  collapsed: boolean;
+  onToggleCollapse: () => void;
+  mobileOpen: boolean;
+  onMobileClose: () => void;
 }
 
 const LEVEL_XP = [0, 0, 100, 250, 500, 800, 1200, 1700, 2300, 3000, 4000];
@@ -29,7 +36,7 @@ const NAV_ITEMS = [
   { to: "/leaderboard", icon: Trophy, label: "Leaderboard", matchExact: false },
 ];
 
-export default function Sidebar({ user, logout }: SidebarProps) {
+export default function Sidebar({ user, logout, collapsed, onToggleCollapse, mobileOpen, onMobileClose }: SidebarProps) {
   const location = useLocation();
 
   const isActive = (to: string, matchExact: boolean) => {
@@ -45,16 +52,53 @@ export default function Sidebar({ user, logout }: SidebarProps) {
   const neededXP = nextLevelXP - currentLevelXP;
   const progressPct = Math.min((progressXP / neededXP) * 100, 100);
 
-  return (
-    <aside className="fixed top-0 left-0 h-screen z-40 flex flex-col w-[220px] bg-cm-card border-r border-cm-border">
-      {/* Logo / Brand */}
-      <div className="flex items-center gap-3 px-4 h-16 border-b border-cm-border shrink-0">
-        <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cm-primary to-cm-emerald flex items-center justify-center shrink-0">
-          <span className="text-white font-bold text-sm tracking-tight">CM</span>
-        </div>
-        <span className="text-cm-text font-bold text-sm whitespace-nowrap">
-          CapMan AI
-        </span>
+  const sidebarInner = (isMobile: boolean) => (
+    <aside
+      className={`
+        flex flex-col bg-cm-card border-r border-cm-border h-full
+        transition-[width] duration-300 ease-in-out overflow-hidden
+        ${isMobile ? "w-[220px]" : collapsed ? "w-16" : "w-[220px]"}
+      `}
+    >
+      {/* Logo / Brand + Controls */}
+      <div className={`flex items-center h-16 border-b border-cm-border shrink-0 ${collapsed && !isMobile ? "justify-center px-2" : "px-4"}`}>
+        {collapsed && !isMobile ? (
+          <button
+            onClick={onToggleCollapse}
+            className="w-9 h-9 rounded-lg bg-gradient-to-br from-cm-primary to-cm-emerald flex items-center justify-center shrink-0 hover:opacity-80 transition-opacity"
+            aria-label="Expand sidebar"
+          >
+            <ChevronRight size={16} className="text-white" />
+          </button>
+        ) : (
+          <>
+            <div className="flex items-center gap-3 min-w-0 flex-1">
+              <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cm-primary to-cm-emerald flex items-center justify-center shrink-0">
+                <span className="text-white font-bold text-sm tracking-tight">CM</span>
+              </div>
+              <span className="text-cm-text font-bold text-sm whitespace-nowrap">
+                CapMan AI
+              </span>
+            </div>
+            {isMobile ? (
+              <button
+                onClick={onMobileClose}
+                className="flex items-center justify-center w-7 h-7 rounded-md text-cm-muted hover:text-cm-text transition-colors shrink-0"
+                aria-label="Close menu"
+              >
+                <X size={18} />
+              </button>
+            ) : (
+              <button
+                onClick={onToggleCollapse}
+                className="flex items-center justify-center w-7 h-7 rounded-md text-cm-muted hover:text-cm-text hover:bg-cm-card-raised transition-colors shrink-0"
+                aria-label="Collapse sidebar"
+              >
+                <ChevronLeft size={16} />
+              </button>
+            )}
+          </>
+        )}
       </div>
 
       {/* Navigation */}
@@ -62,15 +106,18 @@ export default function Sidebar({ user, logout }: SidebarProps) {
         {NAV_ITEMS.map((item) => {
           const active = isActive(item.to, item.matchExact);
           const Icon = item.icon;
+          const isCollapsed = collapsed && !isMobile;
           return (
             <Link
               key={item.to}
               to={item.to}
+              onClick={isMobile ? onMobileClose : undefined}
               aria-current={active ? "page" : undefined}
+              title={isCollapsed ? item.label : undefined}
               className={`
-                relative flex items-center gap-3 rounded-lg px-3 h-11
-                transition-all duration-200 group
-                focus-ring
+                relative flex items-center gap-3 rounded-lg h-11
+                transition-all duration-200 group focus-ring
+                ${isCollapsed ? "justify-center px-0" : "px-3"}
                 ${active
                   ? "bg-cm-primary/12 text-cm-primary"
                   : "text-cm-muted hover:bg-cm-card-raised hover:text-cm-text"
@@ -79,7 +126,7 @@ export default function Sidebar({ user, logout }: SidebarProps) {
             >
               {active && (
                 <motion.div
-                  layoutId="sidebar-active"
+                  layoutId={isMobile ? "sidebar-active-mobile" : "sidebar-active"}
                   className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r-full bg-cm-primary"
                   transition={{ type: "spring", stiffness: 350, damping: 30 }}
                 />
@@ -90,9 +137,11 @@ export default function Sidebar({ user, logout }: SidebarProps) {
                   active ? "text-cm-primary" : "text-cm-muted group-hover:text-cm-text"
                 }`}
               />
-              <span className="text-sm font-medium whitespace-nowrap">
-                {item.label}
-              </span>
+              {!isCollapsed && (
+                <span className="text-sm font-medium whitespace-nowrap">
+                  {item.label}
+                </span>
+              )}
             </Link>
           );
         })}
@@ -101,61 +150,114 @@ export default function Sidebar({ user, logout }: SidebarProps) {
       {/* User section */}
       {user && (
         <div className="border-t border-cm-border px-3 py-4 shrink-0">
-          {/* XP Progress */}
-          <div className="mb-3">
-            <div className="flex items-center justify-between mb-1.5">
-              <span className="text-[11px] font-semibold text-cm-primary tracking-wide uppercase">
-                LVL {user.level}
-              </span>
-              <span className="text-[11px] text-cm-muted">
-                {progressXP}/{neededXP}
-              </span>
+          {collapsed && !isMobile ? (
+            <div className="flex flex-col items-center gap-3">
+              <div
+                className="w-8 h-8 rounded-full bg-cm-card-raised border border-cm-border flex items-center justify-center text-base"
+                title={user.display_name}
+              >
+                {AVATAR_PRESETS[user.avatar_id || "default"] || "👤"}
+              </div>
+              <button
+                onClick={logout}
+                className="flex items-center justify-center w-8 h-8 rounded-md text-cm-muted hover:text-cm-red hover:bg-cm-red/8 transition-all focus-ring"
+                title="Logout"
+              >
+                <LogOut size={18} />
+              </button>
             </div>
-            <div className="relative w-full h-1.5 bg-cm-bg rounded-full overflow-hidden">
-              <motion.div
-                className="absolute inset-y-0 left-0 bg-gradient-to-r from-cm-primary to-cm-emerald rounded-full"
-                initial={{ width: 0 }}
-                animate={{ width: `${progressPct}%` }}
-                transition={{ duration: 0.8, ease: "easeOut" }}
-              />
-            </div>
-          </div>
+          ) : (
+            <>
+              {/* XP Progress */}
+              <div className="mb-3">
+                <div className="flex items-center justify-between mb-1.5">
+                  <span className="text-[11px] font-semibold text-cm-primary tracking-wide uppercase">
+                    LVL {user.level}
+                  </span>
+                  <span className="text-[11px] text-cm-muted">
+                    {progressXP}/{neededXP}
+                  </span>
+                </div>
+                <div className="relative w-full h-1.5 bg-cm-bg rounded-full overflow-hidden">
+                  <motion.div
+                    className="absolute inset-y-0 left-0 bg-gradient-to-r from-cm-primary to-cm-emerald rounded-full"
+                    initial={{ width: 0 }}
+                    animate={{ width: `${progressPct}%` }}
+                    transition={{ duration: 0.8, ease: "easeOut" }}
+                  />
+                </div>
+              </div>
 
-          {/* Streak */}
-          {user.streak_days > 0 && (
-            <div className="flex items-center gap-2 mb-3">
-              <Flame size={16} className="text-cm-amber shrink-0" />
-              <span className="text-xs text-cm-amber font-medium">
-                {user.streak_days}d streak
-              </span>
-            </div>
+              {/* Streak */}
+              {user.streak_days > 0 && (
+                <div className="flex items-center gap-2 mb-3">
+                  <Flame size={16} className="text-cm-amber shrink-0" />
+                  <span className="text-xs text-cm-amber font-medium">
+                    {user.streak_days}d streak
+                  </span>
+                </div>
+              )}
+
+              {/* User avatar + name */}
+              <div className="flex items-center gap-3 mb-2">
+                <div className="w-8 h-8 rounded-full bg-cm-card-raised border border-cm-border flex items-center justify-center shrink-0 text-base">
+                  {AVATAR_PRESETS[user.avatar_id || "default"] || "👤"}
+                </div>
+                <div className="min-w-0">
+                  <div className="text-sm font-medium text-cm-text truncate">
+                    {user.display_name}
+                  </div>
+                  <div className="text-[11px] text-cm-muted truncate">
+                    {user.level_title}
+                  </div>
+                </div>
+              </div>
+
+              {/* Logout */}
+              <button
+                onClick={logout}
+                className="flex items-center gap-3 w-full rounded-lg px-3 h-9 text-cm-muted hover:text-cm-red hover:bg-cm-red/8 transition-all duration-200 focus-ring"
+              >
+                <LogOut size={18} className="shrink-0" />
+                <span className="text-sm font-medium">Logout</span>
+              </button>
+            </>
           )}
-
-          {/* User avatar + name */}
-          <div className="flex items-center gap-3 mb-2">
-            <div className="w-8 h-8 rounded-full bg-cm-card-raised border border-cm-border flex items-center justify-center shrink-0 text-base">
-              {AVATAR_PRESETS[user.avatar_id || "default"] || "👤"}
-            </div>
-            <div className="min-w-0">
-              <div className="text-sm font-medium text-cm-text truncate">
-                {user.display_name}
-              </div>
-              <div className="text-[11px] text-cm-muted truncate">
-                {user.level_title}
-              </div>
-            </div>
-          </div>
-
-          {/* Logout */}
-          <button
-            onClick={logout}
-            className="flex items-center gap-3 w-full rounded-lg px-3 h-9 text-cm-muted hover:text-cm-red hover:bg-cm-red/8 transition-all duration-200 focus-ring"
-          >
-            <LogOut size={18} className="shrink-0" />
-            <span className="text-sm font-medium">Logout</span>
-          </button>
         </div>
       )}
     </aside>
+  );
+
+  return (
+    <>
+      {/* Desktop sidebar — always visible on lg+ */}
+      <div className="hidden lg:block fixed top-0 left-0 h-screen z-40">
+        {sidebarInner(false)}
+      </div>
+
+      {/* Mobile overlay */}
+      <AnimatePresence>
+        {mobileOpen && (
+          <>
+            <motion.div
+              className="fixed inset-0 bg-black/60 z-40 lg:hidden"
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={onMobileClose}
+            />
+            <motion.div
+              className="fixed top-0 left-0 h-screen z-50 lg:hidden"
+              initial={{ x: -280 }}
+              animate={{ x: 0 }}
+              exit={{ x: -280 }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
+            >
+              {sidebarInner(true)}
+            </motion.div>
+          </>
+        )}
+      </AnimatePresence>
+    </>
   );
 }
