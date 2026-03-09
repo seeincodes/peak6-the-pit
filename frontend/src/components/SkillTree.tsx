@@ -98,6 +98,23 @@ export default function SkillTree({ allCategories, unlockedCategories, level: _l
     setPopoverRect(null);
   };
 
+  // Dismiss popover on outside tap or scroll — no blocking backdrop
+  useEffect(() => {
+    if (!activeNode) return;
+    const onTouchOrClick = (e: MouseEvent | TouchEvent) => {
+      const target = e.target as HTMLElement;
+      if (target.closest("[data-skill-popover]")) return;
+      dismissPopover();
+    };
+    const onScroll = () => dismissPopover();
+    document.addEventListener("pointerdown", onTouchOrClick, true);
+    window.addEventListener("scroll", onScroll, true);
+    return () => {
+      document.removeEventListener("pointerdown", onTouchOrClick, true);
+      window.removeEventListener("scroll", onScroll, true);
+    };
+  }, [activeNode]);
+
   // Auto-scale to fit available width on smaller screens
   const wrapperRef = useRef<HTMLDivElement>(null);
   const [scale, setScale] = useState(1);
@@ -253,16 +270,13 @@ export default function SkillTree({ allCategories, unlockedCategories, level: _l
       {createPortal(
         <AnimatePresence>
           {activeNode && popoverRect && (
-            <>
-              {/* Dismiss backdrop */}
-              <div className="fixed inset-0 z-[9998]" onClick={dismissPopover} />
-
               <motion.div
+                data-skill-popover
                 initial={{ opacity: 0, y: 4 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 4 }}
                 transition={{ duration: 0.15 }}
-                className="fixed z-[9999] px-3.5 py-3 bg-cm-card border border-cm-border rounded-xl shadow-2xl"
+                className="fixed z-[9999] cm-popover pointer-events-auto"
                 style={{
                   left: Math.max(12, Math.min(
                     popoverRect.left + popoverRect.width / 2 - 88,
@@ -310,7 +324,6 @@ export default function SkillTree({ allCategories, unlockedCategories, level: _l
                   </div>
                 )}
               </motion.div>
-            </>
           )}
         </AnimatePresence>,
         document.body

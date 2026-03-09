@@ -31,16 +31,16 @@ export default function ProfileEditor({ displayName, avatarId, bio, onClose }: P
   };
 
   return (
-    <div className="bg-cm-card border border-cm-border rounded-lg p-6">
+    <div className="cm-surface rounded-lg p-6">
       <div className="flex items-center justify-between mb-4">
-        <h3 className="text-sm font-semibold text-cm-text">Edit Profile</h3>
+        <h3 className="cm-heading-sm">Edit Profile</h3>
         <button onClick={onClose} className="text-cm-muted hover:text-cm-text focus-ring rounded">
           <X size={18} />
         </button>
       </div>
 
       {/* Avatar picker */}
-      <label className="block text-xs text-cm-muted mb-2">Avatar</label>
+      <label className="block cm-label mb-2">Avatar</label>
       <div className="grid grid-cols-7 gap-2 mb-4">
         {Object.entries(AVATAR_PRESETS).map(([id, emoji]) => (
           <button
@@ -58,24 +58,24 @@ export default function ProfileEditor({ displayName, avatarId, bio, onClose }: P
       </div>
 
       {/* Display name */}
-      <label className="block text-xs text-cm-muted mb-1">Display Name</label>
+      <label className="block cm-label mb-1">Display Name</label>
       <input
         type="text"
         value={name}
         onChange={(e) => setName(e.target.value)}
         maxLength={100}
-        className="w-full bg-cm-bg border border-cm-border rounded px-3 py-2 text-sm text-cm-text mb-4 focus:outline-none focus:ring-2 focus:ring-cm-primary"
+        className="cm-input mb-4"
       />
 
       {/* Bio */}
-      <label className="block text-xs text-cm-muted mb-1">Bio</label>
+      <label className="block cm-label mb-1">Bio</label>
       <textarea
         value={bioText}
         onChange={(e) => setBioText(e.target.value)}
         maxLength={200}
         rows={2}
         placeholder="e.g., Vol desk intern, Phase 2"
-        className="w-full bg-cm-bg border border-cm-border rounded px-3 py-2 text-sm text-cm-text mb-1 resize-none focus:outline-none focus:ring-2 focus:ring-cm-primary"
+        className="cm-textarea mb-1"
       />
       <div className="text-[11px] text-cm-muted text-right mb-4">{bioText.length}/200</div>
 

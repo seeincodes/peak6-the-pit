@@ -35,11 +35,11 @@ export default function MCQCard({
     <motion.div
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-md border border-cm-border bg-cm-card p-6 shadow-card"
+      className="cm-surface-raised p-6"
     >
       <div className="flex items-center justify-between mb-4">
         <span
-          className="px-3 py-1 rounded-md text-xs font-semibold border"
+          className="cm-chip"
           style={{ color, borderColor: `${color}66`, backgroundColor: `${color}15` }}
         >
           {category.replace(/_/g, " ").toUpperCase()}
@@ -56,9 +56,9 @@ export default function MCQCard({
         </span>
       </div>
 
-      <p className="text-cm-muted text-sm leading-relaxed mb-4">{content.context}</p>
+      <p className="cm-body mb-4">{content.context}</p>
 
-      <div className="border-t border-cm-border pt-4 mb-4">
+      <div className="cm-divider pt-4 mb-4">
         <p className="text-cm-text font-medium">{content.question}</p>
       </div>
 

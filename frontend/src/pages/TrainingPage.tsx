@@ -201,11 +201,11 @@ export default function TrainingPage({
   };
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-6 sm:p-8 space-y-6">
+    <div className="cm-page max-w-3xl space-y-6">
       {/* Category selection */}
       {mode === "select" && (
         <div>
-          <h2 className="text-2xl font-bold text-cm-text mb-4">Select Scenario</h2>
+          <h2 className="cm-title mb-4">Select Scenario</h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             {unlockedCategories.map((cat) => (
               <button
@@ -214,7 +214,7 @@ export default function TrainingPage({
                   setSelectedCat(cat);
                   setMode("pick-mode");
                 }}
-                className="p-4 rounded border border-cm-border bg-cm-card hover:border-cm-primary/50 transition-all duration-300 text-left focus-ring"
+                className="cm-surface-interactive p-4"
               >
                 <div className="text-cm-text font-semibold text-sm">
                   {cat.category.replace(/_/g, " ").toUpperCase()}
@@ -229,10 +229,10 @@ export default function TrainingPage({
       {/* Mode selection */}
       {mode === "pick-mode" && selectedCat && (
         <div>
-          <button onClick={() => setMode("select")} className="text-cm-muted text-sm hover:text-cm-text mb-4 flex items-center gap-1 focus-ring">
+          <button onClick={() => setMode("select")} className="cm-back-link mb-4">
             <ArrowLeft size={16} aria-hidden="true" /> Back
           </button>
-          <h2 className="text-xl font-bold text-cm-text mb-2">
+          <h2 className="cm-subtitle mb-2">
             {selectedCat.category.replace(/_/g, " ").toUpperCase()}
             <span className="text-cm-muted text-sm ml-2 capitalize">{selectedCat.difficulty}</span>
           </h2>
@@ -272,10 +272,10 @@ export default function TrainingPage({
       {/* Deep Analysis — Streaming phase */}
       {mode === "deep-streaming" && (
         <div className="space-y-4">
-          <button onClick={reset} className="text-cm-muted text-sm hover:text-cm-text flex items-center gap-1 focus-ring">
+          <button onClick={reset} className="cm-back-link">
             <ArrowLeft size={16} aria-hidden="true" /> Cancel
           </button>
-          <div role="status" aria-live="polite" className="rounded-md border border-cm-border bg-cm-card p-6">
+          <div role="status" aria-live="polite" className="cm-surface p-6">
             <div className="text-cm-primary text-xs font-semibold mb-3 animate-pulse">
               Generating scenario...
             </div>
@@ -290,7 +290,7 @@ export default function TrainingPage({
       {/* Deep Analysis — Scenario phase */}
       {mode === "deep-scenario" && scenario && (
         <>
-          <button onClick={reset} className="text-cm-muted text-sm hover:text-cm-text flex items-center gap-1 focus-ring">
+          <button onClick={reset} className="cm-back-link">
             <ArrowLeft size={16} aria-hidden="true" /> Back
           </button>
           <ScenarioCard
@@ -338,7 +338,7 @@ export default function TrainingPage({
           <div className="text-center">
             <button
               onClick={reset}
-              className="px-8 py-3 rounded bg-cm-primary text-white font-bold hover:bg-cm-primary/90 transition-all focus-ring"
+              className="cm-btn-primary-lg px-8 py-3"
             >
               Next Scenario
             </button>

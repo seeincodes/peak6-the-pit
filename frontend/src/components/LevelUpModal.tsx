@@ -29,7 +29,7 @@ export default function LevelUpModal({ show, level, title, newUnlocks, onClose }
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-black/80"
+          className="cm-modal-backdrop"
           role="dialog"
           aria-modal="true"
           aria-labelledby="levelup-title"
@@ -64,7 +64,7 @@ export default function LevelUpModal({ show, level, title, newUnlocks, onClose }
                   {newUnlocks.map((cat) => (
                     <span
                       key={cat}
-                      className="px-3 py-1 rounded text-xs font-semibold bg-cm-primary/15 border border-cm-primary/40 text-cm-primary"
+                      className="cm-chip-primary"
                     >
                       {cat.replace(/_/g, " ").toUpperCase()}
                     </span>
@@ -76,7 +76,7 @@ export default function LevelUpModal({ show, level, title, newUnlocks, onClose }
             <button
               autoFocus
               onClick={onClose}
-              className="px-8 py-2 rounded bg-cm-primary text-white font-bold hover:bg-cm-primary/90 transition-all focus-ring"
+              className="cm-btn-primary-lg px-8 py-2"
             >
               Continue
             </button>

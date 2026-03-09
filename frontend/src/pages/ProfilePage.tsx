@@ -20,7 +20,7 @@ export default function ProfilePage() {
   const avatarEmoji = AVATAR_PRESETS[user.avatar_id] || AVATAR_PRESETS.default;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6 sm:p-8 space-y-6 sm:space-y-8">
+    <div className="cm-page max-w-4xl space-y-6 sm:space-y-8">
       {/* Profile Header */}
       {editing ? (
         <ProfileEditor
@@ -36,7 +36,7 @@ export default function ProfilePage() {
           </div>
           <div className="flex-1 min-w-0">
             <div className="flex items-center gap-3">
-              <h2 className="text-xl font-bold text-cm-text truncate">{user.display_name}</h2>
+              <h2 className="cm-subtitle truncate">{user.display_name}</h2>
               <button
                 onClick={() => setEditing(true)}
                 className="text-cm-muted hover:text-cm-primary transition-colors focus-ring rounded p-1"
@@ -57,17 +57,17 @@ export default function ProfilePage() {
       )}
 
       {/* Badges & Skill Tree — combined card */}
-      <div className="rounded-xl border border-cm-border bg-cm-card/50 p-4 sm:p-6">
+      <div className="cm-surface-section p-4 sm:p-6">
         {/* Badges section */}
         <BadgeGrid />
 
         {/* Divider */}
-        <div className="my-8 border-t border-cm-border" />
+        <div className="my-8 cm-divider" />
 
         {/* Skill Tree section */}
         <div>
-          <h3 className="text-xl font-bold text-cm-text mb-2">Skill Tree</h3>
-          <p className="text-sm text-cm-muted mb-6">
+          <h3 className="cm-subtitle mb-2">Skill Tree</h3>
+          <p className="cm-body mb-6">
             Unlock categories by leveling up. Master each area to progress.
           </p>
           <div className="flex items-center gap-6 mb-6 text-sm text-cm-muted">

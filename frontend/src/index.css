@@ -4,6 +4,138 @@
 @tailwind components;
 @tailwind utilities;
 
+/* ============================================================
+   CapMan AI — Component Design System
+   All reusable patterns live here so every screen stays cohesive.
+   Use these classes alongside Tailwind utilities.
+   ============================================================ */
+
+@layer components {
+
+  /* ── Page Containers ─────────────────────────────────────── */
+  .cm-page {
+    @apply mx-auto px-4 py-6 sm:p-8;
+  }
+
+  /* ── Surfaces / Cards ────────────────────────────────────── */
+  .cm-surface {
+    @apply rounded-md border border-cm-border bg-cm-card;
+  }
+  .cm-surface-raised {
+    @apply rounded-md border border-cm-border bg-cm-card shadow-card;
+  }
+  .cm-surface-section {
+    @apply rounded-xl border border-cm-border bg-cm-card/50;
+  }
+  .cm-surface-interactive {
+    @apply rounded-md border border-cm-border bg-cm-card
+           hover:border-cm-primary/50 transition-all duration-300
+           text-left focus-ring cursor-pointer;
+  }
+
+  /* ── Buttons ─────────────────────────────────────────────── */
+  .cm-btn-primary {
+    @apply rounded bg-cm-primary text-white font-semibold text-sm
+           hover:bg-cm-primary/90 transition-all
+           disabled:opacity-40 disabled:cursor-not-allowed focus-ring;
+  }
+  .cm-btn-primary-lg {
+    @apply rounded bg-cm-primary text-white font-bold
+           hover:bg-cm-primary/90 transition-all focus-ring;
+  }
+  .cm-btn-ghost {
+    @apply rounded text-cm-muted hover:text-cm-text transition-colors focus-ring;
+  }
+  .cm-btn-danger {
+    @apply rounded text-cm-muted hover:text-cm-red hover:bg-cm-red/8
+           transition-all focus-ring;
+  }
+
+  /* ── Typography ──────────────────────────────────────────── */
+  .cm-title {
+    @apply text-2xl font-bold text-cm-text;
+  }
+  .cm-subtitle {
+    @apply text-xl font-bold text-cm-text;
+  }
+  .cm-heading-sm {
+    @apply text-sm font-semibold text-cm-text;
+  }
+  .cm-label {
+    @apply text-xs text-cm-muted;
+  }
+  .cm-body {
+    @apply text-sm text-cm-muted leading-relaxed;
+  }
+
+  /* ── Form Inputs ─────────────────────────────────────────── */
+  .cm-input {
+    @apply w-full bg-cm-bg border border-cm-border rounded
+           px-3 py-2 text-sm text-cm-text
+           focus:outline-none focus:ring-2 focus:ring-cm-primary;
+  }
+  .cm-textarea {
+    @apply w-full bg-cm-bg border border-cm-border rounded
+           px-3 py-2 text-sm text-cm-text resize-none
+           placeholder-cm-muted/50
+           focus:outline-none focus:ring-2 focus:ring-cm-primary;
+  }
+
+  /* ── Chips / Badges ──────────────────────────────────────── */
+  .cm-chip {
+    @apply px-3 py-1 rounded-md text-xs font-semibold border;
+  }
+  .cm-chip-primary {
+    @apply px-3 py-1 rounded text-xs font-semibold
+           bg-cm-primary/15 border border-cm-primary/40 text-cm-primary;
+  }
+
+  /* ── Navigation ──────────────────────────────────────────── */
+  .cm-back-link {
+    @apply text-cm-muted text-sm hover:text-cm-text
+           flex items-center gap-1 focus-ring;
+  }
+
+  /* ── Progress Bars ───────────────────────────────────────── */
+  .cm-progress-track {
+    @apply h-2 bg-cm-bg rounded-sm overflow-hidden;
+  }
+  .cm-progress-track-thin {
+    @apply h-1.5 bg-cm-bg rounded-full overflow-hidden;
+  }
+
+  /* ── Tooltips & Popovers ─────────────────────────────────── */
+  .cm-tooltip {
+    @apply px-3 py-2 bg-cm-bg border border-cm-border
+           rounded-lg shadow-xl pointer-events-none;
+  }
+  .cm-popover {
+    @apply px-3.5 py-3 bg-cm-card border border-cm-border
+           rounded-xl shadow-2xl;
+  }
+
+  /* ── Modals ──────────────────────────────────────────────── */
+  .cm-modal-backdrop {
+    @apply fixed inset-0 z-50 flex items-center justify-center bg-black/80;
+  }
+
+  /* ── Dividers ────────────────────────────────────────────── */
+  .cm-divider {
+    @apply border-t border-cm-border;
+  }
+
+  /* ── Tab Buttons ─────────────────────────────────────────── */
+  .cm-tab {
+    @apply px-4 py-2 rounded-md text-sm font-semibold transition-all focus-ring
+           border border-cm-border text-cm-muted hover:text-cm-text;
+  }
+  .cm-tab-active {
+    @apply px-4 py-2 rounded-md text-sm font-semibold transition-all focus-ring
+           bg-cm-primary text-white border border-cm-primary;
+  }
+}
+
+/* ── Base ──────────────────────────────────────────────────── */
 body {
   @apply bg-cm-bg text-cm-text font-sans antialiased;
 }

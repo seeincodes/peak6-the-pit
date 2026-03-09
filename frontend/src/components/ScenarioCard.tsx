@@ -22,12 +22,12 @@ export default function ScenarioCard({ category, difficulty, content }: Scenario
       aria-label="Scenario"
       initial={{ opacity: 0, y: 20 }}
       animate={{ opacity: 1, y: 0 }}
-      className="rounded-md border border-cm-border bg-cm-card p-6 shadow-card"
+      className="cm-surface-raised p-6"
     >
       <div className="flex items-center justify-between mb-4">
         <span
           aria-label={`Category: ${category.replace(/_/g, " ")}`}
-          className="px-3 py-1 rounded-md text-xs font-semibold border"
+          className="cm-chip"
           style={{ color, borderColor: `${color}66`, backgroundColor: `${color}15` }}
         >
           {category.replace(/_/g, " ").toUpperCase()}
@@ -44,10 +44,10 @@ export default function ScenarioCard({ category, difficulty, content }: Scenario
         </span>
       </div>
 
-      <h2 className="text-xl font-bold text-cm-text mb-3">{content.title}</h2>
-      <p className="text-cm-muted text-sm leading-relaxed mb-4">{content.setup}</p>
+      <h2 className="cm-subtitle mb-3">{content.title}</h2>
+      <p className="cm-body mb-4">{content.setup}</p>
 
-      <div className="border-t border-cm-border pt-4">
+      <div className="cm-divider pt-4">
         <p className="text-cm-text font-medium">{content.question}</p>
       </div>
     </motion.article>

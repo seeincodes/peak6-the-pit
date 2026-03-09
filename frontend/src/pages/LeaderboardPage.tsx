@@ -29,8 +29,8 @@ export default function LeaderboardPage() {
   });
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-6 sm:p-8">
-      <h2 className="text-2xl font-bold text-cm-text mb-4">Leaderboard</h2>
+    <div className="cm-page max-w-2xl">
+      <h2 className="cm-title mb-4">Leaderboard</h2>
 
       {/* Period tabs */}
       <div className="flex gap-2 mb-6" role="tablist">
@@ -40,11 +40,7 @@ export default function LeaderboardPage() {
             role="tab"
             aria-selected={period === p}
             onClick={() => setPeriod(p)}
-            className={`px-4 py-2 rounded-md text-sm font-semibold transition-all focus-ring ${
-              period === p
-                ? "bg-cm-primary text-white border border-cm-primary"
-                : "border border-cm-border text-cm-muted hover:text-cm-text"
-            }`}
+            className={period === p ? "cm-tab-active" : "cm-tab"}
           >
             {p === "all_time" ? "All-Time" : "This Week"}
           </button>
