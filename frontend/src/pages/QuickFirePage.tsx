@@ -1,5 +1,6 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { ArrowLeft } from "lucide-react";
 import MCQCard from "../components/MCQCard";
 import MCQFeedback from "../components/MCQFeedback";
 import StreakBadge from "../components/StreakBadge";
@@ -33,19 +34,21 @@ export default function QuickFirePage({
   category,
   difficulty,
   onExit,
+  initialMCQ,
 }: {
   category: string;
   difficulty: string;
   onExit: () => void;
+  initialMCQ?: MCQData | null;
 }) {
-  const [phase, setPhase] = useState<Phase>("loading");
-  const [currentMCQ, setCurrentMCQ] = useState<MCQData | null>(null);
+  const [phase, setPhase] = useState<Phase>(initialMCQ ? "question" : "loading");
+  const [currentMCQ, setCurrentMCQ] = useState<MCQData | null>(initialMCQ ?? null);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [justification, setJustification] = useState("");
   const [result, setResult] = useState<MCQResult | null>(null);
   const [streak, setStreak] = useState(0);
   const [totalXP, setTotalXP] = useState(0);
-  const [questionCount, setQuestionCount] = useState(0);
+  const [questionCount, setQuestionCount] = useState(initialMCQ ? 1 : 0);
 
   const prefetchQueue = useRef<MCQData[]>([]);
   const queryClient = useQueryClient();
@@ -68,8 +71,15 @@ export default function QuickFirePage({
     }
   }, [fetchMCQ]);
 
-  // Load first question + start prefetch
+  // Load first question (use initialMCQ if provided, else fetch) + start prefetch
   useEffect(() => {
+    if (initialMCQ) {
+      setCurrentMCQ(initialMCQ);
+      setPhase("question");
+      setQuestionCount(1);
+      prefetch();
+      return;
+    }
     let cancelled = false;
     (async () => {
       const first = await fetchMCQ();
@@ -78,11 +88,10 @@ export default function QuickFirePage({
         setPhase("question");
         setQuestionCount(1);
       }
-      // Start prefetching
       prefetch();
     })();
     return () => { cancelled = true; };
-  }, [fetchMCQ, prefetch]);
+  }, [initialMCQ, fetchMCQ, prefetch]);
 
   const handleSelect = (key: string) => {
     setSelectedKey(key);
@@ -145,11 +154,11 @@ export default function QuickFirePage({
       <div className="flex items-center justify-between">
         <button
           onClick={onExit}
-          className="text-cm-muted text-sm hover:text-cm-text transition-colors"
+          className="text-cm-muted text-sm hover:text-cm-text transition-colors focus-ring flex items-center gap-1"
         >
-          &larr; Back
+          <ArrowLeft size={16} aria-hidden="true" /> Back
         </button>
-        <div className="flex items-center gap-4">
+        <div className="flex items-center gap-4" aria-live="polite">
           <StreakBadge count={streak} />
           <span className="text-cm-emerald font-bold text-sm">+{totalXP} XP</span>
           <span className="text-cm-muted text-xs">Q{questionCount}</span>
@@ -157,7 +166,7 @@ export default function QuickFirePage({
       </div>
 
       {phase === "loading" && (
-        <div className="text-center text-cm-cyan animate-pulse py-12">
+        <div role="status" aria-live="polite" className="text-center text-cm-cyan animate-pulse py-12">
           Generating question...
         </div>
       )}
@@ -175,10 +184,11 @@ export default function QuickFirePage({
 
           {phase === "justify" && (
             <div className="space-y-2">
-              <label className="text-cm-amber text-sm font-semibold">
+              <label htmlFor="justification" className="text-cm-amber text-sm font-semibold">
                 Why did you pick {selectedKey}?
               </label>
               <textarea
+                id="justification"
                 value={justification}
                 onChange={(e) => setJustification(e.target.value.slice(0, 200))}
                 onKeyDown={(e) => {
@@ -193,11 +203,11 @@ export default function QuickFirePage({
                 className="w-full bg-cm-bg border border-cm-border rounded-lg px-4 py-3 text-cm-text text-sm placeholder-cm-muted/50 focus:outline-none focus:border-cm-cyan/50 resize-none"
               />
               <div className="flex items-center justify-between">
-                <span className="text-cm-muted text-xs">{justification.length}/200</span>
+                <span className="text-cm-muted text-xs" aria-live="off">{justification.length}/200</span>
                 <button
                   onClick={() => submitMutation.mutate()}
                   disabled={!justification.trim() || submitMutation.isPending}
-                  className="px-4 py-2 rounded-lg bg-cm-cyan/20 border border-cm-cyan/50 text-cm-cyan text-sm font-bold hover:bg-cm-cyan/30 transition-all disabled:opacity-40"
+                  className="px-4 py-2 rounded-lg bg-cm-cyan/20 border border-cm-cyan/50 text-cm-cyan text-sm font-bold hover:bg-cm-cyan/30 transition-all disabled:opacity-40 focus-ring"
                 >
                   {submitMutation.isPending ? "Grading..." : "Submit"}
                 </button>

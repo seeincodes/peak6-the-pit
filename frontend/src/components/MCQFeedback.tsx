@@ -1,3 +1,4 @@
+import { useRef, useEffect } from "react";
 import { motion } from "framer-motion";
 
 interface MCQFeedbackProps {
@@ -20,13 +21,18 @@ export default function MCQFeedback({
   xpEarned,
   onNext,
 }: MCQFeedbackProps) {
+  const nextRef = useRef<HTMLButtonElement>(null);
+  useEffect(() => {
+    nextRef.current?.focus();
+  }, []);
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
       className="rounded-xl border border-cm-border bg-cm-card/80 backdrop-blur-sm p-6"
     >
-      <div className="text-center mb-4">
+      <div className="text-center mb-4" role="status">
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
@@ -46,6 +52,7 @@ export default function MCQFeedback({
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         transition={{ delay: 0.2 }}
+        aria-live="polite"
         className="text-center mb-4"
       >
         <span className="text-cm-emerald font-bold text-lg">+{xpEarned} XP</span>
@@ -67,8 +74,9 @@ export default function MCQFeedback({
 
       <div className="text-center">
         <button
+          ref={nextRef}
           onClick={onNext}
-          className="px-6 py-2 rounded-xl bg-cm-cyan/20 border border-cm-cyan/50 text-cm-cyan font-bold hover:bg-cm-cyan/30 transition-all"
+          className="px-6 py-2 rounded-xl bg-cm-cyan/20 border border-cm-cyan/50 text-cm-cyan font-bold hover:bg-cm-cyan/30 transition-all focus-ring"
         >
           Next Question
         </button>

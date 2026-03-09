@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Star } from "lucide-react";
 import { categoryColors } from "../theme/colors";
 
 interface Choice {
@@ -19,12 +20,6 @@ interface MCQCardProps {
   selectedKey: string | null;
 }
 
-const difficultyStars: Record<string, string> = {
-  beginner: "\u2605\u2606\u2606",
-  intermediate: "\u2605\u2605\u2606",
-  advanced: "\u2605\u2605\u2605",
-};
-
 export default function MCQCard({
   category,
   difficulty,
@@ -34,6 +29,7 @@ export default function MCQCard({
   selectedKey,
 }: MCQCardProps) {
   const color = categoryColors[category] || "#00f0ff";
+  const difficultyLevel = difficulty === "beginner" ? 1 : difficulty === "intermediate" ? 2 : 3;
 
   return (
     <motion.div
@@ -48,7 +44,16 @@ export default function MCQCard({
         >
           {category.replace(/_/g, " ").toUpperCase()}
         </span>
-        <span className="text-cm-amber text-sm">{difficultyStars[difficulty]}</span>
+        <span className="flex items-center gap-0.5" aria-label={`Difficulty: ${difficulty}`}>
+          {[1, 2, 3].map((i) => (
+            <Star
+              key={i}
+              size={14}
+              className={i <= difficultyLevel ? "text-cm-amber fill-cm-amber" : "text-cm-amber/30"}
+              aria-hidden="true"
+            />
+          ))}
+        </span>
       </div>
 
       <p className="text-cm-muted text-sm leading-relaxed mb-4">{content.context}</p>
@@ -57,13 +62,14 @@ export default function MCQCard({
         <p className="text-cm-text font-medium">{content.question}</p>
       </div>
 
-      <div className="grid gap-2">
+      <div className="grid gap-2" role="group" aria-label="Answer choices">
         {content.choices.map((choice) => (
           <button
             key={choice.key}
             onClick={() => onSelect(choice.key)}
             disabled={disabled}
-            className={`w-full text-left p-3 rounded-lg border transition-all ${
+            aria-pressed={selectedKey === choice.key}
+            className={`w-full text-left p-3 rounded-lg border transition-all focus-ring ${
               selectedKey === choice.key
                 ? "border-cm-cyan bg-cm-cyan/10 text-cm-text"
                 : "border-cm-border bg-cm-card hover:border-cm-cyan/40 text-cm-muted hover:text-cm-text"
