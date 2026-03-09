@@ -8,7 +8,7 @@ class Settings(BaseSettings):
     openai_api_key: str = ""
     jwt_secret_key: str = "dev-secret-change-in-production"
     jwt_algorithm: str = "HS256"
-    jwt_expiration_minutes: int = 60
+    jwt_expiration_minutes: int = 10080  # 7 days
     atlas_api_url: str = ""
     atlas_api_key: str = ""
     atlas_enabled: bool = False

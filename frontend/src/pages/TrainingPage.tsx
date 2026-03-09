@@ -1,25 +1,14 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Zap, Target, ArrowLeft } from "lucide-react";
+import { motion } from "framer-motion";
+import { ArrowLeft } from "lucide-react";
 import ScenarioCard from "../components/ScenarioCard";
 import ResponseInput from "../components/ResponseInput";
 import GradeReveal from "../components/GradeReveal";
 import LevelUpModal from "../components/LevelUpModal";
-import QuickFirePage from "./QuickFirePage";
 import api from "../api/client";
 
-interface MCQData {
-  id: string;
-  category: string;
-  difficulty: string;
-  content: {
-    context: string;
-    question: string;
-    choices: { key: string; text: string }[];
-  };
-}
-
-type Mode = "select" | "pick-mode" | "quickfire" | "deep-streaming" | "deep-scenario" | "deep-probe" | "deep-grading" | "deep-result";
+type Mode = "select" | "deep-streaming" | "deep-scenario" | "deep-probe" | "deep-grading" | "deep-result" | "deep-error";
 
 interface ScenarioData {
   id: string;
@@ -51,15 +40,13 @@ export default function TrainingPage({
 }) {
   const [mode, setMode] = useState<Mode>("select");
   const [selectedCat, setSelectedCat] = useState<{ category: string; difficulty: string } | null>(null);
-  const [prefetchedMCQs, setPrefetchedMCQs] = useState<Record<string, MCQData>>({});
-  const [mcqForQuickFire, setMcqForQuickFire] = useState<MCQData | null>(null);
   const [scenario, setScenario] = useState<ScenarioData | null>(null);
   const [responseId, setResponseId] = useState<string | null>(null);
   const [probeQuestion, setProbeQuestion] = useState<string | null>(null);
   const [gradeData, setGradeData] = useState<GradeData | null>(null);
   const [_prevLevel, setPrevLevel] = useState<number | null>(null);
   const [showLevelUp, setShowLevelUp] = useState(false);
-  const [streamingText, setStreamingText] = useState("");
+  const [deepError, setDeepError] = useState<string | null>(null);
   const queryClient = useQueryClient();
 
   const submitMutation = useMutation({
@@ -101,96 +88,79 @@ export default function TrainingPage({
   const reset = () => {
     setMode("select");
     setSelectedCat(null);
-    setMcqForQuickFire(null);
     setScenario(null);
     setResponseId(null);
     setProbeQuestion(null);
     setGradeData(null);
-    setStreamingText("");
-  };
-
-  // Prefetch MCQs for all categories on mount — ready before user even selects
-  const categoriesKey = unlockedCategories.map((c) => `${c.category}-${c.difficulty}`).sort().join(",");
-  useEffect(() => {
-    if (!unlockedCategories.length) return;
-    let cancelled = false;
-    unlockedCategories.forEach((cat) => {
-      const key = `${cat.category}-${cat.difficulty}`;
-      api
-        .post("/mcq/generate", { category: cat.category, difficulty: cat.difficulty })
-        .then((res) => {
-          if (!cancelled) {
-            setPrefetchedMCQs((prev) => ({ ...prev, [key]: res.data }));
-          }
-        })
-        .catch(() => {});
-    });
-    return () => {
-      cancelled = true;
-    };
-  }, [categoriesKey]);
-
-  const startQuickFire = () => {
-    if (!selectedCat) return;
-    const key = `${selectedCat.category}-${selectedCat.difficulty}`;
-    const mcq = prefetchedMCQs[key];
-    setMcqForQuickFire(mcq ?? null);
-    setPrefetchedMCQs((prev) => {
-      const next = { ...prev };
-      delete next[key];
-      return next;
-    });
-    setMode("quickfire");
-    // Refill pool for next time they pick this category
-    api
-      .post("/mcq/generate", { category: selectedCat.category, difficulty: selectedCat.difficulty })
-      .then((res) => setPrefetchedMCQs((prev) => ({ ...prev, [key]: res.data })))
-      .catch(() => {});
+    setDeepError(null);
   };
 
   const generateStreaming = async (params: { category: string; difficulty: string }) => {
-    setStreamingText("");
+    setDeepError(null);
     setMode("deep-streaming");
 
-    const token = localStorage.getItem("token");
-    const response = await fetch("/api/scenarios/generate-stream", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        ...(token ? { Authorization: `Bearer ${token}` } : {}),
-      },
-      body: JSON.stringify(params),
-    });
+    try {
+      const token = localStorage.getItem("token");
+      const response = await fetch("/api/scenarios/generate-stream", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          ...(token ? { Authorization: `Bearer ${token}` } : {}),
+        },
+        body: JSON.stringify(params),
+      });
 
-    const reader = response.body!.getReader();
-    const decoder = new TextDecoder();
-    let buffer = "";
+      if (!response.ok) {
+        const msg = response.status === 401
+          ? "Session expired. Please log in again."
+          : `Server error (${response.status}). Please try again.`;
+        setDeepError(msg);
+        setMode("deep-error");
+        return;
+      }
 
-    while (true) {
-      const { done, value } = await reader.read();
-      if (done) break;
+      const reader = response.body!.getReader();
+      const decoder = new TextDecoder();
+      let buffer = "";
+      let gotDone = false;
 
-      buffer += decoder.decode(value, { stream: true });
-      const lines = buffer.split("\n\n");
-      buffer = lines.pop() || "";
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
 
-      for (const line of lines) {
-        if (!line.startsWith("data: ")) continue;
-        const data = JSON.parse(line.slice(6));
+        buffer += decoder.decode(value, { stream: true });
+        const lines = buffer.split("\n\n");
+        buffer = lines.pop() || "";
 
-        if (data.type === "chunk") {
-          setStreamingText((prev) => prev + data.text);
-        } else if (data.type === "done") {
-          setScenario({
-            id: data.id,
-            category: params.category,
-            difficulty: params.difficulty,
-            content: data.content,
-          });
-          setMode("deep-scenario");
-          return;
+        for (const line of lines) {
+          if (!line.startsWith("data: ")) continue;
+          const data = JSON.parse(line.slice(6));
+
+          if (data.type === "error") {
+            setDeepError(data.message || "Scenario generation failed.");
+            setMode("deep-error");
+            return;
+          } else if (data.type === "done") {
+            gotDone = true;
+            setScenario({
+              id: data.id,
+              category: params.category,
+              difficulty: params.difficulty,
+              content: data.content,
+            });
+            setMode("deep-scenario");
+            return;
+          }
         }
       }
+
+      if (!gotDone) {
+        setDeepError("Scenario generation ended unexpectedly. Please try again.");
+        setMode("deep-error");
+      }
+    } catch {
+      setDeepError("Network error. Please check your connection and try again.");
+      setMode("deep-error");
     }
   };
 
@@ -202,7 +172,7 @@ export default function TrainingPage({
 
   return (
     <div className="cm-page max-w-3xl space-y-6">
-      {/* Category selection */}
+      {/* Category selection → goes straight to Deep Analysis */}
       {mode === "select" && (
         <div>
           <h2 className="cm-title mb-4">Select Scenario</h2>
@@ -212,7 +182,7 @@ export default function TrainingPage({
                 key={`${cat.category}-${cat.difficulty}`}
                 onClick={() => {
                   setSelectedCat(cat);
-                  setMode("pick-mode");
+                  generateStreaming(cat);
                 }}
                 className="cm-surface-interactive p-4"
               >
@@ -226,63 +196,49 @@ export default function TrainingPage({
         </div>
       )}
 
-      {/* Mode selection */}
-      {mode === "pick-mode" && selectedCat && (
-        <div>
-          <button onClick={() => setMode("select")} className="cm-back-link mb-4">
-            <ArrowLeft size={16} aria-hidden="true" /> Back
-          </button>
-          <h2 className="cm-subtitle mb-2">
-            {selectedCat.category.replace(/_/g, " ").toUpperCase()}
-            <span className="text-cm-muted text-sm ml-2 capitalize">{selectedCat.difficulty}</span>
-          </h2>
-          <div className="grid grid-cols-2 gap-4 mt-4">
-            <button
-              onClick={startQuickFire}
-              className="p-6 rounded-md border border-cm-border bg-cm-card hover:border-cm-amber transition-all duration-300 text-left focus-ring"
-            >
-              <div className="mb-2"><Zap size={24} className="text-cm-amber" aria-hidden="true" /></div>
-              <div className="text-cm-text font-bold">Quick Fire</div>
-              <div className="text-cm-muted text-xs mt-1">MCQ + justify &bull; ~30s per Q &bull; 5-8 XP</div>
-            </button>
-            <button
-              onClick={() => {
-                generateStreaming(selectedCat);
-              }}
-              className="p-6 rounded border border-cm-border bg-cm-card hover:border-cm-primary transition-all duration-300 text-left focus-ring"
-            >
-              <div className="mb-2"><Target size={24} className="text-cm-primary" aria-hidden="true" /></div>
-              <div className="text-cm-text font-bold">Deep Analysis</div>
-              <div className="text-cm-muted text-xs mt-1">Open-ended + probe &bull; ~3-5 min &bull; 16-40 XP</div>
-            </button>
-          </div>
-        </div>
-      )}
-
-      {/* Quick Fire mode */}
-      {mode === "quickfire" && selectedCat && (
-        <QuickFirePage
-          category={selectedCat.category}
-          difficulty={selectedCat.difficulty}
-          onExit={reset}
-          initialMCQ={mcqForQuickFire}
-        />
-      )}
-
-      {/* Deep Analysis — Streaming phase */}
+      {/* Deep Analysis — Loading phase */}
       {mode === "deep-streaming" && (
         <div className="space-y-4">
           <button onClick={reset} className="cm-back-link">
             <ArrowLeft size={16} aria-hidden="true" /> Cancel
           </button>
           <div role="status" aria-live="polite" className="cm-surface p-6">
-            <div className="text-cm-primary text-xs font-semibold mb-3 animate-pulse">
-              Generating scenario...
+            <div className="flex flex-col items-center justify-center py-8 space-y-4">
+              <motion.div
+                className="w-10 h-10 rounded-full border-2 border-cm-primary/30 border-t-cm-primary"
+                animate={{ rotate: 360 }}
+                transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
+              />
+              <div className="text-cm-primary text-sm font-semibold animate-pulse">
+                Generating scenario...
+              </div>
+              {selectedCat && (
+                <div className="text-cm-muted text-xs">
+                  {selectedCat.category.replace(/_/g, " ").toUpperCase()} &middot;{" "}
+                  {selectedCat.difficulty}
+                </div>
+              )}
             </div>
-            <pre className="text-cm-text text-sm whitespace-pre-wrap font-mono leading-relaxed">
-              {streamingText}
-              <span className="animate-pulse text-cm-primary">|</span>
-            </pre>
+          </div>
+        </div>
+      )}
+
+      {/* Deep Analysis — Error phase */}
+      {mode === "deep-error" && (
+        <div className="space-y-4">
+          <button onClick={reset} className="cm-back-link">
+            <ArrowLeft size={16} aria-hidden="true" /> Back
+          </button>
+          <div className="cm-surface p-6 text-center space-y-4">
+            <div className="text-cm-red text-sm font-semibold">{deepError}</div>
+            {selectedCat && (
+              <button
+                onClick={() => generateStreaming(selectedCat)}
+                className="cm-btn-primary-lg px-6 py-2"
+              >
+                Retry
+              </button>
+            )}
           </div>
         </div>
       )}

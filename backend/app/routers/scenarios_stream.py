@@ -46,31 +46,46 @@ async def generate_stream(
 
     async def event_stream():
         full_text = ""
-        async with anthropic_client.messages.stream(
-            model="claude-sonnet-4-6",
-            max_tokens=1024,
-            system=SYSTEM_PROMPT,
-            messages=[{"role": "user", "content": prompt}],
-            temperature=0.7,
-        ) as stream:
-            async for text in stream.text_stream:
-                full_text += text
-                yield f"data: {json.dumps({'type': 'chunk', 'text': text})}\n\n"
+        try:
+            chunk_count = 0
+            async with anthropic_client.messages.stream(
+                model="claude-sonnet-4-6",
+                max_tokens=1024,
+                system=SYSTEM_PROMPT,
+                messages=[{"role": "user", "content": prompt}],
+                temperature=0.7,
+            ) as stream:
+                async for text in stream.text_stream:
+                    full_text += text
+                    chunk_count += 1
+                    if chunk_count % 20 == 0:
+                        yield f"data: {json.dumps({'type': 'progress'})}\n\n"
+        except Exception as e:
+            yield f"data: {json.dumps({'type': 'error', 'message': f'AI generation failed: {e}'})}\n\n"
+            return
 
         # Parse the complete response and save to DB
-        cleaned = re.sub(r"```json\s*", "", full_text)
-        cleaned = re.sub(r"```\s*$", "", cleaned)
-        scenario_data = json.loads(cleaned.strip())
+        try:
+            cleaned = re.sub(r"```json\s*", "", full_text)
+            cleaned = re.sub(r"```\s*$", "", cleaned)
+            scenario_data = json.loads(cleaned.strip())
+        except (json.JSONDecodeError, ValueError) as e:
+            yield f"data: {json.dumps({'type': 'error', 'message': f'Failed to parse scenario: {e}'})}\n\n"
+            return
 
-        scenario = Scenario(
-            category=req.category,
-            difficulty=req.difficulty,
-            content=scenario_data,
-            context_chunks=[c["content"] for c in chunks],
-        )
-        db.add(scenario)
-        await db.commit()
-        await db.refresh(scenario)
+        try:
+            scenario = Scenario(
+                category=req.category,
+                difficulty=req.difficulty,
+                content=scenario_data,
+                context_chunks=[c["content"] for c in chunks],
+            )
+            db.add(scenario)
+            await db.commit()
+            await db.refresh(scenario)
+        except Exception as e:
+            yield f"data: {json.dumps({'type': 'error', 'message': f'Failed to save scenario: {e}'})}\n\n"
+            return
 
         yield f"data: {json.dumps({'type': 'done', 'id': str(scenario.id), 'content': scenario_data})}\n\n"
 

@@ -59,12 +59,17 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = async (email: string, password: string) => {
     const res = await api.post("/auth/login", { email, password });
+    // Set header + localStorage immediately so child components have auth on first render
+    api.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
+    localStorage.setItem("token", res.data.token);
     setToken(res.data.token);
     setUser(res.data.user);
   };
 
   const signup = async (email: string, password: string, displayName: string) => {
     const res = await api.post("/auth/signup", { email, password, display_name: displayName });
+    api.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
+    localStorage.setItem("token", res.data.token);
     setToken(res.data.token);
     setUser(res.data.user);
   };

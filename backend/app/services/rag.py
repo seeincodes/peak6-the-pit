@@ -1,14 +1,20 @@
 """RAG service: PDF ingestion, chunking, embedding, and retrieval."""
+import asyncio
 import re
 
 from openai import AsyncOpenAI
-from sqlalchemy import text
+from sqlalchemy import text, select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
 from app.models.document import Document
+from app.models.embedding_cache import EmbeddingCache
+from app.database import async_session as session_factory
 
 openai_client = AsyncOpenAI(api_key=settings.openai_api_key)
+
+# In-memory cache backed by DB — survives restarts and is shared across instances
+_embedding_cache: dict[str, list[float]] = {}
 
 CATEGORY_QUERIES = {
     "iv_analysis": "implied volatility analysis IV levels percentiles",
@@ -58,12 +64,59 @@ def build_retrieval_query(category: str, difficulty: str) -> str:
 
 
 async def embed_text(text_content: str) -> list[float]:
-    """Generate embedding for a single text string using OpenAI."""
+    """Generate embedding. Checks: memory cache → DB cache → OpenAI API (writes through to both)."""
+    cached = _embedding_cache.get(text_content)
+    if cached is not None:
+        return cached
+
+    # Check DB cache
+    async with session_factory() as db:
+        row = await db.execute(
+            select(EmbeddingCache).where(EmbeddingCache.query_text == text_content)
+        )
+        entry = row.scalar_one_or_none()
+        if entry is not None:
+            embedding = list(entry.embedding)
+            _embedding_cache[text_content] = embedding
+            return embedding
+
+    # Cache miss — call OpenAI and persist
     response = await openai_client.embeddings.create(
         model="text-embedding-3-small",
         input=text_content,
     )
-    return response.data[0].embedding
+    embedding = response.data[0].embedding
+    _embedding_cache[text_content] = embedding
+
+    # Write through to DB
+    async with session_factory() as db:
+        db.add(EmbeddingCache(query_text=text_content, embedding=embedding))
+        await db.commit()
+
+    return embedding
+
+
+async def prewarm_embeddings() -> None:
+    """Load cached embeddings from DB, then compute any missing ones."""
+    # Load all existing cached embeddings from DB into memory
+    async with session_factory() as db:
+        result = await db.execute(select(EmbeddingCache))
+        rows = result.scalars().all()
+        for row in rows:
+            _embedding_cache[row.query_text] = list(row.embedding)
+    loaded = len(_embedding_cache)
+
+    # Compute any missing embeddings (writes through to DB)
+    tasks = []
+    for category in CATEGORY_QUERIES:
+        for difficulty in ("beginner", "intermediate"):
+            query = build_retrieval_query(category, difficulty)
+            if query not in _embedding_cache:
+                tasks.append(embed_text(query))
+    if tasks:
+        await asyncio.gather(*tasks)
+
+    print(f"RAG embeddings: {loaded} from DB, {len(tasks)} newly computed")
 
 
 async def ingest_text(
