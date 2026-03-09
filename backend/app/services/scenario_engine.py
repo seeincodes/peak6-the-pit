@@ -15,6 +15,7 @@ from app.prompts.mcq_generation import (
     MCQ_TEMPLATE,
 )
 from app.services.rag import build_retrieval_query, retrieve_chunks
+from app.services.market_data import get_market_snapshot
 
 anthropic_client = AsyncAnthropic(api_key=settings.anthropic_api_key)
 
@@ -35,6 +36,7 @@ async def generate_scenario(
     query = build_retrieval_query(category, difficulty)
     chunks = await retrieve_chunks(db, query, top_k=5)
     rag_context = "\n\n---\n\n".join(c["content"] for c in chunks)
+    market_snapshot = await get_market_snapshot()
 
     category_display = CATEGORY_DISPLAY.get(category, category.replace("_", " ").title())
 
@@ -42,6 +44,7 @@ async def generate_scenario(
         difficulty=difficulty,
         category_display=category_display,
         rag_context=rag_context if rag_context else "No specific context available. Use general options trading knowledge.",
+        market_snapshot=market_snapshot,
     )
 
     message = await anthropic_client.messages.create(
@@ -72,6 +75,7 @@ async def generate_mcq(
     query = build_retrieval_query(category, difficulty)
     chunks = await retrieve_chunks(db, query, top_k=3)
     rag_context = "\n\n---\n\n".join(c["content"] for c in chunks)
+    market_snapshot = await get_market_snapshot()
 
     category_display = CATEGORY_DISPLAY.get(category, category.replace("_", " ").title())
 
@@ -79,6 +83,7 @@ async def generate_mcq(
         difficulty=difficulty,
         category_display=category_display,
         rag_context=rag_context if rag_context else "No specific context available. Use general options trading knowledge.",
+        market_snapshot=market_snapshot,
     )
 
     message = await anthropic_client.messages.create(

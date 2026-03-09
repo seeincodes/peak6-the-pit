@@ -18,6 +18,12 @@ Use the following context from the Volatility Trading Data Framework to ground t
 {rag_context}
 </context>
 
+<market_data>
+{market_snapshot}
+</market_data>
+
+Use the live market data above to anchor your scenario in current real-world conditions where relevant. Reference actual price levels, yields, or volatility readings when they fit the category.
+
 Output a JSON object with exactly these fields:
 {{
   "title": "Short descriptive title (5-10 words)",

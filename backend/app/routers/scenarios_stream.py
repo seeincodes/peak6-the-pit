@@ -14,6 +14,7 @@ from app.models.scenario import Scenario
 from app.models.user import User
 from app.prompts.scenario_generation import SYSTEM_PROMPT, SCENARIO_TEMPLATE, CATEGORY_DISPLAY
 from app.services.rag import build_retrieval_query, retrieve_chunks
+from app.services.market_data import get_market_snapshot
 from app.middleware.auth import get_current_user
 
 router = APIRouter(prefix="/api/scenarios", tags=["scenarios"])
@@ -35,6 +36,7 @@ async def generate_stream(
     query = build_retrieval_query(req.category, req.difficulty)
     chunks = await retrieve_chunks(db, query, top_k=5)
     rag_context = "\n\n---\n\n".join(c["content"] for c in chunks)
+    market_snapshot = await get_market_snapshot()
 
     category_display = CATEGORY_DISPLAY.get(req.category, req.category.replace("_", " ").title())
 
@@ -42,6 +44,7 @@ async def generate_stream(
         difficulty=req.difficulty,
         category_display=category_display,
         rag_context=rag_context if rag_context else "No specific context available. Use general options trading knowledge.",
+        market_snapshot=market_snapshot,
     )
 
     async def event_stream():

@@ -18,6 +18,12 @@ Use the following context to ground the question:
 {rag_context}
 </context>
 
+<market_data>
+{market_snapshot}
+</market_data>
+
+Use the live market data above to anchor your question in current real-world conditions where relevant.
+
 Output a JSON object with exactly these fields:
 {{
   "context": "Brief market setup (2-3 sentences with specific data points)",

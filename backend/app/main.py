@@ -7,6 +7,7 @@ from app.config import settings
 from app.routers import health, scenarios, scenarios_stream, responses, users, auth, mcq, leaderboard, badges
 from app.services.mcq_pool import prewarm
 from app.services.rag import prewarm_embeddings
+from app.services.market_data import prewarm_market_data
 from app.services.badge_seeder import seed_badges
 from app.services.badge_service import check_and_award_badges
 from app.models.user import User
@@ -23,6 +24,8 @@ async def lifespan(app: FastAPI):
     ])
     # Pre-warm RAG embedding cache for instant Deep Analysis
     await prewarm_embeddings()
+    # Fetch live market data for scenario grounding
+    await prewarm_market_data()
     async with async_session() as db:
         count = await seed_badges(db)
         if count:

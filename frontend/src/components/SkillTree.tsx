@@ -51,8 +51,8 @@ const PARENT_LINKS: { layer: number; parentCol: number }[][] = [
   ],
 ];
 
-const NODE_SIZE = 72;
-const LAYER_GAP = 44;
+const NODE_SIZE = 80;
+const LAYER_GAP = 48;
 const NODE_GAP = 12;
 
 // Short display labels for skill tree nodes
@@ -73,20 +73,42 @@ const DISPLAY_LABELS: Record<string, string> = {
   microstructure: "MICRO\nSTRUCT",
   risk_management: "RISK\nMGMT",
   capman_tooling: "CM\nTOOLING",
-  sentiment: "SENTI-\nMENT",
+  sentiment: "SENTI\nMENT",
   technical_analysis: "TECH\nANALYSIS",
   fixed_income: "FIXED\nINCOME",
-  seasonality: "SEASON-\nALITY",
+  seasonality: "SEASON\nALITY",
   exotic_structures: "EXOTIC\nSTRUCT",
-  fundamentals: "FUNDA-\nMENTALS",
-  commodities: "COMMOD-\nITIES",
+  fundamentals: "FUNDA\nMENTALS",
+  commodities: "COMMO\nDITIES",
   crypto: "CRYPTO",
-  geopolitical: "GEO-\nPOLITICAL",
+  geopolitical: "GEO\nPOLITICAL",
   alt_data: "ALT\nDATA",
-  portfolio_mgmt: "PORT-\nFOLIO",
+  portfolio_mgmt: "PORT\nFOLIO",
 };
 
-export default function SkillTree({ allCategories, unlockedCategories, level: _level }: SkillTreeProps) {
+// Level at which each category first unlocks (beginner difficulty)
+const UNLOCK_LEVELS: Record<string, number> = {
+  iv_analysis: 1, realized_vol: 1,
+  greeks: 2, fundamentals: 2,
+  order_flow: 3, technical_analysis: 3, sentiment: 3,
+  macro: 4, term_structure: 4, fixed_income: 4, seasonality: 4,
+  skew: 5, correlation: 5, event_vol: 5, tail_risk: 5, commodities: 5, geopolitical: 5,
+  position_sizing: 6, trade_structuring: 6, crypto: 6, alt_data: 6,
+  vol_surface: 7, microstructure: 7, risk_management: 7, capman_tooling: 7, exotic_structures: 7, portfolio_mgmt: 7,
+};
+
+const LAYER_LABELS = ["Foundation", "Core", "Specialization", "Advanced", "Expert"];
+
+function getUnlockLevel(cat: string): number {
+  return UNLOCK_LEVELS[cat] ?? 1;
+}
+
+function getLayerLabel(cat: string): string {
+  const layerIdx = TREE_LAYERS.findIndex((layer) => layer.includes(cat));
+  return LAYER_LABELS[layerIdx] ?? "";
+}
+
+export default function SkillTree({ allCategories, unlockedCategories, level }: SkillTreeProps) {
   const unlockedSet = new Set(unlockedCategories.map((c) => c.category));
 
   const displayLayers = TREE_LAYERS.map((layer) =>
@@ -138,11 +160,16 @@ export default function SkillTree({ allCategories, unlockedCategories, level: _l
       dismissPopover();
     };
     const onScroll = () => dismissPopover();
+    const onKeyDown = (e: KeyboardEvent) => {
+      if (e.key === "Escape") dismissPopover();
+    };
     document.addEventListener("pointerdown", onTouchOrClick, true);
     window.addEventListener("scroll", onScroll, true);
+    document.addEventListener("keydown", onKeyDown);
     return () => {
       document.removeEventListener("pointerdown", onTouchOrClick, true);
       window.removeEventListener("scroll", onScroll, true);
+      document.removeEventListener("keydown", onKeyDown);
     };
   }, [activeNode]);
 
@@ -212,6 +239,7 @@ export default function SkillTree({ allCategories, unlockedCategories, level: _l
                 if (!childPos || !parentPos) return null;
 
                 const isPathUnlocked = unlockedSet.has(parentPos.cat) || unlockedSet.has(childPos.cat);
+                const parentColor = categoryColors[parentPos.cat] || "#4D34EF";
                 const parentCx = parentPos.x + NODE_SIZE / 2;
                 const parentBottom = parentPos.y + NODE_SIZE;
                 const childCx = childPos.x + NODE_SIZE / 2;
@@ -223,8 +251,8 @@ export default function SkillTree({ allCategories, unlockedCategories, level: _l
                     key={`${layerIdx}-${colIdx}`}
                     d={`M ${parentCx} ${parentBottom} C ${parentCx} ${midY}, ${childCx} ${midY}, ${childCx} ${childTop}`}
                     fill="none"
-                    stroke={isPathUnlocked ? "rgba(77, 52, 239, 0.4)" : "#2e2e5a"}
-                    strokeWidth={1.5}
+                    stroke={isPathUnlocked ? `${parentColor}50` : "#2e2e5a44"}
+                    strokeWidth={isPathUnlocked ? 2 : 1}
                     strokeDasharray={isPathUnlocked ? "none" : "4 4"}
                   />
                 );
@@ -250,7 +278,8 @@ export default function SkillTree({ allCategories, unlockedCategories, level: _l
                   top: y,
                   width: NODE_SIZE,
                   height: NODE_SIZE,
-                  borderRadius: "12px",
+                  borderRadius: "14px",
+                  opacity: isUnlocked ? 1 : 0.55,
                   background: isUnlocked
                     ? `linear-gradient(135deg, ${color}35 0%, ${color}15 100%)`
                     : "linear-gradient(135deg, #1a1a3a 0%, #12122a 100%)",
@@ -260,15 +289,15 @@ export default function SkillTree({ allCategories, unlockedCategories, level: _l
                     : "inset 0 2px 4px rgba(0,0,0,0.3)",
                 }}
                 initial={{ scale: 0, opacity: 0 }}
-                animate={{ scale: 1, opacity: 1 }}
-                whileHover={
-                  isUnlocked
+                animate={{ scale: 1, opacity: isUnlocked ? 1 : 0.55 }}
+                whileHover={{
+                  scale: isUnlocked ? 1.08 : 1.04,
+                  ...(isUnlocked
                     ? {
-                        scale: 1.08,
                         boxShadow: `0 0 24px ${color}60, 0 0 8px ${color}40, inset 0 1px 0 rgba(255,255,255,0.12)`,
                       }
-                    : undefined
-                }
+                    : {}),
+                }}
                 transition={{
                   delay: i * 0.03,
                   type: "spring",
@@ -278,14 +307,14 @@ export default function SkillTree({ allCategories, unlockedCategories, level: _l
               >
                 <div className="flex flex-col items-center justify-center gap-0.5 px-1 overflow-hidden">
                   {isUnlocked ? (
-                    <Check size={14} style={{ color }} aria-hidden="true" strokeWidth={2.5} />
+                    <Check size={16} style={{ color }} aria-hidden="true" strokeWidth={2.5} />
                   ) : (
-                    <Lock size={14} className="text-cm-muted" aria-hidden="true" strokeWidth={2} />
+                    <Lock size={14} className="text-cm-muted/60" aria-hidden="true" strokeWidth={2} />
                   )}
                   <span
-                    className="text-[9px] font-bold text-center leading-[1.15] whitespace-pre-line max-w-full"
+                    className="text-[10px] font-semibold text-center leading-[1.2] whitespace-pre-line max-w-full tracking-wide"
                     style={{ color: isUnlocked ? color : "#A0A0C0" }}
-                    title={cat.replace(/_/g, " ")}
+                    title={categoryDisplay[cat] || cat.replace(/_/g, " ")}
                   >
                     {DISPLAY_LABELS[cat] || cat.replace(/_/g, " ").toUpperCase()}
                   </span>
@@ -307,16 +336,16 @@ export default function SkillTree({ allCategories, unlockedCategories, level: _l
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 4 }}
                 transition={{ duration: 0.15 }}
-                className="fixed z-[9999] cm-popover pointer-events-auto"
+                className="fixed z-[9999] cm-popover pointer-events-auto px-4 py-3.5"
                 style={{
                   left: Math.max(12, Math.min(
-                    popoverRect.left + popoverRect.width / 2 - 88,
-                    window.innerWidth - 188
+                    popoverRect.left + popoverRect.width / 2 - 120,
+                    window.innerWidth - 252
                   )),
                   ...(popoverRect.top > window.innerHeight / 2
                     ? { bottom: window.innerHeight - popoverRect.top + 8 }
                     : { top: popoverRect.bottom + 8 }),
-                  width: 176,
+                  width: 240,
                 }}
               >
                 {/* Arrow nub */}
@@ -324,8 +353,8 @@ export default function SkillTree({ allCategories, unlockedCategories, level: _l
                   className="absolute w-2.5 h-2.5 bg-cm-card border-cm-border rotate-45"
                   style={{
                     left: Math.max(16, Math.min(
-                      popoverRect.left + popoverRect.width / 2 - Math.max(12, Math.min(popoverRect.left + popoverRect.width / 2 - 88, window.innerWidth - 188)) - 4,
-                      152
+                      popoverRect.left + popoverRect.width / 2 - Math.max(12, Math.min(popoverRect.left + popoverRect.width / 2 - 120, window.innerWidth - 252)) - 4,
+                      216
                     )),
                     ...(popoverRect.top > window.innerHeight / 2
                       ? { bottom: -5, borderBottom: "1px solid", borderRight: "1px solid" }
@@ -333,27 +362,57 @@ export default function SkillTree({ allCategories, unlockedCategories, level: _l
                   }}
                 />
 
-                <div className="text-xs font-semibold text-cm-text leading-snug">
+                {/* Category name */}
+                <div className="text-sm font-bold text-cm-text leading-snug">
                   {categoryDisplay[activeNode] || activeNode.replace(/_/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())}
                 </div>
-                <div className="flex items-center gap-1.5 mt-1.5">
+
+                {/* Accent bar */}
+                <div
+                  className="h-0.5 rounded-full mt-2 mb-2.5 opacity-60"
+                  style={{ background: categoryColors[activeNode] || "#4D34EF" }}
+                />
+
+                {/* Status row */}
+                <div className="flex items-center gap-2">
                   {unlockedSet.has(activeNode) ? (
                     <>
-                      <Check size={12} className="text-cm-emerald shrink-0" />
-                      <span className="text-[11px] text-cm-emerald font-medium">Unlocked</span>
+                      <div className="w-5 h-5 rounded-full bg-cm-emerald/15 flex items-center justify-center shrink-0">
+                        <Check size={12} className="text-cm-emerald" />
+                      </div>
+                      <div className="text-xs">
+                        <span className="text-cm-emerald font-semibold">Unlocked</span>
+                        {difficultyMap.has(activeNode) && (
+                          <span className="text-cm-muted ml-1.5 capitalize">
+                            &middot; {difficultyMap.get(activeNode)}
+                          </span>
+                        )}
+                      </div>
                     </>
                   ) : (
                     <>
-                      <Lock size={12} className="text-cm-muted shrink-0" />
-                      <span className="text-[11px] text-cm-muted">Locked</span>
+                      <div className="w-5 h-5 rounded-full bg-cm-muted/10 flex items-center justify-center shrink-0">
+                        <Lock size={12} className="text-cm-muted" />
+                      </div>
+                      <div className="text-xs">
+                        <span className="text-cm-muted font-medium">Locked</span>
+                        <span className="text-cm-primary ml-1.5">
+                          &middot; Level {getUnlockLevel(activeNode)}
+                        </span>
+                      </div>
                     </>
                   )}
                 </div>
-                {difficultyMap.has(activeNode) && (
-                  <div className="text-[10px] text-cm-primary mt-1 capitalize">
-                    {difficultyMap.get(activeNode)} difficulty
-                  </div>
-                )}
+
+                {/* Tier label */}
+                <div className="text-[11px] text-cm-muted/70 mt-2">
+                  {getLayerLabel(activeNode)} tier
+                  {!unlockedSet.has(activeNode) && getUnlockLevel(activeNode) > level && (
+                    <span className="text-cm-primary/80 ml-1">
+                      &middot; {getUnlockLevel(activeNode) - level} level{getUnlockLevel(activeNode) - level > 1 ? "s" : ""} away
+                    </span>
+                  )}
+                </div>
               </motion.div>
           )}
         </AnimatePresence>,
