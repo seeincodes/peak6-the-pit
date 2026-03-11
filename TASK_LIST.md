@@ -307,3 +307,12 @@
 - [ ] Add basic moderation (report, hide) for educator role
 
 **Files:** new `models/discussion.py`, new `routers/discussions.py`, new `components/DiscussionThread.tsx`, `GradeReveal.tsx`, Alembic migration
+
+### 4.19 "Need an Easier One?" Rescue Button *(Medium)*
+- [ ] Add a "Need an easier question?" button in `TrainingPage.tsx` while user is in a scenario/probe flow
+- [ ] Add backend endpoint (or parameterized generate route) to request an easier follow-up for the same category context
+- [ ] Define downgrade behavior: advanced -> intermediate -> beginner (beginner stays beginner)
+- [ ] Show a short explanation in UI that this is a guided step-down to unblock learning
+- [ ] Track usage event (e.g., `used_easier_rescue`) for analytics/performance insights
+
+**Files:** `TrainingPage.tsx`, `routers/scenarios.py`, `services/difficulty_engine.py`, optional `services/analytics.py`

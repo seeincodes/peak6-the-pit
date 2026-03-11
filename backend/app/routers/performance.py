@@ -42,6 +42,7 @@ async def get_category_summary(
 @router.get("/history")
 async def get_performance_history(
     days: int = Query(30, ge=7, le=90),
+    include_cohort: bool = Query(False),
     current_user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
@@ -133,7 +134,7 @@ async def get_performance_history(
     best_category = category_performance[0]["category"] if category_performance else None
     weakest_category = category_performance[-1]["category"] if category_performance else None
 
-    return {
+    result = {
         "score_trend": score_trend,
         "category_performance": category_performance,
         "xp_trend": xp_trend,
@@ -146,3 +147,66 @@ async def get_performance_history(
             "weakest_category": weakest_category,
         },
     }
+
+    if include_cohort:
+        # Cohort score trend (all users)
+        cohort_score_stmt = (
+            select(
+                cast(Grade.graded_at, Date).label("date"),
+                func.avg(Grade.overall_score).label("avg_score"),
+                func.count().label("count"),
+            )
+            .join(Response, Grade.response_id == Response.id)
+            .where(Grade.graded_at >= cutoff)
+            .group_by(cast(Grade.graded_at, Date))
+            .order_by(cast(Grade.graded_at, Date))
+        )
+        cohort_score_rows = (await db.execute(cohort_score_stmt)).all()
+
+        # Cohort category performance (all users)
+        cohort_cat_stmt = (
+            select(
+                Scenario.category,
+                func.avg(Grade.overall_score).label("avg_score"),
+                func.count().label("attempts"),
+            )
+            .join(Response, Grade.response_id == Response.id)
+            .join(Scenario, Response.scenario_id == Scenario.id)
+            .where(Grade.graded_at >= cutoff)
+            .group_by(Scenario.category)
+        )
+        cohort_cat_rows = (await db.execute(cohort_cat_stmt)).all()
+
+        # Cohort dimension averages (all users)
+        cohort_dim_stmt = (
+            select(Grade.dimension_scores)
+            .join(Response, Grade.response_id == Response.id)
+            .where(Grade.graded_at >= cutoff)
+        )
+        cohort_dim_rows = (await db.execute(cohort_dim_stmt)).scalars().all()
+
+        cohort_dim_sums: dict[str, list[float]] = {}
+        for scores in cohort_dim_rows:
+            if not isinstance(scores, dict) or "reasoning" not in scores:
+                continue
+            for dim in ("reasoning", "terminology", "trade_logic", "risk_awareness"):
+                val = scores.get(dim)
+                if val is not None:
+                    cohort_dim_sums.setdefault(dim, []).append(float(val))
+
+        result["cohort"] = {
+            "score_trend": [
+                {"date": str(r.date), "avg_score": round(float(r.avg_score), 1), "count": r.count}
+                for r in cohort_score_rows
+            ],
+            "category_performance": [
+                {"category": r.category, "avg_score": round(float(r.avg_score), 1), "attempts": r.attempts}
+                for r in cohort_cat_rows
+            ],
+            "dimension_averages": {
+                dim: round(sum(vals) / len(vals), 1) if vals else 0
+                for dim, vals in cohort_dim_sums.items()
+            },
+        }
+
+    return result
