@@ -121,6 +121,7 @@ RUBRIC_DIMENSIONS = ["reasoning", "terminology", "trade_logic", "risk_awareness"
 PEER_REVIEW_BASE_XP = 15
 PEER_REVIEW_QUALITY_BONUS = 10
 PEER_REVIEW_QUALITY_THRESHOLD = 0.8
+PEER_REVIEW_MAX_PER_RESPONSE = 3
 
 SCENARIO_CATEGORIES = [
     "iv_analysis", "realized_vol", "greeks", "order_flow", "macro",

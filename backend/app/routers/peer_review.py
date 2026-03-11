@@ -19,6 +19,7 @@ from app.constants import (
     PEER_REVIEW_BASE_XP,
     PEER_REVIEW_QUALITY_BONUS,
     PEER_REVIEW_QUALITY_THRESHOLD,
+    PEER_REVIEW_MAX_PER_RESPONSE,
 )
 
 router = APIRouter(prefix="/api/peer-review", tags=["peer-review"])
@@ -46,13 +47,30 @@ async def get_review_queue(
     if category:
         filters.append(Scenario.category == category)
 
+    # Count existing reviews per response
+    review_count = (
+        select(
+            PeerReview.response_id,
+            func.count(PeerReview.id).label("review_count"),
+        )
+        .group_by(PeerReview.response_id)
+        .subquery()
+    )
+
     stmt = (
         select(Response, Grade, Scenario, User)
         .join(Grade, Grade.response_id == Response.id)
         .join(Scenario, Response.scenario_id == Scenario.id)
         .join(User, Response.user_id == User.id)
-        .where(and_(*filters))
-        .order_by(func.random())
+        .outerjoin(review_count, review_count.c.response_id == Response.id)
+        .where(and_(
+            *filters,
+            func.coalesce(review_count.c.review_count, 0) < PEER_REVIEW_MAX_PER_RESPONSE,
+        ))
+        .order_by(
+            func.coalesce(review_count.c.review_count, 0).asc(),  # least-reviewed first
+            Response.submitted_at.desc(),  # then newest
+        )
         .limit(limit)
     )
 
@@ -87,15 +105,27 @@ async def get_queue_categories(
         .scalar_subquery()
     )
 
+    # Reuse review_count subquery to exclude fully-reviewed responses
+    review_count = (
+        select(
+            PeerReview.response_id,
+            func.count(PeerReview.id).label("review_count"),
+        )
+        .group_by(PeerReview.response_id)
+        .subquery()
+    )
+
     stmt = (
         select(Scenario.category, func.count(Response.id).label("count"))
         .join(Scenario, Response.scenario_id == Scenario.id)
         .join(Grade, Grade.response_id == Response.id)
+        .outerjoin(review_count, review_count.c.response_id == Response.id)
         .where(
             and_(
                 Response.is_complete == True,  # noqa: E712
                 Response.user_id != current_user.id,
                 Response.id.notin_(already_reviewed),
+                func.coalesce(review_count.c.review_count, 0) < PEER_REVIEW_MAX_PER_RESPONSE,
             )
         )
         .group_by(Scenario.category)
