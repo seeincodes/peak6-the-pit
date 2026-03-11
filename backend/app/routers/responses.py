@@ -1,7 +1,9 @@
 from uuid import UUID
+from typing import Optional
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
+from sqlalchemy import select, desc
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
@@ -142,3 +144,50 @@ async def get_model_answer(
         difficulty=scenario.difficulty,
     )
     return {"model_answer": model_answer}
+
+
+@router.get("/history")
+async def get_response_history(
+    category: Optional[str] = Query(None),
+    max_score: Optional[float] = Query(None, le=5.0),
+    limit: int = Query(20, ge=1, le=50),
+    offset: int = Query(0, ge=0),
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Get paginated history of completed responses with grades and scenario info."""
+    stmt = (
+        select(Response, Grade, Scenario)
+        .join(Grade, Grade.response_id == Response.id)
+        .join(Scenario, Response.scenario_id == Scenario.id)
+        .where(Response.user_id == user.id)
+        .where(Response.is_complete == True)  # noqa: E712
+        .order_by(desc(Response.submitted_at))
+    )
+
+    if category:
+        stmt = stmt.where(Scenario.category == category)
+    if max_score is not None:
+        stmt = stmt.where(Grade.overall_score <= max_score)
+
+    stmt = stmt.offset(offset).limit(limit)
+    rows = (await db.execute(stmt)).all()
+
+    return [
+        {
+            "response_id": str(r.id),
+            "scenario_id": str(s.id),
+            "category": s.category,
+            "difficulty": s.difficulty,
+            "title": s.content.get("title", ""),
+            "question": s.content.get("question", ""),
+            "conversation": r.conversation,
+            "submitted_at": r.submitted_at.isoformat(),
+            "grade": {
+                "dimension_scores": g.dimension_scores,
+                "overall_score": float(g.overall_score),
+                "feedback": g.feedback,
+            },
+        }
+        for r, g, s in rows
+    ]

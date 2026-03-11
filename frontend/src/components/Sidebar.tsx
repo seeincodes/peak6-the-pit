@@ -4,6 +4,8 @@ import {
   Crosshair,
   User,
   Trophy,
+  BookOpen,
+  Bookmark,
   LogOut,
   Flame,
   ChevronLeft,
@@ -32,6 +34,8 @@ const LEVEL_XP = [0, 0, 100, 250, 500, 800, 1200, 1700, 2300, 3000, 4000];
 
 const NAV_ITEMS = [
   { to: "/", icon: Crosshair, label: "Training", matchExact: true },
+  { to: "/review", icon: BookOpen, label: "Review", matchExact: false },
+  { to: "/bookmarks", icon: Bookmark, label: "Bookmarks", matchExact: false },
   { to: "/profile", icon: User, label: "Profile", matchExact: false },
   { to: "/leaderboard", icon: Trophy, label: "Leaderboard", matchExact: false },
 ];

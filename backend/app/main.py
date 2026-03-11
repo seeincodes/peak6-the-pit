@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.routers import health, scenarios, scenarios_stream, responses, users, auth, mcq, leaderboard, badges, performance
+from app.routers import health, scenarios, scenarios_stream, responses, users, auth, mcq, leaderboard, badges, performance, bookmarks, challenges
 from app.services.mcq_pool import prewarm
 from app.services.rag import prewarm_embeddings
 from app.services.market_data import prewarm_market_data
@@ -88,3 +88,5 @@ app.include_router(mcq.router)
 app.include_router(leaderboard.router)
 app.include_router(badges.router)
 app.include_router(performance.router)
+app.include_router(bookmarks.router)
+app.include_router(challenges.router)

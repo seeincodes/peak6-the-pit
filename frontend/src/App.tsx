@@ -10,6 +10,8 @@ import LandingPage from "./pages/LandingPage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import LeaderboardPage from "./pages/LeaderboardPage";
+import ReviewPage from "./pages/ReviewPage";
+import BookmarksPage from "./pages/BookmarksPage";
 import api from "./api/client";
 
 function App() {
@@ -119,6 +121,8 @@ function AuthenticatedApp({
             }
           />
           <Route path="/profile" element={<ProfilePage />} />
+          <Route path="/review" element={<ReviewPage />} />
+          <Route path="/bookmarks" element={<BookmarksPage />} />
           <Route path="/leaderboard" element={<LeaderboardPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

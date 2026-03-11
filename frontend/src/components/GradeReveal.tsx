@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lightbulb, BookOpen, Loader2 } from "lucide-react";
+import { Lightbulb, BookOpen, Loader2, Bookmark, BookmarkCheck } from "lucide-react";
 import RadarScoreChart from "./charts/RadarScoreChart";
 import api from "../api/client";
 
@@ -11,6 +11,7 @@ interface GradeRevealProps {
   xpEarned: number;
   hintsUsed?: number;
   responseId?: string;
+  scenarioId?: string;
 }
 
 export default function GradeReveal({
@@ -20,9 +21,24 @@ export default function GradeReveal({
   xpEarned,
   hintsUsed = 0,
   responseId,
+  scenarioId,
 }: GradeRevealProps) {
   const [modelAnswer, setModelAnswer] = useState<string | null>(null);
   const [loadingModel, setLoadingModel] = useState(false);
+  const [bookmarked, setBookmarked] = useState(false);
+
+  const toggleBookmark = async () => {
+    if (!scenarioId) return;
+    try {
+      if (bookmarked) {
+        await api.delete(`/bookmarks/${scenarioId}`);
+        setBookmarked(false);
+      } else {
+        await api.post("/bookmarks", { scenario_id: scenarioId, tag: "reference" });
+        setBookmarked(true);
+      }
+    } catch { /* ignore */ }
+  };
 
   const fetchModelAnswer = async () => {
     if (!responseId || modelAnswer) return;
@@ -91,8 +107,19 @@ export default function GradeReveal({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.4 }}
-          className="mt-4"
+          className="mt-4 flex items-center gap-4"
         >
+          {scenarioId && (
+            <button
+              onClick={toggleBookmark}
+              className={`flex items-center gap-1.5 text-sm transition-colors ${
+                bookmarked ? "text-cm-amber" : "text-cm-muted hover:text-cm-amber"
+              }`}
+            >
+              {bookmarked ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
+              {bookmarked ? "Bookmarked" : "Bookmark"}
+            </button>
+          )}
           {!modelAnswer && (
             <button
               onClick={fetchModelAnswer}

@@ -9,6 +9,7 @@ import LevelUpModal from "../components/LevelUpModal";
 import BadgeUnlockModal from "../components/BadgeUnlockModal";
 import PerformanceCharts from "../components/charts/PerformanceCharts";
 import CategoryProgress from "../components/CategoryProgress";
+import DailyChallengeCard from "../components/DailyChallengeCard";
 import api from "../api/client";
 import { categoryDisplay, categoryColors } from "../theme/colors";
 
@@ -215,6 +216,7 @@ export default function TrainingPage({
             <PerformanceCharts />
           ) : (
           <div className="space-y-3">
+            <DailyChallengeCard />
             <CategoryProgress />
             {(() => {
               const grouped = new Map<string, string[]>();
@@ -411,6 +413,7 @@ export default function TrainingPage({
             xpEarned={gradeData.xp_earned}
             hintsUsed={gradeData.hints_used ?? hintsUsed}
             responseId={responseId ?? undefined}
+            scenarioId={scenario?.id}
           />
           <div className="text-center">
             <button

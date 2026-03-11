@@ -6,5 +6,7 @@ from app.models.document import Document
 from app.models.xp_transaction import XPTransaction
 from app.models.badge import Badge, UserBadge
 from app.models.embedding_cache import EmbeddingCache
+from app.models.bookmark import Bookmark
+from app.models.challenge import DailyChallenge
 
-__all__ = ["User", "Scenario", "Response", "Grade", "Document", "XPTransaction", "Badge", "UserBadge", "EmbeddingCache"]
+__all__ = ["User", "Scenario", "Response", "Grade", "Document", "XPTransaction", "Badge", "UserBadge", "EmbeddingCache", "Bookmark", "DailyChallenge"]

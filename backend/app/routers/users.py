@@ -42,6 +42,7 @@ def _user_response(user: User):
             for ct in sorted(unlocked, key=lambda x: (x.category, x.difficulty))
         ],
         "all_categories": SCENARIO_CATEGORIES,
+        "has_onboarded": user.has_onboarded,
     }
 
 
