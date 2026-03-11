@@ -22,8 +22,17 @@ class GenerateRequest(BaseModel):
 
 
 @router.post("/generate")
-async def generate(req: GenerateRequest, db: AsyncSession = Depends(get_db)):
-    scenario_data = await generate_scenario(db, req.category, req.difficulty)
+async def generate(
+    req: GenerateRequest,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    scenario_data = await generate_scenario(
+        db,
+        req.category,
+        req.difficulty,
+        user_id=str(current_user.id),
+    )
 
     scenario = Scenario(
         category=scenario_data["category"],

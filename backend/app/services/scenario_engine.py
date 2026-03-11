@@ -44,6 +44,7 @@ SKIP_RAG_CATEGORIES = {
 
 _generation_cache: dict[str, tuple[float, dict]] = {}
 _cache_lock = asyncio.Lock()
+_user_seen_signatures: dict[str, set[str]] = {}
 _latency_window = 500
 _perf_stats = {
     "scenario": {"requests_total": 0, "cache_hits": 0, "total_ms": deque(maxlen=_latency_window), "model_ms": deque(maxlen=_latency_window)},
@@ -60,7 +61,20 @@ def _cache_key(kind: str, prompt: str) -> str:
     return f"{kind}:{prompt_hash}"
 
 
-async def _cache_get(key: str) -> dict | None:
+def _content_signature(content: dict) -> str:
+    canonical = json.dumps(content, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(canonical.encode("utf-8")).hexdigest()
+
+
+async def _mark_user_seen(user_id: str | None, signature: str) -> None:
+    if not user_id:
+        return
+    async with _cache_lock:
+        seen = _user_seen_signatures.setdefault(user_id, set())
+        seen.add(signature)
+
+
+async def _cache_get(key: str, user_id: str | None = None) -> dict | None:
     if not settings.generation_cache_enabled:
         return None
     now = time.time()
@@ -72,6 +86,12 @@ async def _cache_get(key: str) -> dict | None:
         if expires_at <= now:
             _generation_cache.pop(key, None)
             return None
+        signature = payload.get("signature")
+        if signature and user_id:
+            seen = _user_seen_signatures.setdefault(user_id, set())
+            if signature in seen:
+                return None
+            seen.add(signature)
         return payload
 
 
@@ -199,6 +219,7 @@ async def generate_scenario(
     db,
     category: str,
     difficulty: str = "beginner",
+    user_id: str | None = None,
 ) -> dict:
     """Generate a single scenario using optional RAG context + Claude."""
     started = time.perf_counter()
@@ -208,7 +229,7 @@ async def generate_scenario(
     cache_key = _cache_key("scenario", prompt)
 
     cache_started = time.perf_counter()
-    cached = await _cache_get(cache_key)
+    cached = await _cache_get(cache_key, user_id=user_id)
     if cached:
         total_ms = int((time.perf_counter() - started) * 1000)
         record_perf_metric("scenario", cache_hit=True, total_ms=total_ms, model_ms=0)
@@ -224,11 +245,14 @@ async def generate_scenario(
 
     raw_text = await run_scenario_graph(prompt)
     scenario_data = parse_scenario_json(raw_text)
+    signature = _content_signature(scenario_data)
+    await _mark_user_seen(user_id, signature)
     result = {
         "category": category,
         "difficulty": difficulty,
         "content": scenario_data,
         "context_chunks": trimmed_chunks,
+        "signature": signature,
     }
     await _cache_set(cache_key, result)
     model_ms = int((time.perf_counter() - model_started) * 1000)
@@ -249,7 +273,16 @@ async def get_cached_scenario_from_prompt(prompt: str) -> dict | None:
     return await _cache_get(_cache_key("scenario", prompt))
 
 
-async def cache_scenario_from_prompt(prompt: str, payload: dict) -> None:
+async def get_cached_scenario_for_user(prompt: str, user_id: str | None) -> dict | None:
+    return await _cache_get(_cache_key("scenario", prompt), user_id=user_id)
+
+
+async def cache_scenario_from_prompt(prompt: str, payload: dict, user_id: str | None = None) -> None:
+    content = payload.get("content", {})
+    signature = _content_signature(content) if content else ""
+    if signature:
+        payload["signature"] = signature
+        await _mark_user_seen(user_id, signature)
     await _cache_set(_cache_key("scenario", prompt), payload)
 
 

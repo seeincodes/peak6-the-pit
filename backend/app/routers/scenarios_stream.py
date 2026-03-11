@@ -15,7 +15,7 @@ from app.services.scenario_engine import (
     parse_scenario_json,
     build_scenario_prompt,
     build_rag_context,
-    get_cached_scenario_from_prompt,
+    get_cached_scenario_for_user,
     cache_scenario_from_prompt,
 )
 from app.services.scenario_graph import stream_scenario_graph
@@ -44,7 +44,7 @@ async def generate_stream(
 
     async def event_stream():
         full_text = ""
-        cached = await get_cached_scenario_from_prompt(prompt)
+        cached = await get_cached_scenario_for_user(prompt, str(user.id))
         if cached:
             try:
                 scenario = Scenario(
@@ -90,6 +90,7 @@ async def generate_stream(
                     "content": scenario_data,
                     "context_chunks": trimmed_chunks,
                 },
+                user_id=str(user.id),
             )
         except (json.JSONDecodeError, ValueError) as e:
             yield f"data: {json.dumps({'type': 'error', 'message': f'Failed to parse scenario: {e}'})}\n\n"
