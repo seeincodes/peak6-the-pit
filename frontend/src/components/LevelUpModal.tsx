@@ -1,6 +1,7 @@
 import { useEffect, useRef } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowUpCircle } from "lucide-react";
+import ConfettiEffect from "./ConfettiEffect";
 
 interface LevelUpModalProps {
   show: boolean;
@@ -36,13 +37,14 @@ export default function LevelUpModal({ show, level, title, newUnlocks, onClose }
           onClick={onClose}
           onKeyDown={(e) => { if (e.key === "Escape") onClose(); }}
         >
+          <ConfettiEffect />
           <motion.div
             initial={{ scale: 0.5, opacity: 0 }}
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.5, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300 }}
             ref={modalRef}
-            className="bg-cm-card border border-cm-primary rounded-md p-8 text-center max-w-md"
+            className="bg-cm-card border border-cm-primary rounded-md p-8 text-center max-w-md relative z-10"
             onClick={(e) => e.stopPropagation()}
           >
             <motion.div

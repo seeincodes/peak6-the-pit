@@ -20,6 +20,7 @@ from app.prompts.grading_rubric import (
     GRADING_SYSTEM_PROMPT,
     PROBE_TEMPLATE,
     GRADE_TEMPLATE,
+    MODEL_ANSWER_TEMPLATE,
 )
 from app.prompts.mcq_generation import MCQ_JUSTIFY_GRADE_TEMPLATE
 
@@ -120,6 +121,33 @@ async def grade_response(
     )
 
     return parse_grade_json(message.content[0].text)
+
+
+async def generate_model_answer(
+    scenario_content: dict,
+    category: str = "",
+    difficulty: str = "beginner",
+) -> str:
+    """Generate a model (ideal) answer for a scenario."""
+    rag_context = await _get_grading_context(category, difficulty) if category else "No specific reference material available."
+
+    prompt = MODEL_ANSWER_TEMPLATE.format(
+        title=scenario_content["title"],
+        setup=scenario_content["setup"],
+        question=scenario_content["question"],
+        rag_context=rag_context,
+    )
+
+    message = await anthropic_client.messages.create(
+        model="claude-sonnet-4-6",
+        max_tokens=1024,
+        system=GRADING_SYSTEM_PROMPT,
+        messages=[{"role": "user", "content": prompt}],
+        temperature=0.3,
+    )
+
+    result = _parse_json(message.content[0].text)
+    return result["model_answer"]
 
 
 async def grade_mcq_justification(

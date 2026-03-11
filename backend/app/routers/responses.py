@@ -10,7 +10,7 @@ from app.models.response import Response
 from app.models.grade import Grade
 from app.models.xp_transaction import XPTransaction
 from app.models.user import User
-from app.services.grading_agent import generate_probe, grade_response, compute_xp
+from app.services.grading_agent import generate_probe, grade_response, compute_xp, generate_model_answer
 from app.services.badge_service import check_and_award_badges
 from app.middleware.auth import get_current_user
 
@@ -118,3 +118,27 @@ async def continue_response(
         "new_badges": new_badges,
         "hints_used": req.hints_used,
     }
+
+
+@router.post("/{response_id}/model-answer")
+async def get_model_answer(
+    response_id: UUID,
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    response = await db.get(Response, response_id)
+    if not response:
+        raise HTTPException(status_code=404, detail="Response not found")
+    if response.user_id != user.id:
+        raise HTTPException(status_code=403, detail="Not your response")
+
+    scenario = await db.get(Scenario, response.scenario_id)
+    if not scenario:
+        raise HTTPException(status_code=404, detail="Scenario not found")
+
+    model_answer = await generate_model_answer(
+        scenario.content,
+        category=scenario.category,
+        difficulty=scenario.difficulty,
+    )
+    return {"model_answer": model_answer}

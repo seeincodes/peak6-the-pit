@@ -96,3 +96,26 @@ Output JSON:
   "feedback": "2-3 sentences of actionable feedback. Be specific — reference what they said. Suggest one concrete improvement.",
   "confidence": <0.0-1.0, how confident you are in this grade>
 }}"""
+
+MODEL_ANSWER_TEMPLATE = """Write a model answer for this trading scenario that would score 5/5 on all dimensions.
+
+<scenario>
+Title: {title}
+Setup: {setup}
+Question: {question}
+</scenario>
+
+<reference_material>
+{rag_context}
+</reference_material>
+
+Write a concise, expert-level response (150-250 words) that demonstrates:
+- Multi-layered reasoning with second-order effects
+- Precise options/vol terminology
+- A specific, actionable trade with clear entry/exit rationale
+- Explicit risk identification and hedging considerations
+
+Output JSON:
+{{
+  "model_answer": "The full model response text"
+}}"""

@@ -6,7 +6,9 @@ import ScenarioCard from "../components/ScenarioCard";
 import ResponseInput from "../components/ResponseInput";
 import GradeReveal from "../components/GradeReveal";
 import LevelUpModal from "../components/LevelUpModal";
+import BadgeUnlockModal from "../components/BadgeUnlockModal";
 import PerformanceCharts from "../components/charts/PerformanceCharts";
+import CategoryProgress from "../components/CategoryProgress";
 import api from "../api/client";
 import { categoryDisplay, categoryColors } from "../theme/colors";
 
@@ -24,6 +26,13 @@ interface ScenarioData {
   };
 }
 
+interface BadgeData {
+  name: string;
+  description: string;
+  icon: string;
+  tier: string;
+}
+
 interface GradeData {
   grade: {
     dimension_scores: Record<string, number>;
@@ -34,6 +43,7 @@ interface GradeData {
   xp_total: number;
   level: number;
   hints_used?: number;
+  new_badges?: BadgeData[];
 }
 
 export default function TrainingPage({
@@ -49,6 +59,8 @@ export default function TrainingPage({
   const [gradeData, setGradeData] = useState<GradeData | null>(null);
   const [_prevLevel, setPrevLevel] = useState<number | null>(null);
   const [showLevelUp, setShowLevelUp] = useState(false);
+  const [showBadges, setShowBadges] = useState(false);
+  const [earnedBadges, setEarnedBadges] = useState<BadgeData[]>([]);
   const [deepError, setDeepError] = useState<string | null>(null);
   const [showStats, setShowStats] = useState(false);
   const [hintsUsed, setHintsUsed] = useState(0);
@@ -87,6 +99,11 @@ export default function TrainingPage({
         setShowLevelUp(true);
       }
 
+      if (data.new_badges && data.new_badges.length > 0) {
+        setEarnedBadges(data.new_badges);
+        setShowBadges(true);
+      }
+
       queryClient.invalidateQueries({ queryKey: ["user"] });
     },
   });
@@ -100,6 +117,7 @@ export default function TrainingPage({
     setGradeData(null);
     setDeepError(null);
     setHintsUsed(0);
+    setEarnedBadges([]);
   };
 
   const generateStreaming = async (params: { category: string; difficulty: string }) => {
@@ -197,6 +215,7 @@ export default function TrainingPage({
             <PerformanceCharts />
           ) : (
           <div className="space-y-3">
+            <CategoryProgress />
             {(() => {
               const grouped = new Map<string, string[]>();
               for (const cat of unlockedCategories) {
@@ -391,6 +410,7 @@ export default function TrainingPage({
             feedback={gradeData.grade.feedback}
             xpEarned={gradeData.xp_earned}
             hintsUsed={gradeData.hints_used ?? hintsUsed}
+            responseId={responseId ?? undefined}
           />
           <div className="text-center">
             <button
@@ -412,6 +432,12 @@ export default function TrainingPage({
           onClose={() => setShowLevelUp(false)}
         />
       )}
+
+      <BadgeUnlockModal
+        show={showBadges}
+        badges={earnedBadges}
+        onClose={() => setShowBadges(false)}
+      />
     </div>
   );
 }

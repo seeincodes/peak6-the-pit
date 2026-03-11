@@ -1,9 +1,10 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, Timer, Zap } from "lucide-react";
 import MCQCard from "../components/MCQCard";
 import MCQFeedback from "../components/MCQFeedback";
 import StreakBadge from "../components/StreakBadge";
+import QuickFireScoreCard from "../components/QuickFireScoreCard";
 import api from "../api/client";
 
 interface MCQData {
@@ -28,7 +29,10 @@ interface MCQResult {
   level: number;
 }
 
-type Phase = "loading" | "question" | "justify" | "feedback";
+type Phase = "loading" | "question" | "justify" | "feedback" | "summary";
+type TimerOption = 0 | 30 | 60;
+
+const LIGHTNING_ROUND_COUNT = 10;
 
 export default function QuickFirePage({
   category,
@@ -50,16 +54,79 @@ export default function QuickFirePage({
   const [totalXP, setTotalXP] = useState(0);
   const [questionCount, setQuestionCount] = useState(initialMCQ ? 1 : 0);
 
+  // Timer state
+  const [timerOption, setTimerOption] = useState<TimerOption>(0);
+  const [timeLeft, setTimeLeft] = useState(0);
+  const timerRef = useRef<ReturnType<typeof setInterval> | null>(null);
+
+  // Lightning round tracking
+  const [lightningMode, setLightningMode] = useState(false);
+  const [correctCount, setCorrectCount] = useState(0);
+  const [goodJustCount, setGoodJustCount] = useState(0);
+
   const prefetchQueue = useRef<MCQData[]>([]);
   const queryClient = useQueryClient();
 
-  // Fetch a single MCQ
+  // Advance to next question helper
+  const advanceToNext = useCallback(() => {
+    const next = prefetchQueue.current.shift();
+    if (next) {
+      setCurrentMCQ(next);
+      setPhase("question");
+    } else {
+      setPhase("loading");
+      fetchMCQRef.current().then((mcq) => {
+        setCurrentMCQ(mcq);
+        setPhase("question");
+      });
+    }
+    setSelectedKey(null);
+    setJustification("");
+    setResult(null);
+    setQuestionCount((prev) => prev + 1);
+  }, []);
+
+  // Timer logic
+  useEffect(() => {
+    if (timerRef.current) clearInterval(timerRef.current);
+    if (timerOption === 0 || phase !== "question") return;
+
+    setTimeLeft(timerOption);
+    timerRef.current = setInterval(() => {
+      setTimeLeft((prev) => {
+        if (prev <= 1) {
+          if (timerRef.current) clearInterval(timerRef.current);
+          return 0;
+        }
+        return prev - 1;
+      });
+    }, 1000);
+
+    return () => { if (timerRef.current) clearInterval(timerRef.current); };
+  }, [timerOption, phase, currentMCQ?.id]);
+
+  // Handle timer expiry separately to avoid stale closures
+  useEffect(() => {
+    if (timerOption > 0 && timeLeft === 0 && phase === "question" && currentMCQ) {
+      setStreak(0);
+      if (lightningMode && questionCount >= LIGHTNING_ROUND_COUNT) {
+        setPhase("summary");
+      } else {
+        advanceToNext();
+      }
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [timeLeft]);
+
   const fetchMCQ = useCallback(async (): Promise<MCQData> => {
     const res = await api.post("/mcq/generate", { category, difficulty });
     return res.data;
   }, [category, difficulty]);
 
-  // Prefetch next questions in background
+  // Stable ref for fetchMCQ to use in advanceToNext
+  const fetchMCQRef = useRef(fetchMCQ);
+  fetchMCQRef.current = fetchMCQ;
+
   const prefetch = useCallback(async () => {
     while (prefetchQueue.current.length < 2) {
       try {
@@ -71,7 +138,6 @@ export default function QuickFirePage({
     }
   }, [fetchMCQ]);
 
-  // Load first question (use initialMCQ if provided, else fetch) + start prefetch
   useEffect(() => {
     if (initialMCQ) {
       setCurrentMCQ(initialMCQ);
@@ -96,6 +162,7 @@ export default function QuickFirePage({
   const handleSelect = (key: string) => {
     setSelectedKey(key);
     setPhase("justify");
+    if (timerRef.current) clearInterval(timerRef.current);
   };
 
   const submitMutation = useMutation({
@@ -115,38 +182,47 @@ export default function QuickFirePage({
 
       if (data.is_correct) {
         setStreak((prev) => prev + 1);
+        setCorrectCount((prev) => prev + 1);
       } else {
         setStreak(0);
       }
 
-      queryClient.invalidateQueries({ queryKey: ["user"] });
+      if (data.justification_quality === "good") {
+        setGoodJustCount((prev) => prev + 1);
+      }
 
-      // Trigger more prefetch
+      queryClient.invalidateQueries({ queryKey: ["user"] });
       prefetch();
     },
   });
 
   const handleNext = () => {
-    // Pull from prefetch queue or fetch fresh
-    const next = prefetchQueue.current.shift();
-    if (next) {
-      setCurrentMCQ(next);
-      setPhase("question");
-    } else {
-      setPhase("loading");
-      fetchMCQ().then((mcq) => {
-        setCurrentMCQ(mcq);
-        setPhase("question");
-      });
+    if (lightningMode && questionCount >= LIGHTNING_ROUND_COUNT) {
+      setPhase("summary");
+      return;
     }
+    advanceToNext();
+    prefetch();
+  };
+
+  const resetRound = () => {
+    setTotalXP(0);
+    setCorrectCount(0);
+    setGoodJustCount(0);
+    setStreak(0);
     setSelectedKey(null);
     setJustification("");
     setResult(null);
-    setQuestionCount((prev) => prev + 1);
-
-    // Keep prefetching
-    prefetch();
+    setQuestionCount(0);
+    advanceToNext();
   };
+
+  const toggleLightning = () => {
+    setLightningMode((prev) => !prev);
+    resetRound();
+  };
+
+  const timerPct = timerOption > 0 ? (timeLeft / timerOption) * 100 : 0;
 
   return (
     <div className="max-w-3xl mx-auto p-8 space-y-4">
@@ -158,12 +234,67 @@ export default function QuickFirePage({
         >
           <ArrowLeft size={16} aria-hidden="true" /> Back
         </button>
-        <div className="flex items-center gap-4" aria-live="polite">
+        <div className="flex items-center gap-3" aria-live="polite">
+          {/* Timer toggle */}
+          <div className="flex items-center gap-1">
+            <Timer size={12} className="text-cm-muted" />
+            {([0, 30, 60] as TimerOption[]).map((opt) => (
+              <button
+                key={opt}
+                onClick={() => setTimerOption(opt)}
+                className={`text-xs px-1.5 py-0.5 rounded transition-colors ${
+                  timerOption === opt
+                    ? "bg-cm-primary/20 text-cm-primary font-semibold"
+                    : "text-cm-muted hover:text-cm-text"
+                }`}
+              >
+                {opt === 0 ? "Off" : `${opt}s`}
+              </button>
+            ))}
+          </div>
+
+          {/* Lightning round toggle */}
+          <button
+            onClick={toggleLightning}
+            className={`flex items-center gap-1 text-xs px-2 py-1 rounded transition-colors ${
+              lightningMode
+                ? "bg-cm-amber/20 text-cm-amber font-semibold"
+                : "text-cm-muted hover:text-cm-text"
+            }`}
+          >
+            <Zap size={12} />
+            {lightningMode ? `${questionCount}/${LIGHTNING_ROUND_COUNT}` : "Lightning"}
+          </button>
+
           <StreakBadge count={streak} />
           <span className="text-cm-lime font-bold text-sm">+{totalXP} XP</span>
           <span className="text-cm-muted text-xs">Q{questionCount}</span>
         </div>
       </div>
+
+      {/* Timer bar */}
+      {timerOption > 0 && phase === "question" && (
+        <div className="h-1 rounded-full bg-cm-border/40 overflow-hidden">
+          <div
+            className="h-full rounded-full transition-all duration-1000 ease-linear"
+            style={{
+              width: `${timerPct}%`,
+              backgroundColor: timeLeft <= 5 ? "#EF4444" : timeLeft <= 10 ? "#F59E0B" : "#4D34EF",
+            }}
+          />
+        </div>
+      )}
+
+      {phase === "summary" && (
+        <QuickFireScoreCard
+          correct={correctCount}
+          total={LIGHTNING_ROUND_COUNT}
+          totalXP={totalXP}
+          goodJustifications={goodJustCount}
+          onPlayAgain={resetRound}
+          onExit={onExit}
+        />
+      )}
 
       {phase === "loading" && (
         <div role="status" aria-live="polite" className="text-center text-cm-primary animate-pulse py-12">

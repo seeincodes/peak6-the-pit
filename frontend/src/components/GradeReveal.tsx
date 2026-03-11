@@ -1,6 +1,8 @@
-import { motion } from "framer-motion";
-import { Lightbulb } from "lucide-react";
+import { useState } from "react";
+import { motion, AnimatePresence } from "framer-motion";
+import { Lightbulb, BookOpen, Loader2 } from "lucide-react";
 import RadarScoreChart from "./charts/RadarScoreChart";
+import api from "../api/client";
 
 interface GradeRevealProps {
   dimensionScores: Record<string, number>;
@@ -8,6 +10,7 @@ interface GradeRevealProps {
   feedback: string;
   xpEarned: number;
   hintsUsed?: number;
+  responseId?: string;
 }
 
 export default function GradeReveal({
@@ -16,7 +19,24 @@ export default function GradeReveal({
   feedback,
   xpEarned,
   hintsUsed = 0,
+  responseId,
 }: GradeRevealProps) {
+  const [modelAnswer, setModelAnswer] = useState<string | null>(null);
+  const [loadingModel, setLoadingModel] = useState(false);
+
+  const fetchModelAnswer = async () => {
+    if (!responseId || modelAnswer) return;
+    setLoadingModel(true);
+    try {
+      const res = await api.post(`/responses/${responseId}/model-answer`);
+      setModelAnswer(res.data.model_answer);
+    } catch {
+      setModelAnswer("Failed to load model answer. Please try again.");
+    } finally {
+      setLoadingModel(false);
+    }
+  };
+
   return (
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
@@ -65,6 +85,45 @@ export default function GradeReveal({
         <h3 className="cm-heading-sm text-cm-amber mb-2">Feedback</h3>
         <p className="cm-body">{feedback}</p>
       </motion.div>
+
+      {responseId && (
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 1.4 }}
+          className="mt-4"
+        >
+          {!modelAnswer && (
+            <button
+              onClick={fetchModelAnswer}
+              disabled={loadingModel}
+              className="flex items-center gap-2 text-sm text-cm-primary hover:text-cm-primary/80 transition-colors disabled:opacity-50"
+            >
+              {loadingModel ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                <BookOpen size={14} />
+              )}
+              {loadingModel ? "Generating model answer..." : "Show Model Answer"}
+            </button>
+          )}
+          <AnimatePresence>
+            {modelAnswer && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                className="mt-3 p-4 rounded-md border border-cm-primary/20 bg-cm-primary/5"
+              >
+                <h4 className="text-sm font-semibold text-cm-primary mb-2 flex items-center gap-1.5">
+                  <BookOpen size={14} />
+                  Model Answer (5/5)
+                </h4>
+                <p className="text-sm text-cm-text leading-relaxed">{modelAnswer}</p>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </motion.div>
+      )}
     </motion.div>
   );
 }

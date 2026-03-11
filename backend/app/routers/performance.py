@@ -15,6 +15,30 @@ from app.middleware.auth import get_current_user
 router = APIRouter(prefix="/api/performance", tags=["performance"])
 
 
+@router.get("/category-summary")
+async def get_category_summary(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """All-time per-category stats: attempts and avg score."""
+    stmt = (
+        select(
+            Scenario.category,
+            func.avg(Grade.overall_score).label("avg_score"),
+            func.count().label("attempts"),
+        )
+        .join(Response, Grade.response_id == Response.id)
+        .join(Scenario, Response.scenario_id == Scenario.id)
+        .where(Response.user_id == current_user.id)
+        .group_by(Scenario.category)
+    )
+    rows = (await db.execute(stmt)).all()
+    return [
+        {"category": r.category, "avg_score": round(float(r.avg_score), 1), "attempts": r.attempts}
+        for r in rows
+    ]
+
+
 @router.get("/history")
 async def get_performance_history(
     days: int = Query(30, ge=7, le=90),
