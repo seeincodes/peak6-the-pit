@@ -1,3 +1,4 @@
+import asyncio
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI
@@ -14,23 +15,42 @@ from app.models.user import User
 from app.database import async_session
 
 
+async def _safe(name: str, coro, timeout: float = 15):
+    """Run a coroutine with a timeout; log but never crash."""
+    try:
+        await asyncio.wait_for(coro, timeout=timeout)
+    except asyncio.TimeoutError:
+        print(f"Warning: {name} timed out after {timeout}s, skipping")
+    except Exception as e:
+        print(f"Warning: {name} failed: {e}")
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Pre-warm MCQ pool for instant Quick Fire load
-    await prewarm([
+    # Seed badges (DB-only, safe to run)
+    await _safe("badge seeding", _seed_badges())
+    await _safe("badge awarding", _award_existing_badges())
+
+    # Pre-warm tasks (non-critical, fire and forget)
+    await _safe("MCQ prewarm", prewarm([
         ("iv_analysis", "beginner"),
         ("greeks", "beginner"),
         ("order_flow", "beginner"),
-    ])
-    # Pre-warm RAG embedding cache for instant Deep Analysis
-    await prewarm_embeddings()
-    # Fetch live market data for scenario grounding
-    await prewarm_market_data()
+    ]))
+    await _safe("embedding prewarm", prewarm_embeddings(), timeout=30)
+    await _safe("market data prewarm", prewarm_market_data())
+
+    yield
+
+
+async def _seed_badges():
     async with async_session() as db:
         count = await seed_badges(db)
         if count:
             print(f"Seeded {count} new badges")
-    # Award any earned badges to existing users (covers seed users)
+
+
+async def _award_existing_badges():
     async with async_session() as db:
         from sqlalchemy import select
         users = (await db.execute(select(User))).scalars().all()
@@ -41,7 +61,6 @@ async def lifespan(app: FastAPI):
         if total_awarded:
             await db.commit()
             print(f"Awarded {total_awarded} badges to existing users")
-    yield
 
 
 app = FastAPI(
