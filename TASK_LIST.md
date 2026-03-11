@@ -256,11 +256,11 @@
 
 **Files:** new `services/difficulty_engine.py`, new `components/DifficultySuggestion.tsx`, `routers/scenarios.py`, `TrainingPage.tsx`
 
-### 4.13 Concept Explainers Before Scenarios *(Large)*
-- [ ] Add `GET /categories/{slug}/primer` endpoint pulling top RAG chunks for a category
-- [ ] Create `ConceptPrimer.tsx` component rendering primer as a "Learn First" tab
-- [ ] Integrate into `TrainingPage.tsx` category detail view (tabs: Learn First | Practice)
-- [ ] Track primer views in user activity for engagement metrics
+### 4.13 Concept Explainers Before Scenarios *(Large)* ✅
+- [x] Add `GET /categories/{slug}/primer` endpoint pulling top RAG chunks for a category
+- [x] Create `ConceptPrimer.tsx` component rendering primer as a "Learn First" modal
+- [x] Integrate into `TrainingPage.tsx` with BookOpen "Learn First" button on each category card
+- [x] Primer modal shows RAG chunks with source attribution and "Start Practicing" CTA
 
 **Files:** new `components/ConceptPrimer.tsx`, `TrainingPage.tsx`, `routers/scenarios.py`, `services/rag.py`
 

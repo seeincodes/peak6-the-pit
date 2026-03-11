@@ -11,6 +11,7 @@ from app.middleware.auth import get_current_user
 from app.services.scenario_engine import generate_scenario
 from app.services.recommendation import get_recommendations
 from app.services.difficulty_engine import get_difficulty_suggestions
+from app.services.rag import retrieve_chunks, build_retrieval_query, CATEGORY_QUERIES
 
 router = APIRouter(prefix="/api/scenarios", tags=["scenarios"])
 
@@ -62,6 +63,23 @@ async def difficulty_suggestions(
     """Return adaptive difficulty suggestions based on recent performance."""
     unlocked = current_user.unlocked_categories or []
     return await get_difficulty_suggestions(db, current_user.id, unlocked)
+
+
+@router.get("/categories/{slug}/primer")
+async def get_category_primer(
+    slug: str,
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Return top RAG chunks for a category as learning primer content."""
+    if slug not in CATEGORY_QUERIES:
+        raise HTTPException(status_code=404, detail="Category not found")
+    query = build_retrieval_query(slug, "beginner")
+    chunks = await retrieve_chunks(db, query, top_k=5)
+    return {
+        "category": slug,
+        "chunks": [{"content": c["content"], "source": c["filename"]} for c in chunks],
+    }
 
 
 @router.get("/{scenario_id}")

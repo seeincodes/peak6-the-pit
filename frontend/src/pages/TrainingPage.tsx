@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { ArrowLeft, Star } from "lucide-react";
+import { ArrowLeft, Star, BookOpen } from "lucide-react";
 import ScenarioCard from "../components/ScenarioCard";
 import ResponseInput from "../components/ResponseInput";
 import GradeReveal from "../components/GradeReveal";
@@ -10,6 +10,7 @@ import BadgeUnlockModal from "../components/BadgeUnlockModal";
 import CategoryProgress from "../components/CategoryProgress";
 import RecommendedSection from "../components/RecommendedSection";
 import DifficultySuggestion from "../components/DifficultySuggestion";
+import ConceptPrimer from "../components/ConceptPrimer";
 import OnboardingModal from "../components/OnboardingModal";
 import api from "../api/client";
 import { categoryDisplay, categoryColors } from "../theme/colors";
@@ -67,6 +68,7 @@ export default function TrainingPage({
   const [showBadges, setShowBadges] = useState(false);
   const [earnedBadges, setEarnedBadges] = useState<BadgeData[]>([]);
   const [deepError, setDeepError] = useState<string | null>(null);
+  const [primerCategory, setPrimerCategory] = useState<string | null>(null);
   const [hintsUsed, setHintsUsed] = useState(0);
   const queryClient = useQueryClient();
 
@@ -260,6 +262,14 @@ export default function TrainingPage({
                         </span>
                       </div>
                       <div className="flex items-center gap-2">
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setPrimerCategory(category); }}
+                          className="text-cm-muted hover:text-cm-primary transition-colors p-1"
+                          aria-label={`Learn ${categoryDisplay[category] || category} concepts`}
+                          title="Learn First"
+                        >
+                          <BookOpen size={14} />
+                        </button>
                         <span className="capitalize text-cm-muted text-xs">{sorted[0]}</span>
                         <span className="flex items-center gap-0.5">
                           {[1, 2, 3].map((i) => (
@@ -277,14 +287,24 @@ export default function TrainingPage({
 
                 return (
                   <div key={category} className="cm-surface p-4">
-                    <div className="flex items-center gap-2 mb-3">
-                      <span
-                        className="w-2 h-2 rounded-full flex-shrink-0"
-                        style={{ backgroundColor: color }}
-                      />
-                      <span className="text-cm-text font-semibold text-sm">
-                        {categoryDisplay[category] || category.replace(/_/g, " ")}
-                      </span>
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="w-2 h-2 rounded-full flex-shrink-0"
+                          style={{ backgroundColor: color }}
+                        />
+                        <span className="text-cm-text font-semibold text-sm">
+                          {categoryDisplay[category] || category.replace(/_/g, " ")}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => setPrimerCategory(category)}
+                        className="text-cm-muted hover:text-cm-primary transition-colors p-1"
+                        aria-label={`Learn ${categoryDisplay[category] || category} concepts`}
+                        title="Learn First"
+                      >
+                        <BookOpen size={14} />
+                      </button>
                     </div>
                     <div className="flex gap-2">
                       {sorted.map((difficulty) => {
@@ -451,6 +471,13 @@ export default function TrainingPage({
         show={showOnboarding}
         onComplete={() => setShowOnboarding(false)}
       />
+
+      {primerCategory && (
+        <ConceptPrimer
+          category={primerCategory}
+          onClose={() => setPrimerCategory(null)}
+        />
+      )}
     </div>
   );
 }
