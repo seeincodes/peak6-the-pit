@@ -117,6 +117,11 @@ DAILY_FIRST_MCQ_BONUS = 15     # first MCQ session today
 MCQ_JUSTIFY_MAX_CHARS = 200
 RUBRIC_DIMENSIONS = ["reasoning", "terminology", "trade_logic", "risk_awareness"]
 
+# Peer Review XP
+PEER_REVIEW_BASE_XP = 15
+PEER_REVIEW_QUALITY_BONUS = 10
+PEER_REVIEW_QUALITY_THRESHOLD = 0.8
+
 SCENARIO_CATEGORIES = [
     "iv_analysis", "realized_vol", "greeks", "order_flow", "macro",
     "term_structure", "skew", "correlation", "event_vol", "tail_risk",

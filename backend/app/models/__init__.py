@@ -8,5 +8,6 @@ from app.models.badge import Badge, UserBadge
 from app.models.embedding_cache import EmbeddingCache
 from app.models.bookmark import Bookmark
 from app.models.challenge import DailyChallenge
+from app.models.peer_review import PeerReview
 
-__all__ = ["User", "Scenario", "Response", "Grade", "Document", "XPTransaction", "Badge", "UserBadge", "EmbeddingCache", "Bookmark", "DailyChallenge"]
+__all__ = ["User", "Scenario", "Response", "Grade", "Document", "XPTransaction", "Badge", "UserBadge", "EmbeddingCache", "Bookmark", "DailyChallenge", "PeerReview"]

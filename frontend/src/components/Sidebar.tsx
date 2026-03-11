@@ -6,6 +6,7 @@ import {
   BookOpen,
   Bookmark,
   Target,
+  Users,
   LogOut,
   Flame,
   ChevronLeft,
@@ -37,6 +38,7 @@ const NAV_ITEMS = [
   { to: "/", icon: Crosshair, label: "Training", matchExact: true },
   { to: "/review", icon: BookOpen, label: "Review", matchExact: false },
   { to: "/bookmarks", icon: Bookmark, label: "Bookmarks", matchExact: false },
+  { to: "/peer-review", icon: Users, label: "Peer Review", matchExact: false },
   { to: "/progress", icon: Target, label: "Progress", matchExact: false },
   { to: "/leaderboard", icon: Trophy, label: "Leaderboard", matchExact: false },
 ];

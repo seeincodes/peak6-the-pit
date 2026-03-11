@@ -21,6 +21,57 @@ def _start_of_week() -> datetime:
     return naive
 
 
+@router.get("/teams")
+async def get_team_leaderboard(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Aggregate XP by cohort, return team-level stats with member breakdown."""
+    result = await db.execute(
+        select(
+            User.cohort,
+            func.sum(User.xp_total).label("team_xp"),
+            func.count(User.id).label("member_count"),
+            func.avg(User.xp_total).label("avg_xp"),
+        )
+        .where(User.cohort.isnot(None))
+        .group_by(User.cohort)
+        .order_by(func.sum(User.xp_total).desc())
+    )
+    teams = result.all()
+
+    entries = []
+    for rank, team in enumerate(teams, 1):
+        members_result = await db.execute(
+            select(User)
+            .where(User.cohort == team.cohort)
+            .order_by(User.xp_total.desc())
+        )
+        members = members_result.scalars().all()
+
+        entries.append({
+            "rank": rank,
+            "cohort": team.cohort,
+            "team_xp": int(team.team_xp),
+            "member_count": team.member_count,
+            "avg_xp": round(float(team.avg_xp), 1),
+            "is_current_user_team": current_user.cohort == team.cohort,
+            "members": [
+                {
+                    "user_id": str(m.id),
+                    "display_name": m.display_name,
+                    "xp": m.xp_total,
+                    "level": m.level,
+                    "level_title": get_level_title(m.level),
+                    "is_current_user": m.id == current_user.id,
+                }
+                for m in members
+            ],
+        })
+
+    return {"entries": entries}
+
+
 @router.get("")
 async def get_leaderboard(
     period: str = Query("all_time", pattern=r"^(all_time|weekly)$"),

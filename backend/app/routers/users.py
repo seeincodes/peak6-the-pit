@@ -22,6 +22,7 @@ class UpdateProfileRequest(BaseModel):
     display_name: Optional[str] = Field(None, min_length=1, max_length=100)
     avatar_id: Optional[str] = None
     bio: Optional[str] = Field(None, max_length=200)
+    cohort: Optional[str] = Field(None, max_length=50)
 
 
 def _user_response(user: User):
@@ -42,6 +43,7 @@ def _user_response(user: User):
             for ct in sorted(unlocked, key=lambda x: (x.category, x.difficulty))
         ],
         "all_categories": SCENARIO_CATEGORIES,
+        "cohort": user.cohort,
         "has_onboarded": user.has_onboarded,
     }
 
@@ -67,6 +69,8 @@ async def update_profile(
         user.avatar_id = req.avatar_id
     if req.bio is not None:
         user.bio = req.bio
+    if req.cohort is not None:
+        user.cohort = req.cohort
 
     await db.commit()
     await db.refresh(user)
