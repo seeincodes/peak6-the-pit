@@ -1,4 +1,3 @@
-import pytest
 from app.services.rag import chunk_text, build_retrieval_query
 
 

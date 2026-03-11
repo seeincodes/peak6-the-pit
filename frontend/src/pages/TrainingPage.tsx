@@ -218,7 +218,7 @@ export default function TrainingPage({
     setLoadingMsgIdx(Math.floor(Math.random() * loadingMessages.length));
     const interval = setInterval(() => {
       setLoadingMsgIdx((prev) => (prev + 1) % loadingMessages.length);
-    }, 3500);
+    }, 2750);
     return () => clearInterval(interval);
   }, [mode]);
 

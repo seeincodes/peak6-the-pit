@@ -6,7 +6,7 @@ weighting recent attempts higher and low scores higher.
 
 from datetime import datetime, timedelta, timezone
 
-from sqlalchemy import select, func
+from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.models.grade import Grade

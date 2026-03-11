@@ -6,7 +6,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
 from app.routers import health, scenarios, scenarios_stream, responses, users, auth, mcq, leaderboard, badges, performance, bookmarks, challenges
-from app.services.mcq_pool import prewarm
+from app.services.mcq_pool import prewarm as mcq_prewarm
 from app.services.rag import prewarm_embeddings
 from app.services.market_data import prewarm_market_data
 from app.services.badge_seeder import seed_badges
@@ -31,14 +31,14 @@ async def lifespan(app: FastAPI):
     await _safe("badge seeding", _seed_badges())
     await _safe("badge awarding", _award_existing_badges())
 
-    # Pre-warm tasks (non-critical, fire and forget)
-    await _safe("MCQ prewarm", prewarm([
+    # Pre-warm caches (non-critical)
+    await _safe("embedding prewarm", prewarm_embeddings(), timeout=30)
+    await _safe("market data prewarm", prewarm_market_data())
+    await _safe("MCQ prewarm", mcq_prewarm([
         ("iv_analysis", "beginner"),
         ("greeks", "beginner"),
         ("order_flow", "beginner"),
     ]))
-    await _safe("embedding prewarm", prewarm_embeddings(), timeout=30)
-    await _safe("market data prewarm", prewarm_market_data())
 
     yield
 

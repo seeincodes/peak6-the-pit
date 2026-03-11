@@ -1,6 +1,6 @@
 """Tests for MCQ pool service."""
 import pytest
-from unittest.mock import AsyncMock, patch, MagicMock
+from unittest.mock import AsyncMock, patch
 
 from app.services.mcq_pool import (
     get_from_pool,

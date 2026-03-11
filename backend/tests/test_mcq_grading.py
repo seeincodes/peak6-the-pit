@@ -1,5 +1,4 @@
 """Tests for MCQ grading service."""
-import pytest
 from app.services.grading_agent import compute_mcq_xp
 
 

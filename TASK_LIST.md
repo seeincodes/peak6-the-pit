@@ -7,7 +7,7 @@
 ### 0.1 Project Setup
 - [x] Initialize monorepo structure (Python backend + React frontend)
 - [x] Configure Docker Compose for local development (PostgreSQL, Redis, backend, frontend)
-- [ ] Set up CI pipeline (lint, test, build)
+- [x] Set up CI pipeline (lint, test, build)
 - [x] Configure environment variables and secrets management
 - [x] Set up PostgreSQL database with initial schema migration
 
@@ -98,13 +98,15 @@
 - [ ] Challenge queue UI and live match interface
 
 ### 2.2 Peer Review Module
+- [ ] Peer review mechanism for users to evaluate each other's responses
 - [ ] Assign completed responses to peers for review
 - [ ] Peer review rubric (simplified version of AI rubric)
 - [ ] Review quality scoring (compare peer grades to AI grades)
 - [ ] XP bonus for high-quality peer reviews
 - [ ] Peer review queue UI
 
-### 2.3 MTSS God View Dashboard
+### 2.3 MTSS Reporting / God View Dashboard
+- [ ] MTSS reporting pipeline to classify users into support tiers based on performance data
 - [ ] Educator dashboard with learner grid (skill dimensions as columns)
 - [ ] Automated Tier 1/2/3 classification algorithm
 - [ ] Tier classification criteria: Tier 1 (on track), Tier 2 (needs targeted support), Tier 3 (intensive intervention)

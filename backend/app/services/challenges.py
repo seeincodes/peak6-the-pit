@@ -1,6 +1,6 @@
 """Daily challenge generation and tracking."""
 import random
-from datetime import date, datetime, timezone
+from datetime import date
 from uuid import UUID
 
 from sqlalchemy import select

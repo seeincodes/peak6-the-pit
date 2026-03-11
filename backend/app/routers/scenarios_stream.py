@@ -13,8 +13,7 @@ from app.database import get_db
 from app.models.scenario import Scenario
 from app.models.user import User
 from app.prompts.scenario_generation import SYSTEM_PROMPT, SCENARIO_TEMPLATE, CATEGORY_DISPLAY
-from app.services.rag import build_retrieval_query, retrieve_chunks
-from app.services.market_data import get_market_snapshot
+from app.services.scenario_engine import _get_context
 from app.middleware.auth import get_current_user
 
 router = APIRouter(prefix="/api/scenarios", tags=["scenarios"])
@@ -33,10 +32,8 @@ async def generate_stream(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    query = build_retrieval_query(req.category, req.difficulty)
-    chunks = await retrieve_chunks(db, query, top_k=5)
+    chunks, market_snapshot = await _get_context(db, req.category, req.difficulty)
     rag_context = "\n\n---\n\n".join(c["content"] for c in chunks)
-    market_snapshot = await get_market_snapshot()
 
     category_display = CATEGORY_DISPLAY.get(req.category, req.category.replace("_", " ").title())
 
@@ -52,8 +49,8 @@ async def generate_stream(
         try:
             chunk_count = 0
             async with anthropic_client.messages.stream(
-                model="claude-sonnet-4-6",
-                max_tokens=1024,
+                model="claude-haiku-4-5-20251001",
+                max_tokens=600,
                 system=SYSTEM_PROMPT,
                 messages=[{"role": "user", "content": prompt}],
                 temperature=0.7,
