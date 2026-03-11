@@ -1,6 +1,7 @@
 import { motion } from "framer-motion";
 import { Star } from "lucide-react";
 import { categoryColors } from "../theme/colors";
+import MarketChart from "./charts/MarketChart";
 
 interface Choice {
   key: string;
@@ -8,6 +9,7 @@ interface Choice {
 }
 
 interface MCQCardProps {
+  id: string;
   category: string;
   difficulty: string;
   content: {
@@ -21,6 +23,7 @@ interface MCQCardProps {
 }
 
 export default function MCQCard({
+  id,
   category,
   difficulty,
   content,
@@ -57,6 +60,8 @@ export default function MCQCard({
       </div>
 
       <p className="cm-body mb-4">{content.context}</p>
+
+      <MarketChart scenarioId={id} category={category} height={140} className="mb-4" />
 
       <div className="cm-divider pt-4 mb-4">
         <p className="text-cm-text font-medium">{content.question}</p>

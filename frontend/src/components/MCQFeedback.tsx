@@ -1,5 +1,6 @@
 import { useRef, useEffect } from "react";
 import { motion } from "framer-motion";
+import ScoreGauge from "./charts/ScoreGauge";
 
 interface MCQFeedbackProps {
   isCorrect: boolean;
@@ -57,6 +58,9 @@ export default function MCQFeedback({
       >
         <div className="text-center mb-3">
           <span className="text-cm-lime font-bold text-lg">+{xpEarned} XP</span>
+        </div>
+        <div className="flex justify-center mb-3">
+          <ScoreGauge isCorrect={isCorrect} justificationQuality={justificationQuality} size={110} />
         </div>
         <div className="flex justify-center gap-3 text-xs">
           <span className={isCorrect ? "text-cm-emerald" : "text-cm-red"}>

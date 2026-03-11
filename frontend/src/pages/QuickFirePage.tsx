@@ -174,6 +174,7 @@ export default function QuickFirePage({
       {(phase === "question" || phase === "justify") && currentMCQ && (
         <>
           <MCQCard
+            id={currentMCQ.id}
             category={currentMCQ.category}
             difficulty={currentMCQ.difficulty}
             content={currentMCQ.content}

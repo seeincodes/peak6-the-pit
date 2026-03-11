@@ -1,14 +1,14 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { ArrowLeft } from "lucide-react";
+import { ArrowLeft, BarChart3, Star } from "lucide-react";
 import ScenarioCard from "../components/ScenarioCard";
 import ResponseInput from "../components/ResponseInput";
 import GradeReveal from "../components/GradeReveal";
 import LevelUpModal from "../components/LevelUpModal";
+import PerformanceCharts from "../components/charts/PerformanceCharts";
 import api from "../api/client";
 import { categoryDisplay, categoryColors } from "../theme/colors";
-import { Star } from "lucide-react";
 
 type Mode = "select" | "deep-streaming" | "deep-scenario" | "deep-probe" | "deep-grading" | "deep-result" | "deep-error";
 
@@ -49,6 +49,7 @@ export default function TrainingPage({
   const [_prevLevel, setPrevLevel] = useState<number | null>(null);
   const [showLevelUp, setShowLevelUp] = useState(false);
   const [deepError, setDeepError] = useState<string | null>(null);
+  const [showStats, setShowStats] = useState(false);
   const queryClient = useQueryClient();
 
   const submitMutation = useMutation({
@@ -178,7 +179,19 @@ export default function TrainingPage({
       {/* Category selection — grouped by skill with difficulty routes */}
       {mode === "select" && (
         <div>
-          <h2 className="cm-title mb-4">Select Scenario</h2>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="cm-title">{showStats ? "My Stats" : "Select Scenario"}</h2>
+            <button
+              onClick={() => setShowStats(!showStats)}
+              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all border border-cm-border hover:border-cm-primary/40 text-cm-muted hover:text-cm-text"
+            >
+              <BarChart3 size={14} />
+              {showStats ? "Scenarios" : "My Stats"}
+            </button>
+          </div>
+          {showStats ? (
+            <PerformanceCharts />
+          ) : (
           <div className="space-y-3">
             {(() => {
               const grouped = new Map<string, string[]>();
@@ -271,6 +284,7 @@ export default function TrainingPage({
               });
             })()}
           </div>
+          )}
         </div>
       )}
 
@@ -328,6 +342,7 @@ export default function TrainingPage({
             <ArrowLeft size={16} aria-hidden="true" /> Back
           </button>
           <ScenarioCard
+            id={scenario.id}
             category={scenario.category}
             difficulty={scenario.difficulty}
             content={scenario.content}
@@ -344,6 +359,7 @@ export default function TrainingPage({
       {mode === "deep-probe" && scenario && probeQuestion && (
         <>
           <ScenarioCard
+            id={scenario.id}
             category={scenario.category}
             difficulty={scenario.difficulty}
             content={scenario.content}

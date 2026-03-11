@@ -3,6 +3,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import MCQCard from "./MCQCard";
 
 const defaultProps = {
+  id: "test-mcq-id-123",
   category: "iv_analysis",
   difficulty: "beginner",
   content: {

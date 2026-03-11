@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import RadarScoreChart from "./charts/RadarScoreChart";
 
 interface GradeRevealProps {
   dimensionScores: Record<string, number>;
@@ -6,20 +7,6 @@ interface GradeRevealProps {
   feedback: string;
   xpEarned: number;
 }
-
-const dimensionLabels: Record<string, string> = {
-  reasoning: "Reasoning Quality",
-  terminology: "Terminology",
-  trade_logic: "Trade Logic",
-  risk_awareness: "Risk Awareness",
-};
-
-const dimensionColors: Record<string, string> = {
-  reasoning: "#4D34EF",
-  terminology: "#A78BFA",
-  trade_logic: "#34D399",
-  risk_awareness: "#FCD34D",
-};
 
 export default function GradeReveal({
   dimensionScores,
@@ -33,7 +20,7 @@ export default function GradeReveal({
       animate={{ opacity: 1, scale: 1 }}
       className="cm-surface p-6"
     >
-      <div className="text-center mb-6">
+      <div className="text-center mb-4">
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
@@ -51,37 +38,12 @@ export default function GradeReveal({
         animate={{ opacity: 1, y: 0 }}
         transition={{ delay: 0.4 }}
         role="status"
-        className="text-center mb-6"
+        className="text-center mb-4"
       >
         <span className="text-cm-lime font-bold text-lg">+{xpEarned} XP</span>
       </motion.div>
 
-      <div className="space-y-3 mb-6">
-        {Object.entries(dimensionScores).map(([dim, score], i) => (
-          <div key={dim}>
-            <div className="flex justify-between text-sm mb-1">
-              <span className="text-cm-muted">{dimensionLabels[dim] || dim}</span>
-              <span className="text-cm-text font-semibold">{score}/5</span>
-            </div>
-            <div
-              className="cm-progress-track"
-              role="progressbar"
-              aria-valuenow={score}
-              aria-valuemin={0}
-              aria-valuemax={5}
-              aria-label={`${dimensionLabels[dim] || dim}: ${score} out of 5`}
-            >
-              <motion.div
-                className="h-full rounded-sm"
-                style={{ backgroundColor: dimensionColors[dim] || "#4D34EF" }}
-                initial={{ width: 0 }}
-                animate={{ width: `${(score / 5) * 100}%` }}
-                transition={{ delay: 0.5 + i * 0.15, duration: 0.6, ease: "easeOut" }}
-              />
-            </div>
-          </div>
-        ))}
-      </div>
+      <RadarScoreChart dimensionScores={dimensionScores} maxScore={5} size={280} />
 
       <motion.div
         initial={{ opacity: 0 }}
