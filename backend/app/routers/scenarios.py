@@ -1,12 +1,16 @@
 from uuid import UUID
 
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.models.scenario import Scenario
+from app.models.user import User
+from app.middleware.auth import get_current_user
 from app.services.scenario_engine import generate_scenario
+from app.services.recommendation import get_recommendations
+from app.services.difficulty_engine import get_difficulty_suggestions
 
 router = APIRouter(prefix="/api/scenarios", tags=["scenarios"])
 
@@ -36,6 +40,28 @@ async def generate(req: GenerateRequest, db: AsyncSession = Depends(get_db)):
         "difficulty": scenario.difficulty,
         "content": scenario.content,
     }
+
+
+@router.get("/recommended")
+async def recommended(
+    limit: int = Query(3, ge=1, le=5),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Return recommended categories based on spaced repetition analysis."""
+    unlocked = current_user.unlocked_categories or []
+    recs = await get_recommendations(db, current_user.id, unlocked, limit=limit)
+    return recs
+
+
+@router.get("/difficulty-suggestions")
+async def difficulty_suggestions(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Return adaptive difficulty suggestions based on recent performance."""
+    unlocked = current_user.unlocked_categories or []
+    return await get_difficulty_suggestions(db, current_user.id, unlocked)
 
 
 @router.get("/{scenario_id}")

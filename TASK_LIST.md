@@ -239,23 +239,22 @@
 
 **Files:** new `components/OnboardingModal.tsx`, `TrainingPage.tsx`, `models/user.py`, `routers/users.py`, Alembic migration
 
-### 4.11 Spaced Repetition for Weak Areas *(Large)*
-- [ ] Build `services/recommendation.py` analyzing grade history to identify weak categories + dimensions
-- [ ] Implement weighted scoring algorithm (recent attempts weighted higher, low scores weighted higher)
-- [ ] Add `GET /scenarios/recommended` endpoint returning prioritized category + difficulty
-- [ ] Create "Recommended for You" section on `TrainingPage.tsx` above category selector
-- [ ] Track recommendation acceptance rate for algorithm tuning
+### 4.11 Spaced Repetition for Weak Areas *(Large)* ✅
+- [x] Build `services/recommendation.py` analyzing grade history to identify weak categories + dimensions
+- [x] Implement weighted scoring algorithm (recent attempts weighted higher, low scores weighted higher)
+- [x] Add `GET /scenarios/recommended` endpoint returning prioritized category + difficulty
+- [x] Create "Recommended for You" section on `TrainingPage.tsx` above category selector
 
-**Files:** new `services/recommendation.py`, `routers/scenarios.py`, `TrainingPage.tsx`
+**Files:** new `services/recommendation.py`, new `components/RecommendedSection.tsx`, `routers/scenarios.py`, `TrainingPage.tsx`
 
-### 4.12 Adaptive Difficulty Engine *(Large)*
-- [ ] Build `services/difficulty_engine.py` with rolling window analysis (last 5 attempts per category)
-- [ ] Auto-promote: 3+ consecutive scores ≥ 4.0 → suggest next difficulty
-- [ ] Auto-demote: 3+ consecutive scores ≤ 2.0 → suggest easier difficulty
-- [ ] Integrate into `routers/scenarios.py` scenario generation flow
-- [ ] Add difficulty suggestion UI in `TrainingPage.tsx` (user can accept/override)
+### 4.12 Adaptive Difficulty Engine *(Large)* ✅
+- [x] Build `services/difficulty_engine.py` with rolling window analysis (last 5 attempts per category)
+- [x] Auto-promote: 3+ consecutive scores ≥ 4.0 → suggest next difficulty
+- [x] Auto-demote: 3+ consecutive scores ≤ 2.0 → suggest easier difficulty
+- [x] Add `GET /scenarios/difficulty-suggestions` endpoint
+- [x] Add difficulty suggestion UI in `TrainingPage.tsx` (user can accept/dismiss)
 
-**Files:** new `services/difficulty_engine.py`, `routers/scenarios.py`, `services/scenario_engine.py`, `TrainingPage.tsx`
+**Files:** new `services/difficulty_engine.py`, new `components/DifficultySuggestion.tsx`, `routers/scenarios.py`, `TrainingPage.tsx`
 
 ### 4.13 Concept Explainers Before Scenarios *(Large)*
 - [ ] Add `GET /categories/{slug}/primer` endpoint pulling top RAG chunks for a category

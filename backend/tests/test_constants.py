@@ -29,7 +29,7 @@ def test_level_titles():
 def test_level_unlocks_level_1():
     unlocks = LEVEL_UNLOCKS[1]
     assert CategoryTier("iv_analysis", "beginner") in unlocks
-    assert len(unlocks) == 1
+    assert len(unlocks) == 2
 
 
 def test_level_unlocks_level_2():
@@ -52,7 +52,7 @@ def test_difficulty_multiplier():
 def test_scenario_categories():
     assert "iv_analysis" in SCENARIO_CATEGORIES
     assert "capman_tooling" in SCENARIO_CATEGORIES
-    assert len(SCENARIO_CATEGORIES) == 15
+    assert len(SCENARIO_CATEGORIES) == 27
 
 
 def test_mcq_xp_constants():

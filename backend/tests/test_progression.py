@@ -36,10 +36,14 @@ def test_check_mastery_passes():
 
 
 def test_compute_level_from_masteries():
+    # Need all level 1 unlocks (iv_analysis + realized_vol beginner) to reach level 2,
+    # plus all level 2 unlocks (greeks beginner, iv_analysis intermediate, fundamentals beginner) to reach level 3
     masteries = {
         ("iv_analysis", "beginner"),
+        ("realized_vol", "beginner"),
         ("greeks", "beginner"),
         ("iv_analysis", "intermediate"),
+        ("fundamentals", "beginner"),
     }
     assert compute_level(masteries) == 3
 

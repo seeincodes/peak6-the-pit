@@ -8,6 +8,8 @@ import GradeReveal from "../components/GradeReveal";
 import LevelUpModal from "../components/LevelUpModal";
 import BadgeUnlockModal from "../components/BadgeUnlockModal";
 import CategoryProgress from "../components/CategoryProgress";
+import RecommendedSection from "../components/RecommendedSection";
+import DifficultySuggestion from "../components/DifficultySuggestion";
 import OnboardingModal from "../components/OnboardingModal";
 import api from "../api/client";
 import { categoryDisplay, categoryColors } from "../theme/colors";
@@ -207,6 +209,20 @@ export default function TrainingPage({
             <h2 className="cm-title">Select Scenario</h2>
           </div>
           <div className="space-y-3">
+            <RecommendedSection
+              onSelect={(category, difficulty) => {
+                const cat = { category, difficulty };
+                setSelectedCat(cat);
+                generateStreaming(cat);
+              }}
+            />
+            <DifficultySuggestion
+              onAccept={(category, difficulty) => {
+                const cat = { category, difficulty };
+                setSelectedCat(cat);
+                generateStreaming(cat);
+              }}
+            />
             <CategoryProgress />
             {(() => {
               const grouped = new Map<string, string[]>();
