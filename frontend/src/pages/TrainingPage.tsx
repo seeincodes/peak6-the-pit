@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { motion } from "framer-motion";
+import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Star, BookOpen, HelpCircle } from "lucide-react";
 import ScenarioCard from "../components/ScenarioCard";
 import ResponseInput from "../components/ResponseInput";
@@ -196,6 +196,32 @@ export default function TrainingPage({
     }
   };
 
+  const loadingMessages = [
+    "Pulling market data...",
+    "Calculating implied volatility...",
+    "Analyzing the options chain...",
+    "Scanning for mispricings...",
+    "Modeling risk scenarios...",
+    "Checking Greeks exposure...",
+    "Evaluating skew surface...",
+    "Running Monte Carlo sims...",
+    "Stress-testing the book...",
+    "Reviewing term structure...",
+    "Pricing exotic payoffs...",
+    "Assessing tail risk...",
+  ];
+
+  const [loadingMsgIdx, setLoadingMsgIdx] = useState(0);
+
+  useEffect(() => {
+    if (mode !== "deep-streaming") return;
+    setLoadingMsgIdx(Math.floor(Math.random() * loadingMessages.length));
+    const interval = setInterval(() => {
+      setLoadingMsgIdx((prev) => (prev + 1) % loadingMessages.length);
+    }, 3500);
+    return () => clearInterval(interval);
+  }, [mode]);
+
   const levelTitles: Record<number, string> = {
     1: "Initiate", 2: "Analyst", 3: "Strategist", 4: "Risk Manager",
     5: "Volatility Trader", 6: "Senior Strategist", 7: "Portfolio Lead",
@@ -359,8 +385,19 @@ export default function TrainingPage({
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
               />
-              <div className="text-cm-primary text-sm font-semibold animate-pulse">
-                Generating scenario...
+              <div className="h-5 relative overflow-hidden">
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={loadingMsgIdx}
+                    initial={{ opacity: 0, y: 10 }}
+                    animate={{ opacity: 1, y: 0 }}
+                    exit={{ opacity: 0, y: -10 }}
+                    transition={{ duration: 0.3 }}
+                    className="text-cm-primary text-sm font-semibold"
+                  >
+                    {loadingMessages[loadingMsgIdx]}
+                  </motion.div>
+                </AnimatePresence>
               </div>
               {selectedCat && (
                 <div className="text-cm-muted text-xs">
