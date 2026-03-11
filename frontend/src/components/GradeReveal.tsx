@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Lightbulb, BookOpen, Loader2, Bookmark, BookmarkCheck } from "lucide-react";
+import { Lightbulb, BookOpen, Loader2, Bookmark, BookmarkCheck, Flame, Sparkles, Shield } from "lucide-react";
 import RadarScoreChart from "./charts/RadarScoreChart";
 import api from "../api/client";
 
@@ -12,6 +12,11 @@ interface GradeRevealProps {
   hintsUsed?: number;
   responseId?: string;
   scenarioId?: string;
+  bonuses?: {
+    daily_first: boolean;
+    perfect: boolean;
+    no_hints: boolean;
+  };
 }
 
 export default function GradeReveal({
@@ -22,6 +27,7 @@ export default function GradeReveal({
   hintsUsed = 0,
   responseId,
   scenarioId,
+  bonuses,
 }: GradeRevealProps) {
   const [modelAnswer, setModelAnswer] = useState<string | null>(null);
   const [loadingModel, setLoadingModel] = useState(false);
@@ -80,6 +86,25 @@ export default function GradeReveal({
         className="text-center mb-4"
       >
         <span className="text-cm-lime font-bold text-lg">+{xpEarned} XP</span>
+        {(bonuses?.daily_first || bonuses?.perfect || bonuses?.no_hints) && (
+          <div className="flex items-center justify-center gap-3 mt-1.5">
+            {bonuses.daily_first && (
+              <span className="flex items-center gap-1 text-xs text-cm-amber">
+                <Flame size={12} /> Daily First
+              </span>
+            )}
+            {bonuses.perfect && (
+              <span className="flex items-center gap-1 text-xs text-cm-primary">
+                <Sparkles size={12} /> Perfect
+              </span>
+            )}
+            {bonuses.no_hints && (
+              <span className="flex items-center gap-1 text-xs text-cm-emerald">
+                <Shield size={12} /> No Hints
+              </span>
+            )}
+          </div>
+        )}
         {hintsUsed > 0 && (
           <div className="flex items-center justify-center gap-1 mt-1">
             <Lightbulb size={12} className="text-cm-amber" />

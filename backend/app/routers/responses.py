@@ -1,9 +1,10 @@
+from datetime import datetime, timezone
 from uuid import UUID
 from typing import Optional
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from pydantic import BaseModel
-from sqlalchemy import select, desc
+from sqlalchemy import select, desc, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
@@ -93,7 +94,24 @@ async def continue_response(
     )
     db.add(grade)
 
-    xp_earned = compute_xp(grade_data["overall_score"], scenario.difficulty, user.streak_days, hints_used=req.hints_used)
+    # Check if this is the user's first scenario completion today
+    today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+    existing_today = await db.execute(
+        select(func.count()).where(
+            XPTransaction.user_id == user.id,
+            XPTransaction.source == "scenario",
+            XPTransaction.created_at >= today_start,
+        )
+    )
+    is_daily_first = existing_today.scalar() == 0
+
+    xp_earned = compute_xp(
+        grade_data["overall_score"],
+        scenario.difficulty,
+        user.streak_days,
+        hints_used=req.hints_used,
+        is_daily_first=is_daily_first,
+    )
 
     xp_tx = XPTransaction(
         user_id=user.id,
@@ -119,6 +137,12 @@ async def continue_response(
         "level": max(1, user.level),
         "new_badges": new_badges,
         "hints_used": req.hints_used,
+        "is_daily_first": is_daily_first,
+        "bonuses": {
+            "daily_first": is_daily_first,
+            "perfect": grade_data["overall_score"] >= 4.5,
+            "no_hints": req.hints_used == 0,
+        },
     }
 
 

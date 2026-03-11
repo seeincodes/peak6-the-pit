@@ -27,6 +27,7 @@ interface MCQResult {
   xp_earned: number;
   xp_total: number;
   level: number;
+  is_daily_first?: boolean;
 }
 
 type Phase = "loading" | "question" | "justify" | "feedback" | "summary";
@@ -358,6 +359,7 @@ export default function QuickFirePage({
           justificationQuality={result.justification_quality}
           justificationNote={result.justification_note}
           xpEarned={result.xp_earned}
+          isDailyFirst={result.is_daily_first}
           onNext={handleNext}
         />
       )}

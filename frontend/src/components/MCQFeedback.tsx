@@ -1,5 +1,6 @@
 import { useRef, useEffect } from "react";
 import { motion } from "framer-motion";
+import { Flame } from "lucide-react";
 import ScoreGauge from "./charts/ScoreGauge";
 
 interface MCQFeedbackProps {
@@ -10,6 +11,7 @@ interface MCQFeedbackProps {
   justificationQuality: string;
   justificationNote: string;
   xpEarned: number;
+  isDailyFirst?: boolean;
   onNext: () => void;
 }
 
@@ -20,6 +22,7 @@ export default function MCQFeedback({
   justificationQuality,
   justificationNote,
   xpEarned,
+  isDailyFirst,
   onNext,
 }: MCQFeedbackProps) {
   const nextRef = useRef<HTMLButtonElement>(null);
@@ -58,6 +61,12 @@ export default function MCQFeedback({
       >
         <div className="text-center mb-3">
           <span className="text-cm-lime font-bold text-lg">+{xpEarned} XP</span>
+          {isDailyFirst && (
+            <div className="flex items-center justify-center gap-1 mt-1">
+              <Flame size={12} className="text-cm-amber" />
+              <span className="text-cm-amber text-xs">Daily First Bonus</span>
+            </div>
+          )}
         </div>
         <div className="flex justify-center mb-3">
           <ScoreGauge isCorrect={isCorrect} justificationQuality={justificationQuality} size={110} />

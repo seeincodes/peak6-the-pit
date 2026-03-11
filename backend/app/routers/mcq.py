@@ -1,7 +1,9 @@
+from datetime import datetime, timezone
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
+from sqlalchemy import select, func
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
@@ -130,8 +132,19 @@ async def submit(
     )
     db.add(grade)
 
+    # Check if this is the user's first MCQ today
+    today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+    existing_mcq_today = await db.execute(
+        select(func.count()).where(
+            XPTransaction.user_id == user.id,
+            XPTransaction.source == "mcq",
+            XPTransaction.created_at >= today_start,
+        )
+    )
+    is_daily_first = existing_mcq_today.scalar() == 0
+
     # Compute XP with streak from frontend
-    xp_earned = compute_mcq_xp(is_correct, justification_quality, req.streak_count)
+    xp_earned = compute_mcq_xp(is_correct, justification_quality, req.streak_count, is_daily_first=is_daily_first)
 
     xp_tx = XPTransaction(
         user_id=user.id,
@@ -156,4 +169,5 @@ async def submit(
         "xp_total": user.xp_total,
         "level": max(1, user.level),
         "new_badges": new_badges,
+        "is_daily_first": is_daily_first,
     }

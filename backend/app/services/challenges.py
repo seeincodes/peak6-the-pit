@@ -11,11 +11,11 @@ from app.models.xp_transaction import XPTransaction
 from app.models.user import User
 
 CHALLENGE_TEMPLATES = [
-    {"type": "complete_scenarios", "desc": "Complete {n} Deep Analysis scenarios", "targets": [2, 3, 5], "xp": [20, 30, 50]},
-    {"type": "complete_mcq", "desc": "Answer {n} Quick Fire questions", "targets": [5, 10, 15], "xp": [15, 25, 40]},
-    {"type": "score_high", "desc": "Score 4.0+ on {n} scenario(s)", "targets": [1, 2, 3], "xp": [25, 40, 60]},
-    {"type": "try_category", "desc": "Try a scenario in a new category", "targets": [1], "xp": [20]},
-    {"type": "streak_keep", "desc": "Maintain your streak today", "targets": [1], "xp": [15]},
+    {"type": "complete_scenarios", "desc": "Complete {n} Deep Analysis scenarios", "targets": [2, 3, 5], "xp": [50, 75, 125]},
+    {"type": "complete_mcq", "desc": "Answer {n} Quick Fire questions", "targets": [5, 10, 15], "xp": [40, 65, 100]},
+    {"type": "score_high", "desc": "Score 4.0+ on {n} scenario(s)", "targets": [1, 2, 3], "xp": [65, 100, 150]},
+    {"type": "try_category", "desc": "Try a scenario in a new category", "targets": [1], "xp": [50]},
+    {"type": "streak_keep", "desc": "Maintain your streak today", "targets": [1], "xp": [40]},
 ]
 
 CHALLENGES_PER_DAY = 3

@@ -92,17 +92,29 @@ LEVEL_UNLOCKS: dict[int, list[CategoryTier]] = {
 MASTERY_THRESHOLD = 3.5
 MASTERY_SCENARIO_COUNT = 5
 DIFFICULTY_MULTIPLIER = {"beginner": 1.0, "intermediate": 1.5, "advanced": 2.0}
-XP_BASE = 20
+
+# XP thresholds per level (Duolingo-style exponential curve)
+XP_THRESHOLDS = [0, 0, 60, 180, 380, 720, 1250, 2050, 3250, 5050, 8000]
+
+# Scenario XP
+XP_BASE = 50
+PERFECT_SCORE_BONUS = 25       # bonus when overall_score >= 4.5
+NO_HINTS_BONUS = 10            # bonus when hints_used == 0
+DAILY_FIRST_SCENARIO_BONUS = 25  # first scenario completed today
+STREAK_XP_PER_DAY = 5          # XP per streak day
+STREAK_XP_MAX = 50             # max streak bonus
+HINT_XP_PENALTY = 0.20         # 20% XP reduction per hint used
+XP_FLOOR = 5                   # minimum XP per activity
 
 # MCQ Quick Fire XP
-MCQ_XP_CORRECT_GOOD = 8
-MCQ_XP_CORRECT_WEAK = 5
-MCQ_XP_WRONG_GOOD = 3
-MCQ_XP_WRONG_WEAK = 1
-MCQ_STREAK_BONUS = 2
-MCQ_STREAK_MAX_BONUS = 8
+MCQ_XP_CORRECT_GOOD = 20
+MCQ_XP_CORRECT_WEAK = 12
+MCQ_XP_WRONG_GOOD = 8
+MCQ_XP_WRONG_WEAK = 3
+MCQ_STREAK_BONUS = 5
+MCQ_STREAK_MAX_BONUS = 25
+DAILY_FIRST_MCQ_BONUS = 15     # first MCQ session today
 MCQ_JUSTIFY_MAX_CHARS = 200
-HINT_XP_PENALTY = 0.20  # 20% XP reduction per hint used
 RUBRIC_DIMENSIONS = ["reasoning", "terminology", "trade_logic", "risk_awareness"]
 
 SCENARIO_CATEGORIES = [

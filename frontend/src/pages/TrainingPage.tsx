@@ -47,6 +47,11 @@ interface GradeData {
   level: number;
   hints_used?: number;
   new_badges?: BadgeData[];
+  bonuses?: {
+    daily_first: boolean;
+    perfect: boolean;
+    no_hints: boolean;
+  };
 }
 
 export default function TrainingPage({
@@ -484,6 +489,7 @@ export default function TrainingPage({
             hintsUsed={gradeData.hints_used ?? hintsUsed}
             responseId={responseId ?? undefined}
             scenarioId={scenario?.id}
+            bonuses={gradeData.bonuses}
           />
           <div className="text-center">
             <button

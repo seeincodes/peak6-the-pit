@@ -31,7 +31,7 @@ interface SidebarProps {
   onMobileClose: () => void;
 }
 
-const LEVEL_XP = [0, 0, 100, 250, 500, 800, 1200, 1700, 2300, 3000, 4000];
+const LEVEL_XP = [0, 0, 60, 180, 380, 720, 1250, 2050, 3250, 5050, 8000];
 
 const NAV_ITEMS = [
   { to: "/", icon: Crosshair, label: "Training", matchExact: true },

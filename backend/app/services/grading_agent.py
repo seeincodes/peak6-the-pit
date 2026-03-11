@@ -7,14 +7,14 @@ from anthropic import AsyncAnthropic
 from app.config import settings
 from app.database import async_session as session_factory
 from app.services.rag import build_retrieval_query, retrieve_chunks
-from app.constants import DIFFICULTY_MULTIPLIER, XP_BASE, HINT_XP_PENALTY
 from app.constants import (
-    MCQ_XP_CORRECT_GOOD,
-    MCQ_XP_CORRECT_WEAK,
-    MCQ_XP_WRONG_GOOD,
-    MCQ_XP_WRONG_WEAK,
-    MCQ_STREAK_BONUS,
-    MCQ_STREAK_MAX_BONUS,
+    DIFFICULTY_MULTIPLIER, XP_BASE, HINT_XP_PENALTY,
+    PERFECT_SCORE_BONUS, NO_HINTS_BONUS, DAILY_FIRST_SCENARIO_BONUS,
+    STREAK_XP_PER_DAY, STREAK_XP_MAX, XP_FLOOR,
+    MCQ_XP_CORRECT_GOOD, MCQ_XP_CORRECT_WEAK,
+    MCQ_XP_WRONG_GOOD, MCQ_XP_WRONG_WEAK,
+    MCQ_STREAK_BONUS, MCQ_STREAK_MAX_BONUS,
+    DAILY_FIRST_MCQ_BONUS,
 )
 from app.prompts.grading_rubric import (
     GRADING_SYSTEM_PROMPT,
@@ -41,16 +41,29 @@ def parse_probe_json(raw: str) -> dict:
     return _parse_json(raw)
 
 
-def compute_xp(overall_score: float, difficulty: str, streak_days: int, hints_used: int = 0) -> int:
+def compute_xp(
+    overall_score: float,
+    difficulty: str,
+    streak_days: int,
+    hints_used: int = 0,
+    is_daily_first: bool = False,
+) -> int:
     multiplier = DIFFICULTY_MULTIPLIER.get(difficulty, 1.0)
     quality = overall_score / 5.0
     base = int(XP_BASE * multiplier * quality)
-    streak_bonus = min(streak_days * 2, 20)
-    total = base + streak_bonus
+
+    # Hint penalty applies only to base XP
     if hints_used > 0:
-        penalty = min(hints_used * HINT_XP_PENALTY, 1.0)
-        total = int(total * (1.0 - penalty))
-    return max(total, 1)
+        penalty = min(hints_used * HINT_XP_PENALTY, 0.8)
+        base = int(base * (1.0 - penalty))
+
+    streak_bonus = min(streak_days * STREAK_XP_PER_DAY, STREAK_XP_MAX)
+    perfect_bonus = PERFECT_SCORE_BONUS if overall_score >= 4.5 else 0
+    clean_bonus = NO_HINTS_BONUS if hints_used == 0 else 0
+    daily_bonus = DAILY_FIRST_SCENARIO_BONUS if is_daily_first else 0
+
+    total = base + streak_bonus + perfect_bonus + clean_bonus + daily_bonus
+    return max(total, XP_FLOOR)
 
 
 async def _get_grading_context(category: str, difficulty: str) -> str:
@@ -179,19 +192,27 @@ async def grade_mcq_justification(
     return _parse_json(message.content[0].text)
 
 
-def compute_mcq_xp(is_correct: bool, justification_quality: str, streak_count: int) -> int:
+def compute_mcq_xp(
+    is_correct: bool,
+    justification_quality: str,
+    streak_count: int,
+    is_daily_first: bool = False,
+) -> int:
     """Compute XP for an MCQ response.
 
     XP rewards both correctness and reasoning quality:
-    - Correct + good reasoning: 8 XP base + streak bonus
-    - Correct + weak reasoning: 5 XP base + reduced streak bonus
-    - Wrong + good reasoning: 3 XP (partial credit for sound thinking)
-    - Wrong + weak reasoning: 1 XP
+    - Correct + good reasoning: 20 XP base + streak bonus
+    - Correct + weak reasoning: 12 XP base + reduced streak bonus
+    - Wrong + good reasoning: 8 XP (partial credit for sound thinking)
+    - Wrong + weak reasoning: 3 XP
 
     streak_count: number of consecutive correct answers (0-based, before this answer).
     """
+    daily_bonus = DAILY_FIRST_MCQ_BONUS if is_daily_first else 0
+
     if not is_correct:
-        return MCQ_XP_WRONG_GOOD if justification_quality == "good" else MCQ_XP_WRONG_WEAK
+        base = MCQ_XP_WRONG_GOOD if justification_quality == "good" else MCQ_XP_WRONG_WEAK
+        return base + daily_bonus
 
     if justification_quality == "good":
         base = MCQ_XP_CORRECT_GOOD
@@ -200,4 +221,4 @@ def compute_mcq_xp(is_correct: bool, justification_quality: str, streak_count: i
         base = MCQ_XP_CORRECT_WEAK
         streak_bonus = min(streak_count * (MCQ_STREAK_BONUS // 2), MCQ_STREAK_MAX_BONUS // 2)
 
-    return base + streak_bonus
+    return base + streak_bonus + daily_bonus
