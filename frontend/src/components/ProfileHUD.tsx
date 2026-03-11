@@ -19,7 +19,7 @@ export default function ProfileHUD({
 }: ProfileHUDProps) {
   const currentLevelXP = LEVEL_XP[level] || 0;
   const nextLevelXP = LEVEL_XP[level + 1] || LEVEL_XP[level] + 500;
-  const progressXP = xpTotal - currentLevelXP;
+  const progressXP = Math.max(0, xpTotal - currentLevelXP);
   const neededXP = nextLevelXP - currentLevelXP;
 
   return (

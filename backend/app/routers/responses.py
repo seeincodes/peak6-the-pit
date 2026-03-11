@@ -102,7 +102,7 @@ async def continue_response(
         reference_id=response.id,
     )
     db.add(xp_tx)
-    user.xp_total += xp_earned
+    user.xp_total = max(0, user.xp_total + xp_earned)
 
     new_badges = await check_and_award_badges(user.id, db)
 
@@ -116,7 +116,7 @@ async def continue_response(
         },
         "xp_earned": xp_earned,
         "xp_total": user.xp_total,
-        "level": user.level,
+        "level": max(1, user.level),
         "new_badges": new_badges,
         "hints_used": req.hints_used,
     }

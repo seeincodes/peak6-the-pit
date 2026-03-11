@@ -55,7 +55,7 @@ export default function Sidebar({ user, logout, collapsed, onToggleCollapse, mob
   const nextLevelXP = user
     ? LEVEL_XP[user.level + 1] || LEVEL_XP[user.level] + 500
     : 100;
-  const progressXP = user ? user.xp_total - currentLevelXP : 0;
+  const progressXP = user ? Math.max(0, user.xp_total - currentLevelXP) : 0;
   const neededXP = nextLevelXP - currentLevelXP;
   const progressPct = Math.min((progressXP / neededXP) * 100, 100);
 

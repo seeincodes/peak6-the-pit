@@ -7,7 +7,8 @@ interface XPBarProps {
 }
 
 export default function XPBar({ current, nextLevel, level }: XPBarProps) {
-  const pct = Math.min((current / nextLevel) * 100, 100);
+  const safeCurrent = Math.max(0, current);
+  const pct = Math.min((safeCurrent / nextLevel) * 100, 100);
 
   return (
     <div className="flex items-center gap-3">
@@ -28,7 +29,7 @@ export default function XPBar({ current, nextLevel, level }: XPBarProps) {
         />
       </div>
       <span className="text-cm-muted text-xs">
-        {current} / {nextLevel} XP
+        {safeCurrent} / {nextLevel} XP
       </span>
     </div>
   );
