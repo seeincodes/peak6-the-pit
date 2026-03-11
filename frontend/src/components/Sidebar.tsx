@@ -2,7 +2,6 @@ import { Link, useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import {
   Crosshair,
-  User,
   Trophy,
   BookOpen,
   Bookmark,
@@ -39,7 +38,6 @@ const NAV_ITEMS = [
   { to: "/review", icon: BookOpen, label: "Review", matchExact: false },
   { to: "/bookmarks", icon: Bookmark, label: "Bookmarks", matchExact: false },
   { to: "/progress", icon: Target, label: "Progress", matchExact: false },
-  { to: "/profile", icon: User, label: "Profile", matchExact: false },
   { to: "/leaderboard", icon: Trophy, label: "Leaderboard", matchExact: false },
 ];
 
@@ -159,12 +157,15 @@ export default function Sidebar({ user, logout, collapsed, onToggleCollapse, mob
         <div className="border-t border-cm-border px-3 py-4 shrink-0">
           {collapsed && !isMobile ? (
             <div className="flex flex-col items-center gap-3">
-              <div
-                className="w-8 h-8 rounded-full bg-cm-card-raised border border-cm-border flex items-center justify-center text-base"
+              <Link
+                to="/profile"
+                onClick={isMobile ? onMobileClose : undefined}
+                aria-label="Go to profile"
+                className="w-8 h-8 rounded-full bg-cm-card-raised border border-cm-border flex items-center justify-center text-base focus-ring hover:border-cm-primary/40 transition-colors"
                 title={user.display_name}
               >
                 {AVATAR_PRESETS[user.avatar_id || "default"] || "👤"}
-              </div>
+              </Link>
               <button
                 onClick={logout}
                 className="flex items-center justify-center w-8 h-8 rounded-md text-cm-muted hover:text-cm-red hover:bg-cm-red/8 transition-all focus-ring"
@@ -211,7 +212,12 @@ export default function Sidebar({ user, logout, collapsed, onToggleCollapse, mob
               </div>
 
               {/* User avatar + name */}
-              <div className="flex items-center gap-3 mb-2">
+              <Link
+                to="/profile"
+                onClick={isMobile ? onMobileClose : undefined}
+                aria-label="Go to profile"
+                className="flex items-center gap-3 mb-2 rounded-lg px-2 py-1 -mx-2 text-left hover:bg-cm-card-raised transition-colors focus-ring"
+              >
                 <div className="w-8 h-8 rounded-full bg-cm-card-raised border border-cm-border flex items-center justify-center shrink-0 text-base">
                   {AVATAR_PRESETS[user.avatar_id || "default"] || "👤"}
                 </div>
@@ -223,7 +229,7 @@ export default function Sidebar({ user, logout, collapsed, onToggleCollapse, mob
                     {user.level_title}
                   </div>
                 </div>
-              </div>
+              </Link>
 
               {/* Logout */}
               <button
