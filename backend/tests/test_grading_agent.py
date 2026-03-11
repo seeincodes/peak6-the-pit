@@ -33,3 +33,15 @@ def test_compute_xp_intermediate_with_streak():
     base = int(20 * 1.5 * (5.0 / 5.0))
     streak_bonus = min(3 * 2, 20)
     assert xp == base + streak_bonus
+
+
+def test_compute_xp_with_hints_penalty():
+    xp_no_hints = compute_xp(overall_score=4.0, difficulty="beginner", streak_days=0, hints_used=0)
+    xp_one_hint = compute_xp(overall_score=4.0, difficulty="beginner", streak_days=0, hints_used=1)
+    xp_two_hints = compute_xp(overall_score=4.0, difficulty="beginner", streak_days=0, hints_used=2)
+    # 1 hint = 20% penalty, 2 hints = 40% penalty
+    assert xp_one_hint == int(xp_no_hints * 0.80)
+    assert xp_two_hints == int(xp_no_hints * 0.60)
+    # minimum 1 XP even with max hints
+    xp_max = compute_xp(overall_score=1.0, difficulty="beginner", streak_days=0, hints_used=5)
+    assert xp_max >= 1

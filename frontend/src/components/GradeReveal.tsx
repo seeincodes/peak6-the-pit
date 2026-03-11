@@ -1,4 +1,5 @@
 import { motion } from "framer-motion";
+import { Lightbulb } from "lucide-react";
 import RadarScoreChart from "./charts/RadarScoreChart";
 
 interface GradeRevealProps {
@@ -6,6 +7,7 @@ interface GradeRevealProps {
   overallScore: number;
   feedback: string;
   xpEarned: number;
+  hintsUsed?: number;
 }
 
 export default function GradeReveal({
@@ -13,6 +15,7 @@ export default function GradeReveal({
   overallScore,
   feedback,
   xpEarned,
+  hintsUsed = 0,
 }: GradeRevealProps) {
   return (
     <motion.div
@@ -41,6 +44,14 @@ export default function GradeReveal({
         className="text-center mb-4"
       >
         <span className="text-cm-lime font-bold text-lg">+{xpEarned} XP</span>
+        {hintsUsed > 0 && (
+          <div className="flex items-center justify-center gap-1 mt-1">
+            <Lightbulb size={12} className="text-cm-amber" />
+            <span className="text-cm-amber text-xs">
+              {hintsUsed} hint{hintsUsed > 1 ? "s" : ""} used (−{hintsUsed * 20}% XP)
+            </span>
+          </div>
+        )}
       </motion.div>
 
       <RadarScoreChart dimensionScores={dimensionScores} maxScore={5} size={280} />

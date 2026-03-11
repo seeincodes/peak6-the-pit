@@ -102,6 +102,7 @@ MCQ_XP_WRONG_WEAK = 1
 MCQ_STREAK_BONUS = 2
 MCQ_STREAK_MAX_BONUS = 8
 MCQ_JUSTIFY_MAX_CHARS = 200
+HINT_XP_PENALTY = 0.20  # 20% XP reduction per hint used
 RUBRIC_DIMENSIONS = ["reasoning", "terminology", "trade_logic", "risk_awareness"]
 
 SCENARIO_CATEGORIES = [

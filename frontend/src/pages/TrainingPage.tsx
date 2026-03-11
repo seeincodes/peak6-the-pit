@@ -33,6 +33,7 @@ interface GradeData {
   xp_earned: number;
   xp_total: number;
   level: number;
+  hints_used?: number;
 }
 
 export default function TrainingPage({
@@ -50,6 +51,7 @@ export default function TrainingPage({
   const [showLevelUp, setShowLevelUp] = useState(false);
   const [deepError, setDeepError] = useState<string | null>(null);
   const [showStats, setShowStats] = useState(false);
+  const [hintsUsed, setHintsUsed] = useState(0);
   const queryClient = useQueryClient();
 
   const submitMutation = useMutation({
@@ -71,6 +73,7 @@ export default function TrainingPage({
     mutationFn: async (answerText: string) => {
       const res = await api.post(`/responses/${responseId}/continue`, {
         answer_text: answerText,
+        hints_used: hintsUsed,
       });
       return res.data as GradeData;
     },
@@ -96,6 +99,7 @@ export default function TrainingPage({
     setProbeQuestion(null);
     setGradeData(null);
     setDeepError(null);
+    setHintsUsed(0);
   };
 
   const generateStreaming = async (params: { category: string; difficulty: string }) => {
@@ -346,6 +350,7 @@ export default function TrainingPage({
             category={scenario.category}
             difficulty={scenario.difficulty}
             content={scenario.content}
+            onHintsUsedChange={setHintsUsed}
           />
           <ResponseInput
             onSubmit={(text) => submitMutation.mutate(text)}
@@ -363,6 +368,7 @@ export default function TrainingPage({
             category={scenario.category}
             difficulty={scenario.difficulty}
             content={scenario.content}
+            onHintsUsedChange={setHintsUsed}
           />
           <div className="rounded-md border border-cm-amber/30 bg-cm-amber/5 p-4">
             <h3 className="text-cm-amber font-semibold text-sm mb-2">Follow-up Question</h3>
@@ -384,6 +390,7 @@ export default function TrainingPage({
             overallScore={gradeData.grade.overall_score}
             feedback={gradeData.grade.feedback}
             xpEarned={gradeData.xp_earned}
+            hintsUsed={gradeData.hints_used ?? hintsUsed}
           />
           <div className="text-center">
             <button

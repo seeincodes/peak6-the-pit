@@ -24,6 +24,7 @@ class SubmitRequest(BaseModel):
 
 class ContinueRequest(BaseModel):
     answer_text: str
+    hints_used: int = 0
 
 
 @router.post("")
@@ -90,7 +91,7 @@ async def continue_response(
     )
     db.add(grade)
 
-    xp_earned = compute_xp(grade_data["overall_score"], scenario.difficulty, user.streak_days)
+    xp_earned = compute_xp(grade_data["overall_score"], scenario.difficulty, user.streak_days, hints_used=req.hints_used)
 
     xp_tx = XPTransaction(
         user_id=user.id,
@@ -115,4 +116,5 @@ async def continue_response(
         "xp_total": user.xp_total,
         "level": user.level,
         "new_badges": new_badges,
+        "hints_used": req.hints_used,
     }

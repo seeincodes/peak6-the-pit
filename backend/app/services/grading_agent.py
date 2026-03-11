@@ -7,7 +7,7 @@ from anthropic import AsyncAnthropic
 from app.config import settings
 from app.database import async_session as session_factory
 from app.services.rag import build_retrieval_query, retrieve_chunks
-from app.constants import DIFFICULTY_MULTIPLIER, XP_BASE
+from app.constants import DIFFICULTY_MULTIPLIER, XP_BASE, HINT_XP_PENALTY
 from app.constants import (
     MCQ_XP_CORRECT_GOOD,
     MCQ_XP_CORRECT_WEAK,
@@ -40,12 +40,16 @@ def parse_probe_json(raw: str) -> dict:
     return _parse_json(raw)
 
 
-def compute_xp(overall_score: float, difficulty: str, streak_days: int) -> int:
+def compute_xp(overall_score: float, difficulty: str, streak_days: int, hints_used: int = 0) -> int:
     multiplier = DIFFICULTY_MULTIPLIER.get(difficulty, 1.0)
     quality = overall_score / 5.0
     base = int(XP_BASE * multiplier * quality)
     streak_bonus = min(streak_days * 2, 20)
-    return base + streak_bonus
+    total = base + streak_bonus
+    if hints_used > 0:
+        penalty = min(hints_used * HINT_XP_PENALTY, 1.0)
+        total = int(total * (1.0 - penalty))
+    return max(total, 1)
 
 
 async def _get_grading_context(category: str, difficulty: str) -> str:
