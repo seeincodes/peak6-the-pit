@@ -24,6 +24,9 @@ Use the following context to ground the question:
 
 Use the live market data above to anchor your question in current real-world conditions where relevant.
 
+Genre guidance:
+{genre_guidance}
+
 Output a JSON object with exactly these fields:
 {{
   "context": "Brief market setup (2-3 sentences with specific data points)",

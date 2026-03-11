@@ -11,6 +11,11 @@ class Settings(BaseSettings):
     langsmith_api_key: str = ""
     langsmith_project: str = "capman-ai"
     langsmith_endpoint: str = "https://api.smith.langchain.com"
+    generation_cache_enabled: bool = True
+    generation_cache_ttl_seconds: int = 600
+    rag_max_chunks: int = 3
+    rag_max_chunk_chars: int = 700
+    rag_max_total_chars: int = 2200
     jwt_secret_key: str = "dev-secret-change-in-production"
     jwt_algorithm: str = "HS256"
     jwt_expiration_minutes: int = 10080  # 7 days

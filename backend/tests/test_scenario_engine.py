@@ -1,5 +1,5 @@
 import json
-from app.services.scenario_engine import parse_scenario_json
+from app.services.scenario_engine import parse_scenario_json, build_rag_context
 
 
 def test_parse_scenario_json_valid():
@@ -20,3 +20,13 @@ def test_parse_scenario_json_strips_markdown():
     raw = '```json\n{"title": "Test", "setup": "S", "question": "Q", "hints": [], "expected_dimensions": []}\n```'
     result = parse_scenario_json(raw)
     assert result["title"] == "Test"
+
+
+def test_build_rag_context_trims_payload():
+    chunks = [
+        {"content": "A" * 5000},
+        {"content": "B" * 5000},
+    ]
+    context, used_chunks = build_rag_context(chunks)
+    assert len(context) <= 2200
+    assert used_chunks

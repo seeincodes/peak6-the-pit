@@ -54,6 +54,8 @@ function AuthenticatedApp({
       const res = await api.get("/users/me");
       return res.data;
     },
+    staleTime: 60_000,
+    gcTime: 10 * 60_000,
   });
 
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
