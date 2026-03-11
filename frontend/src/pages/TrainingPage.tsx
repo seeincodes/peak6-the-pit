@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { ArrowLeft, Star, BookOpen } from "lucide-react";
+import { ArrowLeft, Star, BookOpen, HelpCircle } from "lucide-react";
 import ScenarioCard from "../components/ScenarioCard";
 import ResponseInput from "../components/ResponseInput";
 import GradeReveal from "../components/GradeReveal";
@@ -209,6 +209,14 @@ export default function TrainingPage({
         <div>
           <div className="flex items-center justify-between mb-4">
             <h2 className="cm-title">Select Scenario</h2>
+            <button
+              onClick={() => setShowOnboarding(true)}
+              className="text-cm-muted hover:text-cm-primary transition-colors p-1"
+              aria-label="Show guided tour"
+              title="How it works"
+            >
+              <HelpCircle size={18} />
+            </button>
           </div>
           <div className="space-y-3">
             <RecommendedSection
