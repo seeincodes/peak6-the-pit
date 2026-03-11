@@ -103,7 +103,8 @@ export default function TrainingPage({
 
     try {
       const token = localStorage.getItem("token");
-      const response = await fetch("/api/scenarios/generate-stream", {
+      const apiBase = import.meta.env.VITE_API_URL || "/api";
+      const response = await fetch(`${apiBase}/scenarios/generate-stream`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
