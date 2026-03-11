@@ -7,6 +7,10 @@ class Settings(BaseSettings):
     redis_url: str = "redis://redis:6379/0"
     anthropic_api_key: str = ""
     openai_api_key: str = ""
+    langsmith_enabled: bool = False
+    langsmith_api_key: str = ""
+    langsmith_project: str = "capman-ai"
+    langsmith_endpoint: str = "https://api.smith.langchain.com"
     jwt_secret_key: str = "dev-secret-change-in-production"
     jwt_algorithm: str = "HS256"
     jwt_expiration_minutes: int = 10080  # 7 days

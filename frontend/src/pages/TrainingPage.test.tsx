@@ -11,22 +11,6 @@ vi.mock("../api/client", () => ({
   },
 }));
 
-const mockMCQ = {
-  id: "prefetch-1",
-  category: "iv_analysis",
-  difficulty: "beginner",
-  content: {
-    context: "Market context here",
-    question: "What is the best course of action?",
-    choices: [
-      { key: "A", text: "Option A" },
-      { key: "B", text: "Option B" },
-      { key: "C", text: "Option C" },
-      { key: "D", text: "Option D" },
-    ],
-  },
-};
-
 function renderTrainingPage() {
   const queryClient = new QueryClient({
     defaultOptions: {
@@ -46,52 +30,47 @@ function renderTrainingPage() {
   );
 }
 
-describe("TrainingPage MCQ prefetch", () => {
+describe("TrainingPage scenario start", () => {
+  const fetchMock = vi.fn();
+
   beforeEach(() => {
-    vi.useFakeTimers();
-    vi.mocked(api.post).mockImplementation((url: string) => {
-      if (typeof url === "string" && url.includes("/mcq/generate")) {
-        return new Promise((resolve) => {
-          setTimeout(() => resolve({ data: { ...mockMCQ, id: `mcq-${Date.now()}` } } as any), 5000);
-        });
-      }
-      return Promise.resolve({ data: {} } as any);
+    vi.stubGlobal("fetch", fetchMock);
+    fetchMock.mockResolvedValue({
+      ok: false,
+      status: 500,
+      body: null,
+      json: async () => ({}),
     });
+    vi.mocked(api.post).mockReset();
   });
 
   afterEach(() => {
-    vi.useRealTimers();
+    vi.unstubAllGlobals();
     vi.restoreAllMocks();
   });
 
-  it("shows question immediately when prefetch completes before Quick Fire click", async () => {
+  it("starts streaming generation when category card is clicked", async () => {
     renderTrainingPage();
 
-    // Prefetch starts on mount — wait for it to complete
-    await vi.advanceTimersByTimeAsync(6000);
+    fireEvent.click(
+      screen.getByRole("button", { name: /^Implied Volatility \(IV\) Analysis beginner$/i })
+    );
 
-    // Select category → pick-mode
-    fireEvent.click(screen.getByRole("button", { name: /IV ANALYSIS/i }));
-
-    // Click Quick Fire — prefetched MCQ should be ready
-    fireEvent.click(screen.getByRole("button", { name: /Quick Fire/i }));
-
-    // Question appears instantly — no "Generating question..." loading state
-    expect(screen.queryByText(/Generating question/i)).toBeNull();
-    expect(screen.getByText(/What is the best course of action/i)).toBeTruthy();
+    expect(fetchMock).toHaveBeenCalled();
+    expect(vi.mocked(api.post)).not.toHaveBeenCalledWith(
+      "/mcq/generate",
+      expect.anything()
+    );
   });
 
-  it("triggers prefetch for all categories on mount", () => {
+  it("renders unlocked category cards", () => {
     renderTrainingPage();
 
-    // Prefetch should be called for each unlocked category
-    expect(api.post).toHaveBeenCalledWith("/mcq/generate", {
-      category: "iv_analysis",
-      difficulty: "beginner",
-    });
-    expect(api.post).toHaveBeenCalledWith("/mcq/generate", {
-      category: "vol_surface",
-      difficulty: "intermediate",
-    });
+    expect(
+      screen.getByRole("button", { name: /^Implied Volatility \(IV\) Analysis beginner$/i })
+    ).toBeTruthy();
+    expect(
+      screen.getByRole("button", { name: /^Volatility Surface intermediate$/i })
+    ).toBeTruthy();
   });
 });

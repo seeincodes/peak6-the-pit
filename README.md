@@ -89,6 +89,14 @@ cd backend && uv run pytest tests/ -v
 
 Tests: auth, constants, grading agent, leaderboard, MCQ generation/grading/pool, progression, RAG, scenario engine.
 
+### Golden set checks
+
+```bash
+cd backend && uv run python evals/run_golden_checks.py
+```
+
+Golden sets live under `backend/evals/golden/` and cover scenario prompt construction plus JSON output parsing invariants.
+
 ### Frontend (Vitest)
 
 ```bash

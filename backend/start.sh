@@ -2,7 +2,7 @@
 set -e
 
 echo "Running migrations..."
-alembic upgrade head
+alembic upgrade heads
 
 PORT=${PORT:-8000}
 

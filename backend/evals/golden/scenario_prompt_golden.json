@@ -1,0 +1,31 @@
+[
+  {
+    "id": "iv_beginner_with_context",
+    "category": "iv_analysis",
+    "difficulty": "beginner",
+    "rag_context": "SPX 30d IV percentile is at 82 while realized vol trails at 17.",
+    "market_snapshot": "SPX 5012.1, VIX 19.4, US10Y 4.12%",
+    "must_contain": [
+      "Generate a beginner difficulty trading scenario",
+      "Implied Volatility Analysis",
+      "SPX 30d IV percentile is at 82 while realized vol trails at 17.",
+      "SPX 5012.1, VIX 19.4, US10Y 4.12%",
+      "\"title\"",
+      "\"expected_dimensions\""
+    ]
+  },
+  {
+    "id": "macro_intermediate_no_context",
+    "category": "macro",
+    "difficulty": "intermediate",
+    "rag_context": "",
+    "market_snapshot": "CPI YoY 3.1%, Fed Funds 5.25-5.50%",
+    "must_contain": [
+      "Generate a intermediate difficulty trading scenario",
+      "Macroeconomic Indicators",
+      "No specific context available. Use general options trading knowledge.",
+      "CPI YoY 3.1%, Fed Funds 5.25-5.50%",
+      "Difficulty guidelines:"
+    ]
+  }
+]
