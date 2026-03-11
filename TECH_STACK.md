@@ -53,7 +53,7 @@
 | **Auth** | JWT (PyJWT) | 2+ | Stateless auth, role-based claims |
 | **WebSocket** | FastAPI WebSocket | Built-in | Real-time leaderboard + head-to-head match updates |
 | **Containerization** | Docker + Docker Compose | 24+ | Local dev parity, deployment consistency |
-| **Cloud** | AWS (ECS + RDS + ElastiCache) | — | Scalable container and managed DB deployment |
+| **Cloud** | Railway | — | Simple PaaS deployment with managed Postgres + Redis add-ons |
 | **Testing** | pytest + Vitest | Latest | Backend + frontend test runners |
 
 ## Key Dependencies
@@ -229,11 +229,24 @@ CREATE INDEX idx_xp_user ON xp_transactions(user_id);
 CREATE INDEX idx_documents_embedding ON documents USING ivfflat (embedding vector_cosine_ops);
 ```
 
+## Deployment (Railway)
+
+Railway project has 4 services:
+
+| Service | Source | Notes |
+|---|---|---|
+| **Backend** | `backend/` directory | FastAPI, uses Dockerfile + `start.sh` |
+| **Frontend** | `frontend/` directory | Vite build → served via `serve` |
+| **PostgreSQL** | Railway add-on | Managed Postgres 16 (pgvector via `CREATE EXTENSION`) |
+| **Redis** | Railway add-on | Managed Redis 7 |
+
+Railway auto-injects `DATABASE_URL`, `REDIS_URL`, and `PORT` for add-on services. Set `ANTHROPIC_API_KEY`, `OPENAI_API_KEY`, `JWT_SECRET_KEY`, `FRONTEND_URL`, and `CORS_ORIGINS` as service variables on the backend.
+
 ## Cost Estimates
 
-| Scale Tier | Users | Monthly Cost (AWS) | Notes |
+| Scale Tier | Users | Monthly Cost (Railway) | Notes |
 |---|---|---|---|
-| **Dev / Demo** | 1–5 | ~$50 | Local Docker or single EC2 t3.medium + RDS free tier |
-| **Pilot** | 10–25 | ~$200 | ECS Fargate (0.5 vCPU) + RDS t3.medium + ElastiCache t3.micro |
-| **Production** | 50–100 | ~$500 | ECS Fargate (1 vCPU) + RDS t3.large + ElastiCache t3.small |
+| **Dev / Demo** | 1–5 | ~$5–20 | Hobby plan, minimal resource usage |
+| **Pilot** | 10–25 | ~$30–60 | Pro plan, small Postgres + Redis |
+| **Production** | 50–100 | ~$100–200 | Pro plan, scaled Postgres + Redis |
 | **LLM API** | Per use | ~$100–300/mo | Claude API (~$0.01–0.05 per scenario+grading cycle at volume) |

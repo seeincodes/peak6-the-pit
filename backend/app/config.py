@@ -1,3 +1,4 @@
+from pydantic import model_validator
 from pydantic_settings import BaseSettings
 
 
@@ -19,6 +20,13 @@ class Settings(BaseSettings):
     log_level: str = "INFO"
 
     model_config = {"env_file": ".env", "extra": "ignore"}
+
+    @model_validator(mode="after")
+    def fix_database_url_scheme(self):
+        """Railway injects DATABASE_URL as postgresql:// but asyncpg needs postgresql+asyncpg://"""
+        if self.database_url.startswith("postgresql://"):
+            self.database_url = self.database_url.replace("postgresql://", "postgresql+asyncpg://", 1)
+        return self
 
 
 settings = Settings()

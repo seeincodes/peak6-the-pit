@@ -2,7 +2,7 @@
 
 Gamified scenario training & MTSS agent for options trading.
 
-## Quick Start
+## Quick Start (Local)
 
 ```bash
 docker-compose up --build
@@ -11,6 +11,51 @@ docker-compose up --build
 - Frontend: http://localhost:5173
 - Backend: http://localhost:8000
 - API Docs: http://localhost:8000/docs
+
+## Deploy to Railway
+
+1. Install the [Railway CLI](https://docs.railway.com/guides/cli) and log in:
+   ```bash
+   npm install -g @railway/cli
+   railway login
+   ```
+
+2. Create a new project and add services:
+   ```bash
+   railway init
+   ```
+
+3. Add **PostgreSQL** and **Redis** add-ons from the Railway dashboard.
+
+4. Create two services pointing to this repo:
+   - **Backend** — root directory: `backend/`
+   - **Frontend** — root directory: `frontend/`
+
+5. Set environment variables on the **Backend** service:
+   ```
+   ANTHROPIC_API_KEY=sk-...
+   OPENAI_API_KEY=sk-...
+   JWT_SECRET_KEY=<generate-a-strong-secret>
+   FRONTEND_URL=https://<frontend-service>.up.railway.app
+   CORS_ORIGINS=https://<frontend-service>.up.railway.app
+   APP_ENV=production
+   ```
+   > `DATABASE_URL`, `REDIS_URL`, and `PORT` are auto-injected by Railway add-ons.
+
+6. Set environment variables on the **Frontend** service:
+   ```
+   VITE_API_URL=https://<backend-service>.up.railway.app
+   ```
+
+7. Deploy:
+   ```bash
+   railway up
+   ```
+
+8. Seed the database (first deploy only):
+   ```bash
+   railway run -s backend python -m app.seed
+   ```
 
 ## Test Accounts
 
