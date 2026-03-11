@@ -1,15 +1,14 @@
 import { useState } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion } from "framer-motion";
-import { ArrowLeft, BarChart3, Star } from "lucide-react";
+import { ArrowLeft, Star } from "lucide-react";
 import ScenarioCard from "../components/ScenarioCard";
 import ResponseInput from "../components/ResponseInput";
 import GradeReveal from "../components/GradeReveal";
 import LevelUpModal from "../components/LevelUpModal";
 import BadgeUnlockModal from "../components/BadgeUnlockModal";
-import PerformanceCharts from "../components/charts/PerformanceCharts";
 import CategoryProgress from "../components/CategoryProgress";
-import DailyChallengeCard from "../components/DailyChallengeCard";
+import OnboardingModal from "../components/OnboardingModal";
 import api from "../api/client";
 import { categoryDisplay, categoryColors } from "../theme/colors";
 
@@ -49,9 +48,12 @@ interface GradeData {
 
 export default function TrainingPage({
   unlockedCategories,
+  hasOnboarded = true,
 }: {
   unlockedCategories: { category: string; difficulty: string }[];
+  hasOnboarded?: boolean;
 }) {
+  const [showOnboarding, setShowOnboarding] = useState(!hasOnboarded);
   const [mode, setMode] = useState<Mode>("select");
   const [selectedCat, setSelectedCat] = useState<{ category: string; difficulty: string } | null>(null);
   const [scenario, setScenario] = useState<ScenarioData | null>(null);
@@ -63,7 +65,6 @@ export default function TrainingPage({
   const [showBadges, setShowBadges] = useState(false);
   const [earnedBadges, setEarnedBadges] = useState<BadgeData[]>([]);
   const [deepError, setDeepError] = useState<string | null>(null);
-  const [showStats, setShowStats] = useState(false);
   const [hintsUsed, setHintsUsed] = useState(0);
   const queryClient = useQueryClient();
 
@@ -203,20 +204,9 @@ export default function TrainingPage({
       {mode === "select" && (
         <div>
           <div className="flex items-center justify-between mb-4">
-            <h2 className="cm-title">{showStats ? "My Stats" : "Select Scenario"}</h2>
-            <button
-              onClick={() => setShowStats(!showStats)}
-              className="flex items-center gap-1.5 px-3 py-1.5 rounded-md text-sm font-medium transition-all border border-cm-border hover:border-cm-primary/40 text-cm-muted hover:text-cm-text"
-            >
-              <BarChart3 size={14} />
-              {showStats ? "Scenarios" : "My Stats"}
-            </button>
+            <h2 className="cm-title">Select Scenario</h2>
           </div>
-          {showStats ? (
-            <PerformanceCharts />
-          ) : (
           <div className="space-y-3">
-            <DailyChallengeCard />
             <CategoryProgress />
             {(() => {
               const grouped = new Map<string, string[]>();
@@ -309,7 +299,6 @@ export default function TrainingPage({
               });
             })()}
           </div>
-          )}
         </div>
       )}
 
@@ -440,6 +429,11 @@ export default function TrainingPage({
         show={showBadges}
         badges={earnedBadges}
         onClose={() => setShowBadges(false)}
+      />
+
+      <OnboardingModal
+        show={showOnboarding}
+        onComplete={() => setShowOnboarding(false)}
       />
     </div>
   );

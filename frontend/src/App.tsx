@@ -12,6 +12,7 @@ import SignupPage from "./pages/SignupPage";
 import LeaderboardPage from "./pages/LeaderboardPage";
 import ReviewPage from "./pages/ReviewPage";
 import BookmarksPage from "./pages/BookmarksPage";
+import ProgressPage from "./pages/ProgressPage";
 import api from "./api/client";
 
 function App() {
@@ -117,12 +118,14 @@ function AuthenticatedApp({
             element={
               <TrainingPage
                 unlockedCategories={user?.unlocked_categories || []}
+                hasOnboarded={user?.has_onboarded ?? true}
               />
             }
           />
           <Route path="/profile" element={<ProfilePage />} />
           <Route path="/review" element={<ReviewPage />} />
           <Route path="/bookmarks" element={<BookmarksPage />} />
+          <Route path="/progress" element={<ProgressPage />} />
           <Route path="/leaderboard" element={<LeaderboardPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>

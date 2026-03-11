@@ -155,87 +155,87 @@
 
 *Ordered by highest impact / easiest implementation*
 
-### 4.1 Surface Hints System with XP Tradeoff *(Quick Win)*
-- [ ] Surface existing `hints` array from scenario JSON in `ScenarioCard.tsx`
-- [ ] Add progressive reveal UI (show one hint at a time)
-- [ ] Apply -20% XP penalty per hint used in `services/grading_agent.py`
-- [ ] Pass hints_used count through `routers/scenarios.py` submission flow
-- [ ] Update `GradeReveal.tsx` to show "hints used" in XP breakdown
+### 4.1 Surface Hints System with XP Tradeoff *(Quick Win)* ✅
+- [x] Surface existing `hints` array from scenario JSON in `ScenarioCard.tsx`
+- [x] Add progressive reveal UI (show one hint at a time)
+- [x] Apply -20% XP penalty per hint used in `services/grading_agent.py`
+- [x] Pass hints_used count through `routers/scenarios.py` submission flow
+- [x] Update `GradeReveal.tsx` to show "hints used" in XP breakdown
 
 **Files:** `ScenarioCard.tsx`, `GradeReveal.tsx`, `TrainingPage.tsx`, `routers/scenarios.py`, `services/grading_agent.py`
 
-### 4.2 Per-Attempt Radar Chart in Grade Reveal *(Quick Win)*
-- [ ] Reuse existing `RadarScoreChart.tsx` component in `GradeReveal.tsx`
-- [ ] Feed individual attempt dimension_scores (reasoning, terminology, trade_logic, risk_awareness) instead of aggregates
-- [ ] Style as a compact inline chart below the overall score
+### 4.2 Per-Attempt Radar Chart in Grade Reveal *(Quick Win)* ✅
+- [x] Reuse existing `RadarScoreChart.tsx` component in `GradeReveal.tsx`
+- [x] Feed individual attempt dimension_scores (reasoning, terminology, trade_logic, risk_awareness) instead of aggregates
+- [x] Style as a compact inline chart below the overall score
 
 **Files:** `GradeReveal.tsx`, `charts/RadarScoreChart.tsx`
 
-### 4.3 Category Mastery Progress Bars *(Quick Win)*
-- [ ] Add new backend endpoint `GET /performance/category-summary` returning attempts + avg score per category
-- [ ] Create `CategoryProgress.tsx` component with mini progress bars
-- [ ] Integrate into category selector on `TrainingPage.tsx`
+### 4.3 Category Mastery Progress Bars *(Quick Win)* ✅
+- [x] Add new backend endpoint `GET /performance/category-summary` returning attempts + avg score per category
+- [x] Create `CategoryProgress.tsx` component with mini progress bars
+- [x] Integrate into category selector on `TrainingPage.tsx`
 
 **Files:** `TrainingPage.tsx`, new `components/CategoryProgress.tsx`, `routers/performance.py`
 
-### 4.4 Model Answer Toggle *(Quick Win)*
-- [ ] Add "Show Model Answer" button in `GradeReveal.tsx`
-- [ ] Create backend endpoint `POST /responses/{id}/model-answer` that generates an ideal response via Claude + RAG context
-- [ ] Add model answer prompt template to `prompts/grading_rubric.py`
-- [ ] Display model answer in expandable section with dimension callouts
+### 4.4 Model Answer Toggle *(Quick Win)* ✅
+- [x] Add "Show Model Answer" button in `GradeReveal.tsx`
+- [x] Create backend endpoint `POST /responses/{id}/model-answer` that generates an ideal response via Claude + RAG context
+- [x] Add model answer prompt template to `prompts/grading_rubric.py`
+- [x] Display model answer in expandable section with dimension callouts
 
 **Files:** `GradeReveal.tsx`, `routers/responses.py`, `services/grading_agent.py`, `prompts/grading_rubric.py`
 
-### 4.5 Progress Celebrations & Micro-Feedback *(Quick Win)*
-- [ ] Enhance `LevelUpModal.tsx` with full-screen animation + confetti (Framer Motion)
-- [ ] Create `BadgeUnlockModal.tsx` with confetti effect on badge earn
-- [ ] Add "Personal Best!" notification when user beats their high score in a category
-- [ ] Trigger celebrations from `TrainingPage.tsx` and `QuickFirePage.tsx` after grade/XP response
+### 4.5 Progress Celebrations & Micro-Feedback *(Quick Win)* ✅
+- [x] Enhance `LevelUpModal.tsx` with full-screen animation + confetti (Framer Motion)
+- [x] Create `BadgeUnlockModal.tsx` with confetti effect on badge earn
+- [x] Add "Personal Best!" notification when user beats their high score in a category
+- [x] Trigger celebrations from `TrainingPage.tsx` and `QuickFirePage.tsx` after grade/XP response
 
 **Files:** `LevelUpModal.tsx`, new `components/BadgeUnlockModal.tsx`, `TrainingPage.tsx`, `QuickFirePage.tsx`
 
-### 4.6 Quick Fire Timer & Score Card *(Quick Win)*
-- [ ] Add optional countdown timer toggle (30s/60s/off) to `QuickFirePage.tsx`
-- [ ] Create `QuickFireScoreCard.tsx` showing running tally (correct/total, avg justification quality)
-- [ ] Add "Lightning Round" mode: 10 questions, timed, summary at end with total XP
-- [ ] Auto-advance on timer expiry (mark as wrong)
+### 4.6 Quick Fire Timer & Score Card *(Quick Win)* ✅
+- [x] Add optional countdown timer toggle (30s/60s/off) to `QuickFirePage.tsx`
+- [x] Create `QuickFireScoreCard.tsx` showing running tally (correct/total, avg justification quality)
+- [x] Add "Lightning Round" mode: 10 questions, timed, summary at end with total XP
+- [x] Auto-advance on timer expiry (mark as wrong)
 
 **Files:** `QuickFirePage.tsx`, `MCQCard.tsx`, new `components/QuickFireScoreCard.tsx`
 
-### 4.7 Mistake Journal / Review Mode *(Medium)*
-- [ ] Create `ReviewPage.tsx` with paginated list of past attempts + grades
-- [ ] Add route `/review` in `App.tsx` and nav link in `Sidebar.tsx`
-- [ ] Add backend endpoint `GET /responses/history` with filters (category, score range, date range)
-- [ ] Show scenario, user response, AI feedback, and dimension scores per attempt
-- [ ] Add "Retry This Scenario" button linking back to training
+### 4.7 Mistake Journal / Review Mode *(Medium)* ✅
+- [x] Create `ReviewPage.tsx` with paginated list of past attempts + grades
+- [x] Add route `/review` in `App.tsx` and nav link in `Sidebar.tsx`
+- [x] Add backend endpoint `GET /responses/history` with filters (category, score range, date range)
+- [x] Show scenario, user response, AI feedback, and dimension scores per attempt
+- [x] Add "Retry This Scenario" button linking back to training
 
 **Files:** new `pages/ReviewPage.tsx`, `App.tsx`, `Sidebar.tsx`, `routers/responses.py`
 
-### 4.8 Scenario Bookmarking & Favorites *(Medium)*
-- [ ] Create `user_bookmarks` table (user_id, scenario_id, tag, created_at) + Alembic migration
-- [ ] Create `models/bookmark.py` and `routers/bookmarks.py` (CRUD endpoints)
-- [ ] Add bookmark icon toggle on `ScenarioCard.tsx` and `GradeReveal.tsx`
-- [ ] Create `BookmarksPage.tsx` showing saved scenarios with tag filters
-- [ ] Add route `/bookmarks` in `App.tsx` and nav link in `Sidebar.tsx`
+### 4.8 Scenario Bookmarking & Favorites *(Medium)* ✅
+- [x] Create `user_bookmarks` table (user_id, scenario_id, tag, created_at) + Alembic migration
+- [x] Create `models/bookmark.py` and `routers/bookmarks.py` (CRUD endpoints)
+- [x] Add bookmark icon toggle on `ScenarioCard.tsx` and `GradeReveal.tsx`
+- [x] Create `BookmarksPage.tsx` showing saved scenarios with tag filters
+- [x] Add route `/bookmarks` in `App.tsx` and nav link in `Sidebar.tsx`
 
 **Files:** new `models/bookmark.py`, new `routers/bookmarks.py`, `ScenarioCard.tsx`, `GradeReveal.tsx`, new `pages/BookmarksPage.tsx`, `App.tsx`, `Sidebar.tsx`, Alembic migration
 
-### 4.9 Session Goals & Daily Challenges *(Medium)*
-- [ ] Create `daily_challenges` table (id, user_id, challenge_type, target, progress, bonus_xp, date, completed) + migration
-- [ ] Build `services/challenges.py` with daily challenge generation logic (3 challenges per day, rotating types)
-- [ ] Create `routers/challenges.py` with `GET /challenges/today` and `POST /challenges/{id}/progress`
-- [ ] Create `DailyChallengeCard.tsx` component showing today's challenges with progress bars
-- [ ] Integrate into `TrainingPage.tsx` header and `Sidebar.tsx` indicator
-- [ ] Auto-award bonus XP on challenge completion
+### 4.9 Session Goals & Daily Challenges *(Medium)* ✅
+- [x] Create `daily_challenges` table (id, user_id, challenge_type, target, progress, bonus_xp, date, completed) + migration
+- [x] Build `services/challenges.py` with daily challenge generation logic (3 challenges per day, rotating types)
+- [x] Create `routers/challenges.py` with `GET /challenges/today` and `POST /challenges/{id}/progress`
+- [x] Create `DailyChallengeCard.tsx` component showing today's challenges with progress bars
+- [x] Integrate into `TrainingPage.tsx` header and `Sidebar.tsx` indicator
+- [x] Auto-award bonus XP on challenge completion
 
 **Files:** new `models/challenge.py`, new `services/challenges.py`, new `routers/challenges.py`, new `components/DailyChallengeCard.tsx`, `TrainingPage.tsx`, `Sidebar.tsx`, Alembic migration
 
-### 4.10 Onboarding Flow *(Medium)*
-- [ ] Add `has_onboarded` boolean to `users` table + migration
-- [ ] Create `OnboardingModal.tsx` with step-through guided tour (5 steps: welcome, modes, XP, skill tree, go)
-- [ ] Include sample MCQ walkthrough in onboarding
-- [ ] Trigger on first login in `TrainingPage.tsx` (check `has_onboarded` flag)
-- [ ] Add `PATCH /users/me/onboard` endpoint to mark complete
+### 4.10 Onboarding Flow *(Medium)* ✅
+- [x] Add `has_onboarded` boolean to `users` table + migration
+- [x] Create `OnboardingModal.tsx` with step-through guided tour (4 steps: welcome, modes, XP, compete)
+- [x] Trigger on first login in `TrainingPage.tsx` (check `has_onboarded` flag)
+- [x] Add `PATCH /users/me/onboard` endpoint to mark complete
+- [x] Skip tour option on first step
 
 **Files:** new `components/OnboardingModal.tsx`, `TrainingPage.tsx`, `models/user.py`, `routers/users.py`, Alembic migration
 

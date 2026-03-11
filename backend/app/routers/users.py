@@ -72,3 +72,13 @@ async def update_profile(
     await db.refresh(user)
 
     return _user_response(user)
+
+
+@router.patch("/me/onboard")
+async def mark_onboarded(
+    user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    user.has_onboarded = True
+    await db.commit()
+    return {"status": "onboarded"}

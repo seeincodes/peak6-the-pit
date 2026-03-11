@@ -6,6 +6,7 @@ import {
   Trophy,
   BookOpen,
   Bookmark,
+  Target,
   LogOut,
   Flame,
   ChevronLeft,
@@ -13,6 +14,7 @@ import {
   X,
 } from "lucide-react";
 import { AVATAR_PRESETS } from "../constants/avatars";
+import DailyChallengeCard from "./DailyChallengeCard";
 
 interface SidebarProps {
   user: {
@@ -36,6 +38,7 @@ const NAV_ITEMS = [
   { to: "/", icon: Crosshair, label: "Training", matchExact: true },
   { to: "/review", icon: BookOpen, label: "Review", matchExact: false },
   { to: "/bookmarks", icon: Bookmark, label: "Bookmarks", matchExact: false },
+  { to: "/progress", icon: Target, label: "Progress", matchExact: false },
   { to: "/profile", icon: User, label: "Profile", matchExact: false },
   { to: "/leaderboard", icon: Trophy, label: "Leaderboard", matchExact: false },
 ];
@@ -201,6 +204,11 @@ export default function Sidebar({ user, logout, collapsed, onToggleCollapse, mob
                   </span>
                 </div>
               )}
+
+              {/* Daily Challenges */}
+              <div className="mb-3">
+                <DailyChallengeCard compact />
+              </div>
 
               {/* User avatar + name */}
               <div className="flex items-center gap-3 mb-2">
