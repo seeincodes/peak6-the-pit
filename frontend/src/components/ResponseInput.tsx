@@ -8,6 +8,7 @@ interface ResponseInputProps {
 
 export default function ResponseInput({ onSubmit, placeholder, loading }: ResponseInputProps) {
   const [text, setText] = useState("");
+  const [pasteBlocked, setPasteBlocked] = useState(false);
 
   const handleSubmit = () => {
     if (text.trim() && !loading) {
@@ -25,10 +26,20 @@ export default function ResponseInput({ onSubmit, placeholder, loading }: Respon
         onChange={(e) => setText(e.target.value)}
         placeholder={placeholder || "Type your analysis..."}
         className="w-full h-32 bg-transparent text-cm-text placeholder-cm-muted resize-none outline-none text-sm leading-relaxed focus-ring"
+        onPaste={(e) => {
+          e.preventDefault();
+          setPasteBlocked(true);
+          setTimeout(() => setPasteBlocked(false), 2500);
+        }}
         onKeyDown={(e) => {
           if (e.key === "Enter" && e.metaKey) handleSubmit();
         }}
       />
+      {pasteBlocked && (
+        <div className="text-cm-red text-xs mt-1 animate-pulse">
+          Paste is disabled — please type your own analysis.
+        </div>
+      )}
       <div className="flex justify-between items-center mt-2">
         <span className="text-cm-muted text-xs">Cmd+Enter to submit</span>
         <button
