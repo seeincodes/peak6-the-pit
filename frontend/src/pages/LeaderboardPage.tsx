@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { Link } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { Trophy, Users, ChevronDown, ChevronRight } from "lucide-react";
 import api from "../api/client";
@@ -68,7 +69,12 @@ function IndividualEntry({ entry, index }: { entry: LeaderboardEntry; index: num
         </div>
         <div>
           <div className="text-sm font-semibold text-cm-text">
-            {entry.display_name}
+            <Link
+              to={`/profile/${entry.user_id}`}
+              className="hover:text-cm-primary transition-colors"
+            >
+              {entry.display_name}
+            </Link>
             {entry.is_current_user && <span className="text-cm-primary text-xs ml-2">(you)</span>}
           </div>
           <div className="text-xs text-cm-muted">
@@ -170,10 +176,10 @@ function TeamCard({ team, index }: { team: TeamEntry; index: number }) {
                     <div className="w-6 h-6 rounded-full bg-gradient-to-br from-cm-primary to-cm-emerald flex items-center justify-center text-white font-bold text-xs">
                       {m.display_name.charAt(0).toUpperCase()}
                     </div>
-                    <span className="text-cm-text text-sm">
+                    <Link to={`/profile/${m.user_id}`} className="text-cm-text text-sm hover:text-cm-primary transition-colors">
                       {m.display_name}
                       {m.is_current_user && <span className="text-cm-primary text-xs ml-1">(you)</span>}
-                    </span>
+                    </Link>
                     <span className="text-cm-muted text-xs">Lv{m.level}</span>
                   </div>
                   <span className="text-cm-lime text-xs font-medium">

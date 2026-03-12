@@ -9,13 +9,14 @@ import {
   Users,
   Map,
   LogOut,
-  Flame,
   ChevronLeft,
   ChevronRight,
   X,
+  Activity,
 } from "lucide-react";
 import { AVATAR_PRESETS } from "../constants/avatars";
 import DailyChallengeCard from "./DailyChallengeCard";
+import StreakFlame from "./StreakFlame";
 
 interface SidebarProps {
   user: {
@@ -38,6 +39,7 @@ const LEVEL_XP = [0, 0, 60, 180, 380, 720, 1250, 2050, 3250, 5050, 8000];
 const NAV_ITEMS = [
   { to: "/", icon: Crosshair, label: "Training", matchExact: true },
   { to: "/paths", icon: Map, label: "Paths", matchExact: false },
+  { to: "/feed", icon: Activity, label: "Feed", matchExact: false },
   { to: "/review", icon: BookOpen, label: "Review", matchExact: false },
   { to: "/bookmarks", icon: Bookmark, label: "Bookmarks", matchExact: false },
   { to: "/peer-review", icon: Users, label: "Peer Review", matchExact: false },
@@ -203,10 +205,8 @@ export default function Sidebar({ user, logout, collapsed, onToggleCollapse, mob
               {/* Streak */}
               {user.streak_days > 0 && (
                 <div className="flex items-center gap-2 mb-3">
-                  <Flame size={16} className="text-cm-amber shrink-0" />
-                  <span className="text-xs text-cm-amber font-medium">
-                    {user.streak_days}d streak
-                  </span>
+                  <StreakFlame days={user.streak_days} size="sm" />
+                  <span className="text-xs text-cm-amber font-medium">streak</span>
                 </div>
               )}
 

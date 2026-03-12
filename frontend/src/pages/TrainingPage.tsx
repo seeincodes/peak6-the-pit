@@ -14,6 +14,7 @@ import DifficultySuggestion from "../components/DifficultySuggestion";
 import ConceptPrimer from "../components/ConceptPrimer";
 import OnboardingModal from "../components/OnboardingModal";
 import QuickFirePage from "./QuickFirePage";
+import { useXPToast } from "../context/XPToastContext";
 import api from "../api/client";
 import { categoryDisplay, categoryColors } from "../theme/colors";
 
@@ -55,8 +56,22 @@ interface GradeData {
     feedback: string;
   };
   xp_earned: number;
+  xp_breakdown?: {
+    base: number;
+    streak_bonus: number;
+    perfect_bonus: number;
+    no_hints_bonus: number;
+    daily_first_bonus: number;
+    hint_penalty_pct: number;
+    total: number;
+  };
   xp_total: number;
   level: number;
+  level_progress?: {
+    current_xp: number;
+    level_min_xp: number;
+    level_max_xp: number;
+  };
   hints_used?: number;
   new_badges?: BadgeData[];
   bonuses?: {
@@ -77,6 +92,7 @@ export default function TrainingPage({
   const location = useLocation();
   const navigate = useNavigate();
   const autoStarted = useRef(false);
+  const { showXPToast } = useXPToast();
 
   const [showOnboarding, setShowOnboarding] = useState(!hasOnboarded);
   const [mode, setMode] = useState<Mode>("select");
@@ -142,6 +158,7 @@ export default function TrainingPage({
     onSuccess: (data) => {
       setGradeData(data);
       setMode("deep-result");
+      showXPToast(data.xp_earned);
 
       const userData = queryClient.getQueryData<{ level: number }>(["user"]);
       if (userData && data.level > userData.level) {
@@ -581,6 +598,9 @@ export default function TrainingPage({
             overallScore={gradeData.grade.overall_score}
             feedback={gradeData.grade.feedback}
             xpEarned={gradeData.xp_earned}
+            xpBreakdown={gradeData.xp_breakdown}
+            levelProgress={gradeData.level_progress}
+            level={gradeData.level}
             hintsUsed={gradeData.hints_used ?? hintsUsed}
             responseId={responseId ?? undefined}
             scenarioId={scenario?.id}

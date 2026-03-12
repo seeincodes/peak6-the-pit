@@ -5,6 +5,7 @@ import MCQCard from "../components/MCQCard";
 import MCQFeedback from "../components/MCQFeedback";
 import StreakBadge from "../components/StreakBadge";
 import QuickFireScoreCard from "../components/QuickFireScoreCard";
+import { useXPToast } from "../context/XPToastContext";
 import api from "../api/client";
 
 interface MCQData {
@@ -25,8 +26,19 @@ interface MCQResult {
   justification_quality: string;
   justification_note: string;
   xp_earned: number;
+  xp_breakdown?: {
+    base: number;
+    streak_bonus: number;
+    daily_first_bonus: number;
+    total: number;
+  };
   xp_total: number;
   level: number;
+  level_progress?: {
+    current_xp: number;
+    level_min_xp: number;
+    level_max_xp: number;
+  };
   is_daily_first?: boolean;
 }
 
@@ -46,6 +58,7 @@ export default function QuickFirePage({
   onExit: () => void;
   initialMCQ?: MCQData | null;
 }) {
+  const { showXPToast } = useXPToast();
   const [phase, setPhase] = useState<Phase>(initialMCQ ? "question" : "loading");
   const [currentMCQ, setCurrentMCQ] = useState<MCQData | null>(initialMCQ ?? null);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
@@ -181,6 +194,7 @@ export default function QuickFirePage({
       setResult(data);
       setPhase("feedback");
       setTotalXP((prev) => prev + data.xp_earned);
+      showXPToast(data.xp_earned);
 
       if (data.is_correct) {
         setStreak((prev) => prev + 1);
@@ -377,6 +391,10 @@ export default function QuickFirePage({
           justificationQuality={result.justification_quality}
           justificationNote={result.justification_note}
           xpEarned={result.xp_earned}
+          xpBreakdown={result.xp_breakdown}
+          levelProgress={result.level_progress}
+          level={result.level}
+          streakCount={streak}
           isDailyFirst={result.is_daily_first}
           onNext={handleNext}
         />

@@ -1,7 +1,20 @@
 import { useRef, useEffect } from "react";
 import { motion } from "framer-motion";
-import { Flame } from "lucide-react";
 import ScoreGauge from "./charts/ScoreGauge";
+import XPProgressBar from "./XPProgressBar";
+
+interface XPBreakdown {
+  base: number;
+  streak_bonus: number;
+  daily_first_bonus: number;
+  total: number;
+}
+
+interface LevelProgress {
+  current_xp: number;
+  level_min_xp: number;
+  level_max_xp: number;
+}
 
 interface MCQFeedbackProps {
   isCorrect: boolean;
@@ -13,6 +26,10 @@ interface MCQFeedbackProps {
   xpEarned: number;
   isDailyFirst?: boolean;
   onNext: () => void;
+  xpBreakdown?: XPBreakdown;
+  levelProgress?: LevelProgress;
+  level?: number;
+  streakCount?: number;
 }
 
 export default function MCQFeedback({
@@ -22,8 +39,11 @@ export default function MCQFeedback({
   justificationQuality,
   justificationNote,
   xpEarned,
-  isDailyFirst,
   onNext,
+  xpBreakdown,
+  levelProgress,
+  level,
+  streakCount = 0,
 }: MCQFeedbackProps) {
   const nextRef = useRef<HTMLButtonElement>(null);
   useEffect(() => {
@@ -60,14 +80,67 @@ export default function MCQFeedback({
         className="mb-4"
       >
         <div className="text-center mb-3">
-          <span className="text-cm-lime font-bold text-lg">+{xpEarned} XP</span>
-          {isDailyFirst && (
-            <div className="flex items-center justify-center gap-1 mt-1">
-              <Flame size={12} className="text-cm-amber" />
-              <span className="text-cm-amber text-xs">Daily First Bonus</span>
+          {xpBreakdown ? (
+            <div className="inline-flex flex-col items-start gap-1 text-sm">
+              <motion.div
+                initial={{ opacity: 0, x: -20 }}
+                animate={{ opacity: 1, x: 0 }}
+                transition={{ delay: 0.3 }}
+                className="text-cm-muted"
+              >
+                +{xpBreakdown.base} {isCorrect ? (justificationQuality === "good" ? "Correct + Strong Reasoning" : "Correct") : (justificationQuality === "good" ? "Strong Reasoning" : "Base")}
+              </motion.div>
+              {xpBreakdown.streak_bonus > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.4 }}
+                  className="text-cm-amber"
+                >
+                  +{xpBreakdown.streak_bonus} Streak Bonus ({streakCount}🔥)
+                </motion.div>
+              )}
+              {xpBreakdown.daily_first_bonus > 0 && (
+                <motion.div
+                  initial={{ opacity: 0, x: -20 }}
+                  animate={{ opacity: 1, x: 0 }}
+                  transition={{ delay: 0.5 }}
+                  className="text-cm-amber"
+                >
+                  +{xpBreakdown.daily_first_bonus} Daily First 🔥
+                </motion.div>
+              )}
+              <motion.div
+                initial={{ opacity: 0, scale: 0.5 }}
+                animate={{ opacity: 1, scale: 1 }}
+                transition={{ delay: 0.6, type: "spring", stiffness: 300 }}
+                className="border-t border-cm-border pt-1 mt-1 w-full"
+              >
+                <span className="text-cm-lime font-bold text-lg">= {xpBreakdown.total} XP</span>
+              </motion.div>
             </div>
+          ) : (
+            <span className="text-cm-lime font-bold text-lg">+{xpEarned} XP</span>
           )}
         </div>
+
+        {/* Level Progress Bar */}
+        {levelProgress && level && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.7 }}
+            className="mb-3 px-2"
+          >
+            <XPProgressBar
+              xpTotal={levelProgress.current_xp}
+              levelMinXP={levelProgress.level_min_xp}
+              levelMaxXP={levelProgress.level_max_xp}
+              level={level}
+            />
+          </motion.div>
+        )}
+
         <div className="flex justify-center mb-3">
           <ScoreGauge isCorrect={isCorrect} justificationQuality={justificationQuality} size={110} />
         </div>

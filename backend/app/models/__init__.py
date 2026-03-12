@@ -10,5 +10,7 @@ from app.models.bookmark import Bookmark
 from app.models.challenge import DailyChallenge
 from app.models.peer_review import PeerReview
 from app.models.learning_path import LearningPath, UserPathProgress
+from app.models.activity_event import ActivityEvent
+from app.models.study_group import StudyGroup, StudyGroupMember
 
-__all__ = ["User", "Scenario", "Response", "Grade", "Document", "XPTransaction", "Badge", "UserBadge", "EmbeddingCache", "Bookmark", "DailyChallenge", "PeerReview", "LearningPath", "UserPathProgress"]
+__all__ = ["User", "Scenario", "Response", "Grade", "Document", "XPTransaction", "Badge", "UserBadge", "EmbeddingCache", "Bookmark", "DailyChallenge", "PeerReview", "LearningPath", "UserPathProgress", "ActivityEvent", "StudyGroup", "StudyGroupMember"]

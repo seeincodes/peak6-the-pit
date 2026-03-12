@@ -15,6 +15,7 @@ from app.models.scenario import Scenario
 from app.models.peer_review import PeerReview
 from app.models.xp_transaction import XPTransaction
 from app.middleware.auth import get_current_user
+from app.services.streak import update_streak
 from app.constants import (
     PEER_REVIEW_BASE_XP,
     PEER_REVIEW_QUALITY_BONUS,
@@ -234,6 +235,8 @@ async def submit_peer_review(
     )
     db.add(xp_tx)
     current_user.xp_total = max(0, current_user.xp_total + xp_amount)
+
+    await update_streak(current_user, db)
 
     await db.commit()
 

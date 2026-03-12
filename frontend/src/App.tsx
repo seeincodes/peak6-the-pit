@@ -15,6 +15,9 @@ import BookmarksPage from "./pages/BookmarksPage";
 import ProgressPage from "./pages/ProgressPage";
 import PeerReviewPage from "./pages/PeerReviewPage";
 import LearningPathPage from "./pages/LearningPathPage";
+import FeedPage from "./pages/FeedPage";
+import UserProfilePage from "./pages/UserProfilePage";
+import { XPToastProvider } from "./context/XPToastContext";
 import api from "./api/client";
 
 function App() {
@@ -78,65 +81,69 @@ function AuthenticatedApp({
   }
 
   return (
-    <div className="h-screen bg-cm-bg flex overflow-hidden">
-      <a href="#main-content" className="skip-link">Skip to main content</a>
+    <XPToastProvider>
+      <div className="h-screen bg-cm-bg flex overflow-hidden">
+        <a href="#main-content" className="skip-link">Skip to main content</a>
 
-      {/* Mobile top bar */}
-      <div className="fixed top-0 left-0 right-0 h-14 bg-cm-card border-b border-cm-border flex items-center px-4 z-30 lg:hidden">
-        <button
-          onClick={() => setMobileSidebarOpen(true)}
-          className="text-cm-muted hover:text-cm-text transition-colors p-1 -ml-1"
-          aria-label="Open menu"
-        >
-          <Menu size={22} />
-        </button>
-        <div className="flex items-center gap-2 ml-3">
-          <div className="w-7 h-7 rounded-md bg-gradient-to-br from-cm-primary to-cm-emerald flex items-center justify-center shrink-0">
-            <span className="text-white font-bold text-[10px] tracking-tight">CM</span>
+        {/* Mobile top bar */}
+        <div className="fixed top-0 left-0 right-0 h-14 bg-cm-card border-b border-cm-border flex items-center px-4 z-30 lg:hidden">
+          <button
+            onClick={() => setMobileSidebarOpen(true)}
+            className="text-cm-muted hover:text-cm-text transition-colors p-1 -ml-1"
+            aria-label="Open menu"
+          >
+            <Menu size={22} />
+          </button>
+          <div className="flex items-center gap-2 ml-3">
+            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-cm-primary to-cm-emerald flex items-center justify-center shrink-0">
+              <span className="text-white font-bold text-[10px] tracking-tight">CM</span>
+            </div>
+            <span className="text-cm-text font-bold text-sm">CapMan AI</span>
           </div>
-          <span className="text-cm-text font-bold text-sm">CapMan AI</span>
         </div>
+
+        <Sidebar
+          user={user}
+          logout={logout}
+          collapsed={sidebarCollapsed}
+          onToggleCollapse={() => setSidebarCollapsed((c) => !c)}
+          mobileOpen={mobileSidebarOpen}
+          onMobileClose={() => setMobileSidebarOpen(false)}
+        />
+
+        <main
+          id="main-content"
+          className={`
+            flex-1 min-h-0 overflow-y-auto overflow-x-hidden
+            pt-14 lg:pt-0
+            transition-[margin-left] duration-300 ease-in-out
+            ml-0 ${sidebarCollapsed ? "lg:ml-16" : "lg:ml-[220px]"}
+          `}
+        >
+          <Routes>
+            <Route
+              path="/"
+              element={
+                <TrainingPage
+                  unlockedCategories={user?.unlocked_categories || []}
+                  hasOnboarded={user?.has_onboarded ?? true}
+                />
+              }
+            />
+            <Route path="/profile" element={<ProfilePage />} />
+            <Route path="/review" element={<ReviewPage />} />
+            <Route path="/bookmarks" element={<BookmarksPage />} />
+            <Route path="/progress" element={<ProgressPage />} />
+            <Route path="/leaderboard" element={<LeaderboardPage />} />
+            <Route path="/peer-review" element={<PeerReviewPage />} />
+            <Route path="/paths" element={<LearningPathPage />} />
+            <Route path="/feed" element={<FeedPage />} />
+            <Route path="/profile/:userId" element={<UserProfilePage />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </main>
       </div>
-
-      <Sidebar
-        user={user}
-        logout={logout}
-        collapsed={sidebarCollapsed}
-        onToggleCollapse={() => setSidebarCollapsed((c) => !c)}
-        mobileOpen={mobileSidebarOpen}
-        onMobileClose={() => setMobileSidebarOpen(false)}
-      />
-
-      <main
-        id="main-content"
-        className={`
-          flex-1 min-h-0 overflow-y-auto overflow-x-hidden
-          pt-14 lg:pt-0
-          transition-[margin-left] duration-300 ease-in-out
-          ml-0 ${sidebarCollapsed ? "lg:ml-16" : "lg:ml-[220px]"}
-        `}
-      >
-        <Routes>
-          <Route
-            path="/"
-            element={
-              <TrainingPage
-                unlockedCategories={user?.unlocked_categories || []}
-                hasOnboarded={user?.has_onboarded ?? true}
-              />
-            }
-          />
-          <Route path="/profile" element={<ProfilePage />} />
-          <Route path="/review" element={<ReviewPage />} />
-          <Route path="/bookmarks" element={<BookmarksPage />} />
-          <Route path="/progress" element={<ProgressPage />} />
-          <Route path="/leaderboard" element={<LeaderboardPage />} />
-          <Route path="/peer-review" element={<PeerReviewPage />} />
-          <Route path="/paths" element={<LearningPathPage />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </main>
-    </div>
+    </XPToastProvider>
   );
 }
 

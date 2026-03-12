@@ -14,10 +14,13 @@ from app.models.xp_transaction import XPTransaction
 from app.models.user import User
 from app.services.scenario_engine import generate_mcq
 from app.services.mcq_pool import get_from_pool, spawn_refill
-from app.services.grading_agent import grade_mcq_justification, compute_mcq_xp
-from app.constants import MCQ_JUSTIFY_MAX_CHARS
+from app.services.grading_agent import grade_mcq_justification, compute_mcq_xp_breakdown
+from app.constants import MCQ_JUSTIFY_MAX_CHARS, XP_THRESHOLDS
 from app.services.badge_service import check_and_award_badges
 from app.services.path_progress import check_and_advance_paths
+from app.services.streak import update_streak
+from app.services.activity import emit_activity
+from app.services.progression import get_level_title
 from app.middleware.auth import get_current_user
 
 router = APIRouter(prefix="/api/mcq", tags=["mcq"])
@@ -145,7 +148,8 @@ async def submit(
     is_daily_first = existing_mcq_today.scalar() == 0
 
     # Compute XP with streak from frontend
-    xp_earned = compute_mcq_xp(is_correct, justification_quality, req.streak_count, is_daily_first=is_daily_first)
+    xp_breakdown = compute_mcq_xp_breakdown(is_correct, justification_quality, req.streak_count, is_daily_first=is_daily_first)
+    xp_earned = xp_breakdown["total"]
 
     xp_tx = XPTransaction(
         user_id=user.id,
@@ -154,7 +158,10 @@ async def submit(
         reference_id=response.id,
     )
     db.add(xp_tx)
+    old_level = user.level
     user.xp_total = max(0, user.xp_total + xp_earned)
+
+    streak_result = await update_streak(user, db)
 
     new_badges = await check_and_award_badges(user.id, db)
 
@@ -162,6 +169,26 @@ async def submit(
         db, user.id, scenario.category, scenario.difficulty,
         overall_score, step_type="mcq",
     )
+
+    # Emit activity events
+    await emit_activity(db, user.id, "completed_mcq", {
+        "category": scenario.category,
+        "difficulty": scenario.difficulty,
+        "is_correct": is_correct,
+    })
+    for badge in new_badges:
+        await emit_activity(db, user.id, "earned_badge", badge)
+    for adv in path_advancements:
+        event_type = "path_completed" if adv["path_completed"] else "path_step_completed"
+        await emit_activity(db, user.id, event_type, adv)
+    if streak_result.get("milestone"):
+        await emit_activity(db, user.id, "streak_milestone", {"streak_days": streak_result["milestone"]})
+    if user.level > old_level:
+        await emit_activity(db, user.id, "level_up", {
+            "old_level": old_level,
+            "new_level": user.level,
+            "level_title": get_level_title(user.level),
+        })
 
     await db.commit()
 
@@ -172,8 +199,14 @@ async def submit(
         "justification_quality": justification_quality,
         "justification_note": grade_result.get("note", ""),
         "xp_earned": xp_earned,
+        "xp_breakdown": xp_breakdown,
         "xp_total": user.xp_total,
         "level": max(1, user.level),
+        "level_progress": {
+            "current_xp": user.xp_total,
+            "level_min_xp": XP_THRESHOLDS[user.level],
+            "level_max_xp": XP_THRESHOLDS[min(user.level + 1, len(XP_THRESHOLDS) - 1)],
+        },
         "new_badges": new_badges,
         "is_daily_first": is_daily_first,
         "path_advancements": path_advancements,

@@ -21,6 +21,7 @@ import {
   Zap,
 } from "lucide-react";
 import { categoryDisplay, categoryColors } from "../theme/colors";
+import StudyGroupWidget from "../components/StudyGroupWidget";
 import api from "../api/client";
 
 interface PathSummary {
@@ -376,6 +377,11 @@ function PathDetailView({
           );
         })}
       </div>
+
+      {/* Study Group Widget — only when enrolled */}
+      {path.is_enrolled && (
+        <StudyGroupWidget pathId={pathId} pathName={path.name} />
+      )}
     </motion.div>
   );
 }

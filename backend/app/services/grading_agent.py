@@ -41,6 +41,42 @@ def parse_probe_json(raw: str) -> dict:
     return _parse_json(raw)
 
 
+def compute_xp_breakdown(
+    overall_score: float,
+    difficulty: str,
+    streak_days: int,
+    hints_used: int = 0,
+    is_daily_first: bool = False,
+) -> dict:
+    multiplier = DIFFICULTY_MULTIPLIER.get(difficulty, 1.0)
+    quality = overall_score / 5.0
+    base = int(XP_BASE * multiplier * quality)
+
+    hint_penalty_pct = 0
+    if hints_used > 0:
+        hint_penalty_pct = min(hints_used * int(HINT_XP_PENALTY * 100), 80)
+        penalty = min(hints_used * HINT_XP_PENALTY, 0.8)
+        base = int(base * (1.0 - penalty))
+
+    streak_bonus = min(streak_days * STREAK_XP_PER_DAY, STREAK_XP_MAX)
+    perfect_bonus = PERFECT_SCORE_BONUS if overall_score >= 4.5 else 0
+    no_hints_bonus = NO_HINTS_BONUS if hints_used == 0 else 0
+    daily_first_bonus = DAILY_FIRST_SCENARIO_BONUS if is_daily_first else 0
+
+    total = base + streak_bonus + perfect_bonus + no_hints_bonus + daily_first_bonus
+    total = max(total, XP_FLOOR)
+
+    return {
+        "base": base,
+        "streak_bonus": streak_bonus,
+        "perfect_bonus": perfect_bonus,
+        "no_hints_bonus": no_hints_bonus,
+        "daily_first_bonus": daily_first_bonus,
+        "hint_penalty_pct": hint_penalty_pct,
+        "total": total,
+    }
+
+
 def compute_xp(
     overall_score: float,
     difficulty: str,
@@ -48,22 +84,7 @@ def compute_xp(
     hints_used: int = 0,
     is_daily_first: bool = False,
 ) -> int:
-    multiplier = DIFFICULTY_MULTIPLIER.get(difficulty, 1.0)
-    quality = overall_score / 5.0
-    base = int(XP_BASE * multiplier * quality)
-
-    # Hint penalty applies only to base XP
-    if hints_used > 0:
-        penalty = min(hints_used * HINT_XP_PENALTY, 0.8)
-        base = int(base * (1.0 - penalty))
-
-    streak_bonus = min(streak_days * STREAK_XP_PER_DAY, STREAK_XP_MAX)
-    perfect_bonus = PERFECT_SCORE_BONUS if overall_score >= 4.5 else 0
-    clean_bonus = NO_HINTS_BONUS if hints_used == 0 else 0
-    daily_bonus = DAILY_FIRST_SCENARIO_BONUS if is_daily_first else 0
-
-    total = base + streak_bonus + perfect_bonus + clean_bonus + daily_bonus
-    return max(total, XP_FLOOR)
+    return compute_xp_breakdown(overall_score, difficulty, streak_days, hints_used, is_daily_first)["total"]
 
 
 async def _get_grading_context(category: str, difficulty: str) -> str:
@@ -192,27 +213,18 @@ async def grade_mcq_justification(
     return _parse_json(message.content[0].text)
 
 
-def compute_mcq_xp(
+def compute_mcq_xp_breakdown(
     is_correct: bool,
     justification_quality: str,
     streak_count: int,
     is_daily_first: bool = False,
-) -> int:
-    """Compute XP for an MCQ response.
-
-    XP rewards both correctness and reasoning quality:
-    - Correct + good reasoning: 20 XP base + streak bonus
-    - Correct + weak reasoning: 12 XP base + reduced streak bonus
-    - Wrong + good reasoning: 8 XP (partial credit for sound thinking)
-    - Wrong + weak reasoning: 3 XP
-
-    streak_count: number of consecutive correct answers (0-based, before this answer).
-    """
-    daily_bonus = DAILY_FIRST_MCQ_BONUS if is_daily_first else 0
+) -> dict:
+    """Compute XP breakdown for an MCQ response."""
+    daily_first_bonus = DAILY_FIRST_MCQ_BONUS if is_daily_first else 0
 
     if not is_correct:
         base = MCQ_XP_WRONG_GOOD if justification_quality == "good" else MCQ_XP_WRONG_WEAK
-        return base + daily_bonus
+        return {"base": base, "streak_bonus": 0, "daily_first_bonus": daily_first_bonus, "total": base + daily_first_bonus}
 
     if justification_quality == "good":
         base = MCQ_XP_CORRECT_GOOD
@@ -221,4 +233,14 @@ def compute_mcq_xp(
         base = MCQ_XP_CORRECT_WEAK
         streak_bonus = min(streak_count * (MCQ_STREAK_BONUS // 2), MCQ_STREAK_MAX_BONUS // 2)
 
-    return base + streak_bonus + daily_bonus
+    total = base + streak_bonus + daily_first_bonus
+    return {"base": base, "streak_bonus": streak_bonus, "daily_first_bonus": daily_first_bonus, "total": total}
+
+
+def compute_mcq_xp(
+    is_correct: bool,
+    justification_quality: str,
+    streak_count: int,
+    is_daily_first: bool = False,
+) -> int:
+    return compute_mcq_xp_breakdown(is_correct, justification_quality, streak_count, is_daily_first)["total"]
