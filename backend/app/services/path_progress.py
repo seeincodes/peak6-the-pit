@@ -13,9 +13,12 @@ async def check_and_advance_paths(
     category: str,
     difficulty: str,
     overall_score: float,
+    step_type: str = "scenario",
 ) -> list[dict]:
     """Check all in-progress paths for the user and advance if this grading
     satisfies the current step's requirements.
+
+    step_type should be "scenario" or "mcq" to match the right step kind.
 
     Returns a list of path advancement events (for frontend notification).
     Does NOT commit — caller manages the transaction.
@@ -38,7 +41,10 @@ async def check_and_advance_paths(
         if not step:
             continue
 
+        # Match category, difficulty, and step type
         if step["category"] != category or step["difficulty"] != difficulty:
+            continue
+        if step.get("step_type", "scenario") != step_type:
             continue
 
         required_score = step.get("required_score", 3.5)

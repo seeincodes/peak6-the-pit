@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, Star, BookOpen, HelpCircle, Check } from "lucide-react";
 import ScenarioCard from "../components/ScenarioCard";
@@ -13,10 +13,11 @@ import RecommendedSection from "../components/RecommendedSection";
 import DifficultySuggestion from "../components/DifficultySuggestion";
 import ConceptPrimer from "../components/ConceptPrimer";
 import OnboardingModal from "../components/OnboardingModal";
+import QuickFirePage from "./QuickFirePage";
 import api from "../api/client";
 import { categoryDisplay, categoryColors } from "../theme/colors";
 
-type Mode = "select" | "deep-streaming" | "deep-scenario" | "deep-probe" | "deep-grading" | "deep-result" | "deep-error";
+type Mode = "select" | "path-mcq" | "deep-streaming" | "deep-scenario" | "deep-probe" | "deep-grading" | "deep-result" | "deep-error";
 
 interface ScenarioData {
   id: string;
@@ -74,11 +75,13 @@ export default function TrainingPage({
   hasOnboarded?: boolean;
 }) {
   const location = useLocation();
+  const navigate = useNavigate();
   const autoStarted = useRef(false);
 
   const [showOnboarding, setShowOnboarding] = useState(!hasOnboarded);
   const [mode, setMode] = useState<Mode>("select");
   const [selectedCat, setSelectedCat] = useState<{ category: string; difficulty: string } | null>(null);
+  const [activePathId, setActivePathId] = useState<string | null>(null);
   const [scenario, setScenario] = useState<ScenarioData | null>(null);
   const [responseId, setResponseId] = useState<string | null>(null);
   const [probeQuestion, setProbeQuestion] = useState<string | null>(null);
@@ -92,16 +95,22 @@ export default function TrainingPage({
   const [hintsUsed, setHintsUsed] = useState(0);
   const queryClient = useQueryClient();
 
-  // Auto-start scenario when navigated from a learning path
+  // Auto-start scenario or MCQ when navigated from a learning path
   useEffect(() => {
     const state = location.state as {
-      category?: string; difficulty?: string; fromPath?: string; learningObjective?: string;
+      category?: string; difficulty?: string; fromPath?: string;
+      learningObjective?: string; stepType?: string;
     } | null;
     if (state?.category && state?.difficulty && state?.fromPath && !autoStarted.current) {
       autoStarted.current = true;
+      setActivePathId(state.fromPath);
       const cat = { category: state.category, difficulty: state.difficulty };
       setSelectedCat(cat);
-      generateStreaming(cat, state.learningObjective);
+      if (state.stepType === "mcq") {
+        setMode("path-mcq");
+      } else {
+        generateStreaming(cat, state.learningObjective);
+      }
       // Clear location state to prevent re-trigger on remount
       window.history.replaceState({}, "");
     }
@@ -161,6 +170,39 @@ export default function TrainingPage({
     setDeepError(null);
     setHintsUsed(0);
     setEarnedBadges([]);
+    setActivePathId(null);
+  };
+
+  const [loadingNextStep, setLoadingNextStep] = useState(false);
+
+  const startNextPathStep = async () => {
+    if (!activePathId) return;
+    setLoadingNextStep(true);
+    try {
+      const res = await api.post(`/paths/${activePathId}/start-step`);
+      const { category, difficulty, step_description, step_type, path_id } = res.data;
+      // Reset scenario state for next step
+      setScenario(null);
+      setResponseId(null);
+      setProbeQuestion(null);
+      setGradeData(null);
+      setDeepError(null);
+      setHintsUsed(0);
+      setEarnedBadges([]);
+      setActivePathId(path_id);
+      const cat = { category, difficulty };
+      setSelectedCat(cat);
+      if (step_type === "mcq") {
+        setMode("path-mcq");
+      } else {
+        generateStreaming(cat, step_description);
+      }
+    } catch {
+      // Path completed or error — go back to paths page
+      navigate("/paths");
+    } finally {
+      setLoadingNextStep(false);
+    }
   };
 
   const generateStreaming = async (params: { category: string; difficulty: string }, learningObjective?: string) => {
@@ -471,6 +513,23 @@ export default function TrainingPage({
         </div>
       )}
 
+      {/* Learning Path — MCQ step */}
+      {mode === "path-mcq" && selectedCat && (
+        <QuickFirePage
+          category={selectedCat.category}
+          difficulty={selectedCat.difficulty}
+          onExit={() => {
+            queryClient.invalidateQueries({ queryKey: ["paths"] });
+            queryClient.invalidateQueries({ queryKey: ["path-detail"] });
+            if (activePathId) {
+              startNextPathStep();
+            } else {
+              reset();
+            }
+          }}
+        />
+      )}
+
       {/* Deep Analysis — Scenario phase */}
       {mode === "deep-scenario" && scenario && (
         <>
@@ -556,13 +615,31 @@ export default function TrainingPage({
               ))}
             </div>
           )}
-          <div className="text-center">
-            <button
-              onClick={reset}
-              className="cm-btn-primary-lg px-8 py-3"
-            >
-              Next Scenario
-            </button>
+          <div className="text-center flex items-center justify-center gap-3">
+            {activePathId ? (
+              <>
+                <button
+                  onClick={startNextPathStep}
+                  disabled={loadingNextStep}
+                  className="cm-btn-primary-lg px-8 py-3"
+                >
+                  {loadingNextStep ? "Loading..." : "Next Path Step"}
+                </button>
+                <button
+                  onClick={() => navigate("/paths")}
+                  className="text-cm-muted hover:text-cm-text text-sm transition-colors"
+                >
+                  Back to Paths
+                </button>
+              </>
+            ) : (
+              <button
+                onClick={reset}
+                className="cm-btn-primary-lg px-8 py-3"
+              >
+                Next Scenario
+              </button>
+            )}
           </div>
         </>
       )}

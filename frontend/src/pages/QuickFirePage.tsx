@@ -345,6 +345,13 @@ export default function QuickFirePage({
                   {submitMutation.isPending ? "Grading..." : "Submit"}
                 </button>
               </div>
+
+              {submitMutation.isPending && (
+                <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-cm-primary/5 border border-cm-primary/20 animate-pulse">
+                  <div className="w-5 h-5 border-2 border-cm-primary/30 border-t-cm-primary rounded-full animate-spin" />
+                  <span className="text-sm text-cm-primary">AI is reviewing your reasoning...</span>
+                </div>
+              )}
             </div>
           )}
         </>

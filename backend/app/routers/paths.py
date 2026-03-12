@@ -158,6 +158,7 @@ async def start_step(
         "step_number": step["step_number"],
         "step_title": step["title"],
         "step_description": step.get("description", ""),
+        "step_type": step.get("step_type", "scenario"),
         "required_score": step["required_score"],
         "path_id": str(path.id),
         "path_name": path.name,

@@ -17,6 +17,7 @@ from app.services.mcq_pool import get_from_pool, spawn_refill
 from app.services.grading_agent import grade_mcq_justification, compute_mcq_xp
 from app.constants import MCQ_JUSTIFY_MAX_CHARS
 from app.services.badge_service import check_and_award_badges
+from app.services.path_progress import check_and_advance_paths
 from app.middleware.auth import get_current_user
 
 router = APIRouter(prefix="/api/mcq", tags=["mcq"])
@@ -133,7 +134,7 @@ async def submit(
     db.add(grade)
 
     # Check if this is the user's first MCQ today
-    today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+    today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
     existing_mcq_today = await db.execute(
         select(func.count()).where(
             XPTransaction.user_id == user.id,
@@ -157,6 +158,11 @@ async def submit(
 
     new_badges = await check_and_award_badges(user.id, db)
 
+    path_advancements = await check_and_advance_paths(
+        db, user.id, scenario.category, scenario.difficulty,
+        overall_score, step_type="mcq",
+    )
+
     await db.commit()
 
     return {
@@ -170,4 +176,5 @@ async def submit(
         "level": max(1, user.level),
         "new_badges": new_badges,
         "is_daily_first": is_daily_first,
+        "path_advancements": path_advancements,
     }

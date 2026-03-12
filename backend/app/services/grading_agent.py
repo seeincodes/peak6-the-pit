@@ -182,7 +182,7 @@ async def grade_mcq_justification(
     )
 
     message = await anthropic_client.messages.create(
-        model="claude-sonnet-4-6",
+        model="claude-haiku-4-5-20251001",
         max_tokens=256,
         system=GRADING_SYSTEM_PROMPT,
         messages=[{"role": "user", "content": prompt}],

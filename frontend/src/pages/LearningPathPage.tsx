@@ -18,6 +18,7 @@ import {
   Activity,
   BookOpen,
   CheckCircle2,
+  Zap,
 } from "lucide-react";
 import { categoryDisplay, categoryColors } from "../theme/colors";
 import api from "../api/client";
@@ -42,6 +43,7 @@ interface PathStep {
   description: string;
   category: string;
   difficulty: string;
+  step_type?: "scenario" | "mcq";
   required_score: number;
   status: "completed" | "current" | "locked";
 }
@@ -191,7 +193,7 @@ function PathDetailView({
   const startStepMutation = useMutation({
     mutationFn: () => api.post(`/paths/${pathId}/start-step`),
     onSuccess: (res) => {
-      const { category, difficulty, path_id, path_name, step_title, step_description } = res.data;
+      const { category, difficulty, path_id, path_name, step_title, step_description, step_type } = res.data;
       navigate("/", {
         state: {
           category,
@@ -200,6 +202,7 @@ function PathDetailView({
           pathName: path_name,
           stepTitle: step_title,
           learningObjective: step_description,
+          stepType: step_type || "scenario",
         },
       });
     },
@@ -331,6 +334,11 @@ function PathDetailView({
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-xs text-cm-muted">Step {step.step_number}</span>
+                      {step.step_type === "mcq" && (
+                        <span className="text-xs px-1.5 py-0.5 rounded bg-cm-amber/15 text-cm-amber border border-cm-amber/30">
+                          Quiz
+                        </span>
+                      )}
                       <span
                         className="text-xs px-1.5 py-0.5 rounded capitalize"
                         style={{
@@ -359,8 +367,8 @@ function PathDetailView({
                     disabled={startStepMutation.isPending}
                     className="cm-btn-primary mt-3 w-full flex items-center justify-center gap-2 text-sm"
                   >
-                    <Play size={14} />
-                    {startStepMutation.isPending ? "Loading..." : "Start Scenario"}
+                    {step.step_type === "mcq" ? <Zap size={14} /> : <Play size={14} />}
+                    {startStepMutation.isPending ? "Loading..." : step.step_type === "mcq" ? "Start Quiz" : "Start Scenario"}
                   </button>
                 )}
               </div>

@@ -96,7 +96,7 @@ async def continue_response(
     db.add(grade)
 
     # Check if this is the user's first scenario completion today
-    today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+    today_start = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0, tzinfo=None)
     existing_today = await db.execute(
         select(func.count()).where(
             XPTransaction.user_id == user.id,
