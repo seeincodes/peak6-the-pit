@@ -14,6 +14,7 @@ import ReviewPage from "./pages/ReviewPage";
 import BookmarksPage from "./pages/BookmarksPage";
 import ProgressPage from "./pages/ProgressPage";
 import PeerReviewPage from "./pages/PeerReviewPage";
+import LearningPathPage from "./pages/LearningPathPage";
 import api from "./api/client";
 
 function App() {
@@ -131,6 +132,7 @@ function AuthenticatedApp({
           <Route path="/progress" element={<ProgressPage />} />
           <Route path="/leaderboard" element={<LeaderboardPage />} />
           <Route path="/peer-review" element={<PeerReviewPage />} />
+          <Route path="/paths" element={<LearningPathPage />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </main>

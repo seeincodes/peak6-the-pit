@@ -7,6 +7,7 @@ import {
   Bookmark,
   Target,
   Users,
+  Map,
   LogOut,
   Flame,
   ChevronLeft,
@@ -36,6 +37,7 @@ const LEVEL_XP = [0, 0, 60, 180, 380, 720, 1250, 2050, 3250, 5050, 8000];
 
 const NAV_ITEMS = [
   { to: "/", icon: Crosshair, label: "Training", matchExact: true },
+  { to: "/paths", icon: Map, label: "Paths", matchExact: false },
   { to: "/review", icon: BookOpen, label: "Review", matchExact: false },
   { to: "/bookmarks", icon: Bookmark, label: "Bookmarks", matchExact: false },
   { to: "/peer-review", icon: Users, label: "Peer Review", matchExact: false },

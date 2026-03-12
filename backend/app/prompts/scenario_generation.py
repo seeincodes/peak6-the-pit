@@ -26,12 +26,12 @@ Use the live market data above to anchor your scenario in current real-world con
 
 Genre guidance:
 {genre_guidance}
-
+{learning_objective_section}
 Output a JSON object with exactly these fields:
 {{
   "title": "Short descriptive title (5-10 words)",
   "setup": "Market context paragraph (3-5 sentences describing the current market state, data points, and relevant observations)",
-  "question": "The specific analytical question the trader must answer (1-2 sentences)",
+  "question": "The specific analytical question the trader must answer (1-2 sentences)",{concept_explainer_field}
   "hints": ["hint1", "hint2"],
   "expected_dimensions": ["which rubric dimensions this scenario primarily tests"]
 }}
@@ -40,6 +40,14 @@ Difficulty guidelines:
 - beginner: Single concept, explicit data, straightforward analysis
 - intermediate: Multiple concepts interact, some data must be inferred, requires trade-offs
 - advanced: Complex multi-factor analysis, ambiguous data, multiple valid approaches"""
+
+LEARNING_OBJECTIVE_SECTION = """
+Learning objective for this step:
+<learning_objective>
+{learning_objective}
+</learning_objective>
+
+IMPORTANT: Focus the scenario specifically on this learning objective. The concept_explainer field should teach this specific concept before the trader attempts to answer. The setup and question should directly test understanding of this topic."""
 
 CATEGORY_DISPLAY = {
     "iv_analysis": "Implied Volatility Analysis",

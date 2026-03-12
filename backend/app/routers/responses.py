@@ -15,6 +15,7 @@ from app.models.xp_transaction import XPTransaction
 from app.models.user import User
 from app.services.grading_agent import generate_probe, grade_response, compute_xp, generate_model_answer
 from app.services.badge_service import check_and_award_badges
+from app.services.path_progress import check_and_advance_paths
 from app.middleware.auth import get_current_user
 
 router = APIRouter(prefix="/api/responses", tags=["responses"])
@@ -124,6 +125,11 @@ async def continue_response(
 
     new_badges = await check_and_award_badges(user.id, db)
 
+    path_advancements = await check_and_advance_paths(
+        db, user.id, scenario.category, scenario.difficulty,
+        grade_data["overall_score"],
+    )
+
     await db.commit()
 
     return {
@@ -143,6 +149,7 @@ async def continue_response(
             "perfect": grade_data["overall_score"] >= 4.5,
             "no_hints": req.hints_used == 0,
         },
+        "path_advancements": path_advancements,
     }
 
 

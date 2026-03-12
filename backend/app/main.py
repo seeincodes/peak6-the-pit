@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.routers import health, scenarios, scenarios_stream, responses, users, auth, mcq, leaderboard, badges, performance, bookmarks, challenges, metrics, peer_review
+from app.routers import health, scenarios, scenarios_stream, responses, users, auth, mcq, leaderboard, badges, performance, bookmarks, challenges, metrics, peer_review, paths
 from app.services.mcq_pool import prewarm as mcq_prewarm
 from app.services.rag import prewarm_embeddings
 from app.services.market_data import prewarm_market_data
@@ -27,9 +27,10 @@ async def _safe(name: str, coro, timeout: float = 15):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Seed badges (DB-only, safe to run)
+    # Seed badges and learning paths (DB-only, safe to run)
     await _safe("badge seeding", _seed_badges())
     await _safe("badge awarding", _award_existing_badges())
+    await _safe("path seeding", _seed_paths())
 
     # Pre-warm caches (non-critical)
     await _safe("embedding prewarm", prewarm_embeddings(), timeout=30)
@@ -63,6 +64,14 @@ async def _award_existing_badges():
             print(f"Awarded {total_awarded} badges to existing users")
 
 
+async def _seed_paths():
+    from app.services.path_seed import seed_learning_paths
+    async with async_session() as db:
+        count = await seed_learning_paths(db)
+        if count:
+            print(f"Seeded {count} learning paths")
+
+
 app = FastAPI(
     title="CapMan AI",
     description="Gamified Scenario Training & MTSS Agent",
@@ -92,3 +101,4 @@ app.include_router(bookmarks.router)
 app.include_router(challenges.router)
 app.include_router(metrics.router)
 app.include_router(peer_review.router)
+app.include_router(paths.router)

@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { Star, Lightbulb } from "lucide-react";
+import { Star, Lightbulb, BookOpen } from "lucide-react";
 import { categoryColors, categoryDisplay } from "../theme/colors";
 import MarketChart from "./charts/MarketChart";
 
@@ -12,6 +12,7 @@ interface ScenarioCardProps {
     title: string;
     setup: string;
     question: string;
+    concept_explainer?: string;
     hints?: string[];
   };
   onHintsUsedChange?: (count: number) => void;
@@ -60,6 +61,17 @@ export default function ScenarioCard({ id, category, difficulty, content, onHint
       </div>
 
       <h2 className="cm-subtitle mb-3">{content.title}</h2>
+
+      {content.concept_explainer && (
+        <div className="mb-4 px-4 py-3 rounded-lg border border-cm-primary/20 bg-cm-primary/5">
+          <div className="flex items-center gap-2 mb-2">
+            <BookOpen size={14} className="text-cm-primary" />
+            <span className="text-xs font-semibold text-cm-primary uppercase tracking-wide">Key Concept</span>
+          </div>
+          <p className="text-sm text-cm-text leading-relaxed">{content.concept_explainer}</p>
+        </div>
+      )}
+
       <p className="cm-body mb-4">{content.setup}</p>
 
       <MarketChart scenarioId={id} category={category} height={160} className="mb-4" />

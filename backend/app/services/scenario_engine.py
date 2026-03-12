@@ -13,6 +13,7 @@ from app.config import settings
 from app.prompts.scenario_generation import (
     SYSTEM_PROMPT,
     SCENARIO_TEMPLATE,
+    LEARNING_OBJECTIVE_SECTION,
 )
 from app.prompts.mcq_generation import (
     MCQ_SYSTEM_PROMPT,
@@ -184,10 +185,16 @@ def build_scenario_prompt(
     difficulty: str,
     rag_context: str,
     market_snapshot: str,
+    learning_objective: str | None = None,
 ) -> str:
     """Build the user prompt for scenario generation."""
     category_display = get_category_display(category)
     genre_guidance = get_genre_guidance(category, "scenario")
+    objective_section = ""
+    concept_explainer_field = ""
+    if learning_objective:
+        objective_section = LEARNING_OBJECTIVE_SECTION.format(learning_objective=learning_objective)
+        concept_explainer_field = '\n  "concept_explainer": "A 2-4 sentence mini-lesson explaining the key concept being tested. Define terms, explain why it matters, and give a mental model the trader can use. Write as a helpful instructor, not a textbook.",'
     return SCENARIO_TEMPLATE.format(
         difficulty=difficulty,
         category_display=category_display,
@@ -196,6 +203,8 @@ def build_scenario_prompt(
         if rag_context
         else "No specific context available. Use general options trading knowledge.",
         market_snapshot=market_snapshot,
+        learning_objective_section=objective_section,
+        concept_explainer_field=concept_explainer_field,
     )
 
 

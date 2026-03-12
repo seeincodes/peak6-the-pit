@@ -28,6 +28,7 @@ logger = logging.getLogger(__name__)
 class StreamGenerateRequest(BaseModel):
     category: str = "iv_analysis"
     difficulty: str = "beginner"
+    learning_objective: str | None = None
 
 
 @router.post("/generate-stream")
@@ -40,7 +41,10 @@ async def generate_stream(
     chunks, market_snapshot = await _get_context(db, req.category, req.difficulty)
     rag_context, trimmed_chunks = build_rag_context(chunks)
 
-    prompt = build_scenario_prompt(req.category, req.difficulty, rag_context, market_snapshot)
+    prompt = build_scenario_prompt(
+        req.category, req.difficulty, rag_context, market_snapshot,
+        learning_objective=req.learning_objective,
+    )
 
     async def event_stream():
         full_text = ""

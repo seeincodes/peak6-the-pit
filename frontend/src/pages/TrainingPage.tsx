@@ -1,7 +1,8 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useLocation } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Star, BookOpen, HelpCircle } from "lucide-react";
+import { ArrowLeft, Star, BookOpen, HelpCircle, Check } from "lucide-react";
 import ScenarioCard from "../components/ScenarioCard";
 import ResponseInput from "../components/ResponseInput";
 import GradeReveal from "../components/GradeReveal";
@@ -25,6 +26,7 @@ interface ScenarioData {
     title: string;
     setup: string;
     question: string;
+    concept_explainer?: string;
     hints?: string[];
   };
 }
@@ -34,6 +36,15 @@ interface BadgeData {
   description: string;
   icon: string;
   tier: string;
+}
+
+interface PathAdvancement {
+  path_id: string;
+  path_name: string;
+  step_completed: number;
+  step_title: string;
+  total_steps: number;
+  path_completed: boolean;
 }
 
 interface GradeData {
@@ -52,6 +63,7 @@ interface GradeData {
     perfect: boolean;
     no_hints: boolean;
   };
+  path_advancements?: PathAdvancement[];
 }
 
 export default function TrainingPage({
@@ -61,6 +73,9 @@ export default function TrainingPage({
   unlockedCategories: { category: string; difficulty: string }[];
   hasOnboarded?: boolean;
 }) {
+  const location = useLocation();
+  const autoStarted = useRef(false);
+
   const [showOnboarding, setShowOnboarding] = useState(!hasOnboarded);
   const [mode, setMode] = useState<Mode>("select");
   const [selectedCat, setSelectedCat] = useState<{ category: string; difficulty: string } | null>(null);
@@ -76,6 +91,21 @@ export default function TrainingPage({
   const [primerCategory, setPrimerCategory] = useState<string | null>(null);
   const [hintsUsed, setHintsUsed] = useState(0);
   const queryClient = useQueryClient();
+
+  // Auto-start scenario when navigated from a learning path
+  useEffect(() => {
+    const state = location.state as {
+      category?: string; difficulty?: string; fromPath?: string; learningObjective?: string;
+    } | null;
+    if (state?.category && state?.difficulty && state?.fromPath && !autoStarted.current) {
+      autoStarted.current = true;
+      const cat = { category: state.category, difficulty: state.difficulty };
+      setSelectedCat(cat);
+      generateStreaming(cat, state.learningObjective);
+      // Clear location state to prevent re-trigger on remount
+      window.history.replaceState({}, "");
+    }
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   const submitMutation = useMutation({
     mutationFn: async (answerText: string) => {
@@ -116,6 +146,8 @@ export default function TrainingPage({
       }
 
       queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.invalidateQueries({ queryKey: ["paths"] });
+      queryClient.invalidateQueries({ queryKey: ["path-detail"] });
     },
   });
 
@@ -131,20 +163,24 @@ export default function TrainingPage({
     setEarnedBadges([]);
   };
 
-  const generateStreaming = async (params: { category: string; difficulty: string }) => {
+  const generateStreaming = async (params: { category: string; difficulty: string }, learningObjective?: string) => {
     setDeepError(null);
     setMode("deep-streaming");
 
     try {
       const token = localStorage.getItem("token");
       const apiBase = import.meta.env.VITE_API_URL || "/api";
+      const body: Record<string, string> = { ...params };
+      if (learningObjective) {
+        body.learning_objective = learningObjective;
+      }
       const response = await fetch(`${apiBase}/scenarios/generate-stream`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
         },
-        body: JSON.stringify(params),
+        body: JSON.stringify(body),
       });
 
       if (!response.ok) {
@@ -491,6 +527,35 @@ export default function TrainingPage({
             scenarioId={scenario?.id}
             bonuses={gradeData.bonuses}
           />
+          {gradeData.path_advancements && gradeData.path_advancements.length > 0 && (
+            <div className="space-y-2">
+              {gradeData.path_advancements.map((adv) => (
+                <motion.div
+                  key={adv.path_id}
+                  initial={{ opacity: 0, y: 20 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  className={`cm-surface p-4 flex items-center gap-3 ${
+                    adv.path_completed ? "border-cm-emerald/40" : "border-cm-primary/30"
+                  }`}
+                >
+                  <div className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
+                    adv.path_completed ? "bg-cm-emerald/15" : "bg-cm-primary/15"
+                  }`}>
+                    <Check size={16} className={adv.path_completed ? "text-cm-emerald" : "text-cm-primary"} />
+                  </div>
+                  <div>
+                    <p className={`font-semibold text-sm ${adv.path_completed ? "text-cm-emerald" : "text-cm-primary"}`}>
+                      {adv.path_completed ? "Path Completed!" : "Path Step Complete!"}
+                    </p>
+                    <p className="text-cm-muted text-xs">
+                      {adv.step_title} in {adv.path_name}
+                      {!adv.path_completed && ` — Step ${adv.step_completed}/${adv.total_steps}`}
+                    </p>
+                  </div>
+                </motion.div>
+              ))}
+            </div>
+          )}
           <div className="text-center">
             <button
               onClick={reset}
