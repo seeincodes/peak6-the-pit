@@ -22,6 +22,8 @@ from app.constants import (
     PEER_REVIEW_QUALITY_THRESHOLD,
     PEER_REVIEW_MAX_PER_RESPONSE,
 )
+from app.services.progression import compute_level_from_xp, get_level_title
+from app.services.activity import emit_activity
 
 router = APIRouter(prefix="/api/peer-review", tags=["peer-review"])
 
@@ -234,9 +236,18 @@ async def submit_peer_review(
         reference_id=peer_review.id,
     )
     db.add(xp_tx)
+    old_level = current_user.level
     current_user.xp_total = max(0, current_user.xp_total + xp_amount)
+    current_user.level = compute_level_from_xp(current_user.xp_total)
 
     await update_streak(current_user, db)
+
+    if current_user.level > old_level:
+        await emit_activity(db, current_user.id, "level_up", {
+            "old_level": old_level,
+            "new_level": current_user.level,
+            "level_title": get_level_title(current_user.level),
+        })
 
     await db.commit()
 

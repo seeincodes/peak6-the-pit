@@ -19,7 +19,7 @@ from app.services.badge_service import check_and_award_badges
 from app.services.path_progress import check_and_advance_paths
 from app.services.streak import update_streak
 from app.services.activity import emit_activity
-from app.services.progression import get_level_title
+from app.services.progression import get_level_title, compute_level_from_xp
 from app.middleware.auth import get_current_user
 
 router = APIRouter(prefix="/api/responses", tags=["responses"])
@@ -156,6 +156,7 @@ async def continue_response(
         db.add(xp_tx)
         old_level = user.level
         user.xp_total = max(0, user.xp_total + xp_earned)
+        user.level = compute_level_from_xp(user.xp_total)
 
         streak_result = await update_streak(user, db)
 

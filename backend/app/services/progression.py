@@ -4,6 +4,7 @@ from app.constants import (
     MASTERY_THRESHOLD,
     MASTERY_SCENARIO_COUNT,
     LEVEL_TITLES,
+    XP_THRESHOLDS,
     CategoryTier,
 )
 
@@ -37,6 +38,17 @@ def compute_level(masteries: set[tuple[str, str]]) -> int:
             for ct in LEVEL_UNLOCKS.get(prev_lvl, []):
                 prev_unlocks.add((ct.category, ct.difficulty))
         if prev_unlocks.issubset(masteries):
+            level = lvl
+        else:
+            break
+    return level
+
+
+def compute_level_from_xp(xp_total: int) -> int:
+    """Derive level from cumulative XP using XP_THRESHOLDS."""
+    level = 1
+    for lvl in range(2, len(XP_THRESHOLDS)):
+        if xp_total >= XP_THRESHOLDS[lvl]:
             level = lvl
         else:
             break

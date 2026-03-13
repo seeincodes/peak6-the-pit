@@ -13,7 +13,7 @@ from app.models.grade import Grade
 from app.models.badge import UserBadge, Badge
 from app.models.activity_event import ActivityEvent
 from app.models.learning_path import UserPathProgress
-from app.services.progression import get_unlocked_categories, get_level_title
+from app.services.progression import get_unlocked_categories, get_level_title, compute_level_from_xp
 from app.constants import SCENARIO_CATEGORIES
 from app.middleware.auth import get_current_user
 
@@ -58,7 +58,12 @@ def _user_response(user: User):
 @router.get("/me")
 async def get_current_user_profile(
     user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
 ):
+    correct_level = compute_level_from_xp(user.xp_total)
+    if user.level != correct_level:
+        user.level = correct_level
+        await db.commit()
     return _user_response(user)
 
 

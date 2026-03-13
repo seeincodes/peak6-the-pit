@@ -9,6 +9,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.challenge import DailyChallenge
 from app.models.xp_transaction import XPTransaction
 from app.models.user import User
+from app.services.progression import compute_level_from_xp
 
 CHALLENGE_TEMPLATES = [
     {"type": "complete_scenarios", "desc": "Complete {n} Deep Analysis scenarios", "targets": [2, 3, 5], "xp": [50, 75, 125]},
@@ -91,6 +92,7 @@ async def increment_challenge_progress(
                 )
                 db.add(xp_tx)
                 user.xp_total += c.bonus_xp
+                user.level = compute_level_from_xp(user.xp_total)
             newly_completed.append(_to_dict(c))
 
     await db.commit()
