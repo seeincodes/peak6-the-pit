@@ -1,8 +1,8 @@
 import { useState, useEffect, useRef } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Star, BookOpen, HelpCircle, Check } from "lucide-react";
+import { ArrowLeft, BookOpen, HelpCircle, Check } from "lucide-react";
 import ScenarioCard from "../components/ScenarioCard";
 import ResponseInput from "../components/ResponseInput";
 import GradeReveal from "../components/GradeReveal";
@@ -110,6 +110,12 @@ export default function TrainingPage({
   const [primerCategory, setPrimerCategory] = useState<string | null>(null);
   const [hintsUsed, setHintsUsed] = useState(0);
   const queryClient = useQueryClient();
+
+  const { data: categoryStats } = useQuery<{ category: string; avg_score: number; attempts: number }[]>({
+    queryKey: ["category-summary"],
+    queryFn: async () => (await api.get("/performance/category-summary")).data,
+    staleTime: 60_000,
+  });
 
   // Auto-start scenario or MCQ when navigated from a learning path
   useEffect(() => {
@@ -375,24 +381,36 @@ export default function TrainingPage({
                 grouped.set(cat.category, existing);
               }
               const diffOrder = ["beginner", "intermediate", "advanced"];
+              const statsMap = new Map(
+                (categoryStats || []).map((s) => [s.category, s])
+              );
+
               return Array.from(grouped.entries()).map(([category, difficulties]) => {
                 const color = categoryColors[category] || "#4D34EF";
                 const sorted = difficulties.sort((a, b) => diffOrder.indexOf(a) - diffOrder.indexOf(b));
-                const startRoute = (difficulty: string) => {
-                  const cat = { category, difficulty };
-                  setSelectedCat(cat);
-                  generateStreaming(cat);
-                };
+                const bestDifficulty = sorted[sorted.length - 1];
+                const stat = statsMap.get(category);
+                const pct = stat ? Math.round((stat.avg_score / 5) * 100) : 0;
+                const label = !stat || stat.attempts === 0
+                  ? "New"
+                  : stat.avg_score >= 3.5
+                    ? "Mastery"
+                    : stat.avg_score >= 2.5
+                      ? "Proficient"
+                      : "Developing";
 
-                if (sorted.length === 1) {
-                  const diffLevel = sorted[0] === "beginner" ? 1 : sorted[0] === "intermediate" ? 2 : 3;
-                  return (
-                    <button
-                      key={category}
-                      onClick={() => startRoute(sorted[0])}
-                      className="cm-surface-interactive p-4 w-full text-left flex items-center justify-between"
-                      style={{ borderColor: `${color}40` }}
-                    >
+                return (
+                  <button
+                    key={category}
+                    onClick={() => {
+                      const cat = { category, difficulty: bestDifficulty };
+                      setSelectedCat(cat);
+                      generateStreaming(cat);
+                    }}
+                    className="cm-surface-interactive p-4 w-full text-left"
+                    style={{ borderColor: `${color}40` }}
+                  >
+                    <div className="flex items-center justify-between mb-2">
                       <div className="flex items-center gap-2">
                         <span
                           className="w-2 h-2 rounded-full flex-shrink-0"
@@ -411,67 +429,34 @@ export default function TrainingPage({
                           <BookOpen size={12} />
                           Learn
                         </button>
-                        <span className="capitalize text-cm-muted text-xs">{sorted[0]}</span>
-                        <span className="flex items-center gap-0.5">
-                          {[1, 2, 3].map((i) => (
-                            <Star
-                              key={i}
-                              size={12}
-                              className={i <= diffLevel ? "text-cm-amber fill-cm-amber" : "text-cm-amber/30"}
-                            />
-                          ))}
+                        <span className={`text-[11px] font-medium ${
+                          label === "Mastery" ? "text-cm-emerald" :
+                          label === "Proficient" ? "text-cm-amber" :
+                          label === "Developing" ? "text-cm-primary" :
+                          "text-cm-muted"
+                        }`}>
+                          {label}
                         </span>
                       </div>
-                    </button>
-                  );
-                }
-
-                return (
-                  <div key={category} className="cm-surface p-4">
-                    <div className="flex items-center justify-between mb-3">
-                      <div className="flex items-center gap-2">
-                        <span
-                          className="w-2 h-2 rounded-full flex-shrink-0"
-                          style={{ backgroundColor: color }}
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <div className="flex-1 h-1.5 bg-cm-bg rounded-full overflow-hidden">
+                        <div
+                          className="h-full rounded-full transition-all duration-500"
+                          style={{
+                            width: `${pct}%`,
+                            backgroundColor: color,
+                            opacity: pct > 0 ? 1 : 0,
+                          }}
                         />
-                        <span className="text-cm-text font-semibold text-sm">
-                          {categoryDisplay[category] || category.replace(/_/g, " ")}
-                        </span>
                       </div>
-                      <button
-                        onClick={() => setPrimerCategory(category)}
-                        className="flex items-center gap-1 text-xs text-cm-muted hover:text-cm-primary border border-cm-border hover:border-cm-primary/40 rounded px-2 py-0.5 transition-all"
-                        aria-label={`Learn ${categoryDisplay[category] || category} concepts`}
-                      >
-                        <BookOpen size={12} />
-                        Learn
-                      </button>
+                      {stat && stat.attempts > 0 && (
+                        <span className="text-[10px] text-cm-muted whitespace-nowrap">
+                          {stat.avg_score.toFixed(1)}/5 · {stat.attempts} done
+                        </span>
+                      )}
                     </div>
-                    <div className="flex gap-2">
-                      {sorted.map((difficulty) => {
-                        const diffLevel = difficulty === "beginner" ? 1 : difficulty === "intermediate" ? 2 : 3;
-                        return (
-                          <button
-                            key={difficulty}
-                            onClick={() => startRoute(difficulty)}
-                            className="cm-surface-interactive px-3 py-2 flex-1 flex items-center justify-center gap-2 text-xs"
-                            style={{ borderColor: `${color}40` }}
-                          >
-                            <span className="capitalize text-cm-text">{difficulty}</span>
-                            <span className="flex items-center gap-0.5">
-                              {[1, 2, 3].map((i) => (
-                                <Star
-                                  key={i}
-                                  size={12}
-                                  className={i <= diffLevel ? "text-cm-amber fill-cm-amber" : "text-cm-amber/30"}
-                                />
-                              ))}
-                            </span>
-                          </button>
-                        );
-                      })}
-                    </div>
-                  </div>
+                  </button>
                 );
               });
             })()}
