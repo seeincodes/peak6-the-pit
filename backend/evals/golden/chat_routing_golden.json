@@ -1,0 +1,17 @@
+[
+  {"id": "lesson_teach_me", "user_message": "teach me about delta hedging", "expected_route": "generate_lesson_plan"},
+  {"id": "lesson_create_lesson", "user_message": "create a lesson on implied volatility", "expected_route": "generate_lesson_plan"},
+  {"id": "lesson_lesson_plan", "user_message": "I need a lesson plan for options Greeks", "expected_route": "generate_lesson_plan"},
+  {"id": "lesson_give_me_lesson", "user_message": "give me a lesson about straddle strategies", "expected_route": "generate_lesson_plan"},
+  {"id": "lesson_tutorial_on", "user_message": "can you do a tutorial on calendar spreads?", "expected_route": "generate_lesson_plan"},
+  {"id": "lesson_study_guide", "user_message": "I want a study guide for the term structure", "expected_route": "generate_lesson_plan"},
+  {"id": "lesson_walk_me_through", "user_message": "walk me through how gamma scalping works", "expected_route": "generate_lesson_plan"},
+  {"id": "lesson_mixed_case", "user_message": "TEACH ME about vol surface", "expected_route": "generate_lesson_plan"},
+  {"id": "agent_simple_question", "user_message": "What is delta?", "expected_route": "agent_call"},
+  {"id": "agent_explain_request", "user_message": "Explain the difference between call and put options", "expected_route": "agent_call"},
+  {"id": "agent_chart_request", "user_message": "Show me a payoff diagram for a long call at 100 strike", "expected_route": "agent_call"},
+  {"id": "agent_vol_question", "user_message": "Why is the VIX elevated right now?", "expected_route": "agent_call"},
+  {"id": "agent_comparison", "user_message": "Compare iron condor vs iron butterfly", "expected_route": "agent_call"},
+  {"id": "agent_definition", "user_message": "Define gamma risk", "expected_route": "agent_call"},
+  {"id": "agent_teachers_not_trigger", "user_message": "How do teachers explain options pricing?", "expected_route": "agent_call"}
+]

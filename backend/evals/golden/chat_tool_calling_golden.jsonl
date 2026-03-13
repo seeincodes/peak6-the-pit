@@ -1,0 +1,7 @@
+{"id": "payoff_long_call_request", "user_message": "Show me a payoff chart for a long call with strike 100 and premium 5", "expected_tool_name": "option_payoff_chart", "expected_args_contain": {"strategy": "long_call"}, "expected_tool_called": true}
+{"id": "greeks_request", "user_message": "Plot the Greeks for a call option at strike 150 with 3 months to expiry and 30% vol", "expected_tool_name": "greeks_chart", "expected_args_contain": {"option_type": "call"}, "expected_tool_called": true}
+{"id": "vol_smile_request", "user_message": "Show the volatility smile with 25% ATM vol", "expected_tool_name": "volatility_smile_chart", "expected_args_contain": {}, "expected_tool_called": true}
+{"id": "price_history_request", "user_message": "Generate a simulated price chart for AAPL starting at 150 over 30 days", "expected_tool_name": "price_history_chart", "expected_args_contain": {"ticker": "AAPL"}, "expected_tool_called": true}
+{"id": "spread_payoff_request", "user_message": "Show the payoff for a bull call spread with strikes at 100 and 110", "expected_tool_name": "option_payoff_chart", "expected_args_contain": {"strategy": "bull_call_spread"}, "expected_tool_called": true}
+{"id": "no_tool_definition", "user_message": "What is a call option?", "expected_tool_name": null, "expected_args_contain": {}, "expected_tool_called": false}
+{"id": "no_tool_simple_greeks", "user_message": "Define gamma in one sentence", "expected_tool_name": null, "expected_args_contain": {}, "expected_tool_called": false}

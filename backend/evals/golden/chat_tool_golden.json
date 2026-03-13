@@ -1,0 +1,131 @@
+[
+  {
+    "id": "payoff_long_call",
+    "tool": "option_payoff_chart",
+    "args": {"strategy": "long_call", "strike": 100.0, "premium": 5.0},
+    "expected_chart_type": "line",
+    "expected_title_contains": "Long Call",
+    "expected_keys": ["chart_type", "title", "x_label", "y_label", "zero_line", "series", "data"],
+    "expected_data_length": 61,
+    "expected_data_point_keys": ["price", "pnl"],
+    "spot_checks": [
+      {"field": "x_label", "equals": "Underlying Price"},
+      {"field": "y_label", "equals": "Profit / Loss"},
+      {"field": "zero_line", "equals": true}
+    ],
+    "data_assertions": [
+      {"description": "At strike, payoff equals negative premium", "find_data_where": {"price": 100.0}, "expected_pnl": -5.0},
+      {"description": "Deep OTM payoff equals negative premium", "find_data_where": {"price": 70.0}, "expected_pnl": -5.0},
+      {"description": "Deep ITM payoff is positive", "find_data_where": {"price": 130.0}, "expected_pnl": 25.0}
+    ]
+  },
+  {
+    "id": "payoff_short_put",
+    "tool": "option_payoff_chart",
+    "args": {"strategy": "short_put", "strike": 50.0, "premium": 3.0},
+    "expected_chart_type": "line",
+    "expected_title_contains": "Short Put",
+    "expected_keys": ["chart_type", "title", "x_label", "y_label", "zero_line", "series", "data"],
+    "expected_data_length": 61,
+    "expected_data_point_keys": ["price", "pnl"],
+    "spot_checks": [],
+    "data_assertions": [
+      {"description": "Above strike payoff equals premium", "find_data_where": {"price": 65.0}, "expected_pnl": 3.0},
+      {"description": "At strike payoff equals premium", "find_data_where": {"price": 50.0}, "expected_pnl": 3.0}
+    ]
+  },
+  {
+    "id": "payoff_bull_call_spread",
+    "tool": "option_payoff_chart",
+    "args": {"strategy": "bull_call_spread", "strike": 100.0, "premium": 5.0, "strike2": 110.0, "premium2": 2.0},
+    "expected_chart_type": "line",
+    "expected_title_contains": "Bull Call Spread",
+    "expected_keys": ["chart_type", "title", "x_label", "y_label", "zero_line", "series", "data"],
+    "expected_data_length": 61,
+    "expected_data_point_keys": ["price", "pnl"],
+    "spot_checks": [],
+    "data_assertions": []
+  },
+  {
+    "id": "payoff_straddle",
+    "tool": "option_payoff_chart",
+    "args": {"strategy": "straddle", "strike": 100.0, "premium": 5.0, "premium2": 5.0},
+    "expected_chart_type": "line",
+    "expected_title_contains": "Long Straddle",
+    "expected_keys": ["chart_type", "title", "x_label", "y_label", "zero_line", "series", "data"],
+    "expected_data_length": 61,
+    "expected_data_point_keys": ["price", "pnl"],
+    "spot_checks": [],
+    "data_assertions": [
+      {"description": "At strike straddle loss equals total premium", "find_data_where": {"price": 100.0}, "expected_pnl": -10.0}
+    ]
+  },
+  {
+    "id": "greeks_call",
+    "tool": "greeks_chart",
+    "args": {"strike": 100, "time_to_expiry": 0.25, "volatility": 0.25, "risk_free_rate": 0.05, "option_type": "call"},
+    "expected_chart_type": "multi_line",
+    "expected_title_contains": "Call Option Greeks",
+    "expected_keys": ["chart_type", "title", "x_label", "y_label", "series", "data"],
+    "expected_data_length": 51,
+    "expected_data_point_keys": ["price", "delta", "gamma", "theta", "vega"],
+    "spot_checks": [
+      {"field": "x_label", "equals": "Underlying Price"},
+      {"field": "y_label", "equals": "Greek Value"}
+    ],
+    "data_assertions": [
+      {"description": "Call delta between 0 and 1", "all_data_field": "delta", "range": [0.0, 1.0]},
+      {"description": "Gamma non-negative", "all_data_field": "gamma", "range": [0.0, null]}
+    ]
+  },
+  {
+    "id": "greeks_put",
+    "tool": "greeks_chart",
+    "args": {"strike": 100, "time_to_expiry": 0.25, "volatility": 0.25, "risk_free_rate": 0.05, "option_type": "put"},
+    "expected_chart_type": "multi_line",
+    "expected_title_contains": "Put Option Greeks",
+    "expected_keys": ["chart_type", "title", "x_label", "y_label", "series", "data"],
+    "expected_data_length": 51,
+    "expected_data_point_keys": ["price", "delta", "gamma", "theta", "vega"],
+    "spot_checks": [],
+    "data_assertions": [
+      {"description": "Put delta between -1 and 0", "all_data_field": "delta", "range": [-1.0, 0.0]}
+    ]
+  },
+  {
+    "id": "vol_smile",
+    "tool": "volatility_smile_chart",
+    "args": {"atm_vol": 0.20, "skew_strength": 0.5, "num_strikes": 11},
+    "expected_chart_type": "area",
+    "expected_title_contains": "Volatility Smile",
+    "expected_keys": ["chart_type", "title", "x_label", "y_label", "series", "data"],
+    "expected_data_length": 11,
+    "expected_data_point_keys": ["strike", "iv"],
+    "spot_checks": [
+      {"field": "x_label", "equals": "Strike (% of Spot)"},
+      {"field": "y_label", "equals": "Implied Volatility (%)"}
+    ],
+    "data_assertions": [
+      {"description": "All IVs positive", "all_data_field": "iv", "range": [0.0, null]},
+      {"description": "ATM IV equals input", "find_data_where": {"strike": 100.0}, "expected_iv": 20.0}
+    ]
+  },
+  {
+    "id": "price_history_spy",
+    "tool": "price_history_chart",
+    "args": {"ticker": "SPY", "start_price": 100, "num_days": 60, "daily_vol": 0.015, "trend": 0.0003},
+    "expected_chart_type": "area",
+    "expected_title_contains": "SPY Simulated Price History",
+    "expected_keys": ["chart_type", "title", "x_label", "y_label", "series", "data"],
+    "expected_data_length": 60,
+    "expected_data_point_keys": ["day", "price"],
+    "spot_checks": [
+      {"field": "x_label", "equals": "Trading Day"},
+      {"field": "y_label", "equals": "Price ($)"}
+    ],
+    "data_assertions": [
+      {"description": "First day price equals start_price", "find_data_where": {"day": 1}, "expected_price": 100.0},
+      {"description": "All prices positive", "all_data_field": "price", "range": [0.0, null]}
+    ]
+  }
+]

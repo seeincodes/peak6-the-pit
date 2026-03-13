@@ -20,13 +20,13 @@ import FeedPage from "./pages/FeedPage";
 import UserProfilePage from "./pages/UserProfilePage";
 import QuickFirePage from "./pages/QuickFirePage";
 import DictionaryPage from "./pages/DictionaryPage";
+import ChatPage from "./pages/ChatPage";
 import { XPToastProvider } from "./context/XPToastContext";
 import api from "./api/client";
 
 function App() {
   const { user: authUser, isLoading: authLoading } = useAuth();
 
-  // Show loading spinner while auth state is being determined
   if (authLoading) {
     return (
       <div className="min-h-screen bg-cm-bg flex items-center justify-center">
@@ -38,7 +38,6 @@ function App() {
     );
   }
 
-  // Not authenticated — show public routes only
   if (!authUser) {
     return (
       <Routes>
@@ -50,7 +49,6 @@ function App() {
     );
   }
 
-  // Authenticated — show protected layout
   return <AuthenticatedApp />;
 }
 
@@ -166,6 +164,7 @@ function AuthenticatedApp() {
             <Route path="/peer-review" element={<PeerReviewPage />} />
             <Route path="/paths" element={<LearningPathPage />} />
             <Route path="/feed" element={<FeedPage />} />
+            <Route path="/chat" element={<ChatPage />} />
             <Route path="/profile/:userId" element={<UserProfilePage />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>

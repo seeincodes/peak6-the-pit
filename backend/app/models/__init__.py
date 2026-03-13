@@ -12,5 +12,6 @@ from app.models.peer_review import PeerReview
 from app.models.learning_path import LearningPath, UserPathProgress
 from app.models.activity_event import ActivityEvent
 from app.models.study_group import StudyGroup, StudyGroupMember
+from app.models.chat import ChatSession, ChatMessage
 
-__all__ = ["User", "Scenario", "Response", "Grade", "Document", "XPTransaction", "Badge", "UserBadge", "EmbeddingCache", "Bookmark", "DailyChallenge", "PeerReview", "LearningPath", "UserPathProgress", "ActivityEvent", "StudyGroup", "StudyGroupMember"]
+__all__ = ["User", "Scenario", "Response", "Grade", "Document", "XPTransaction", "Badge", "UserBadge", "EmbeddingCache", "Bookmark", "DailyChallenge", "PeerReview", "LearningPath", "UserPathProgress", "ActivityEvent", "StudyGroup", "StudyGroupMember", "ChatSession", "ChatMessage"]

@@ -1,0 +1,67 @@
+[
+  {
+    "id": "system_prompt_contents",
+    "template": "system_prompt",
+    "inputs": {},
+    "must_contain": [
+      "CapMan AI",
+      "options trading tutor",
+      "markdown",
+      "option_payoff_chart",
+      "greeks_chart",
+      "volatility_smile_chart",
+      "price_history_chart",
+      "NOT give financial advice",
+      "educational tool"
+    ]
+  },
+  {
+    "id": "chat_response_with_context",
+    "template": "chat_response",
+    "inputs": {
+      "rag_context": "Delta measures the rate of change of an option's price with respect to the underlying.",
+      "conversation_history": "**User:** Hi\n\n**Assistant:** Hello!",
+      "user_message": "What is delta in options trading?"
+    },
+    "must_contain": [
+      "Reference material:",
+      "Delta measures the rate of change",
+      "Conversation so far:",
+      "User's question:",
+      "What is delta in options trading?",
+      "well-formatted markdown"
+    ]
+  },
+  {
+    "id": "chat_response_empty_history",
+    "template": "chat_response",
+    "inputs": {
+      "rag_context": "No specific reference material available.",
+      "conversation_history": "",
+      "user_message": "What is implied volatility?"
+    },
+    "must_contain": [
+      "Reference material:",
+      "No specific reference material available.",
+      "What is implied volatility?"
+    ]
+  },
+  {
+    "id": "lesson_plan_template",
+    "template": "lesson_plan",
+    "inputs": {
+      "rag_context": "Greeks are sensitivity measures for option pricing.",
+      "conversation_history": "",
+      "user_message": "teach me about the Greeks"
+    },
+    "must_contain": [
+      "structured lesson plan",
+      "Greeks are sensitivity measures",
+      "teach me about the Greeks",
+      "\"title\"",
+      "\"sections\"",
+      "\"practice_questions\"",
+      "ONLY the JSON object"
+    ]
+  }
+]
