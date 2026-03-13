@@ -15,7 +15,7 @@ import OnboardingModal from "../components/OnboardingModal";
 import QuickFirePage from "./QuickFirePage";
 import { useXPToast } from "../context/XPToastContext";
 import api from "../api/client";
-import { categoryDisplay, categoryColors } from "../theme/colors";
+import { categoryShortDisplay, categoryColors, categorySections } from "../theme/colors";
 
 type Mode = "select" | "path-mcq" | "deep-streaming" | "deep-scenario" | "deep-probe" | "deep-grading" | "deep-result" | "deep-error";
 
@@ -370,9 +370,6 @@ export default function TrainingPage({
                 generateStreaming(cat);
               }}
             />
-            <h3 className="text-xs font-semibold text-cm-muted uppercase tracking-wider mt-2">
-              Browse by Category
-            </h3>
             {(() => {
               const grouped = new Map<string, string[]>();
               for (const cat of unlockedCategories) {
@@ -384,81 +381,95 @@ export default function TrainingPage({
               const statsMap = new Map(
                 (categoryStats || []).map((s) => [s.category, s])
               );
+              const radius = 16;
+              const circumference = 2 * Math.PI * radius;
 
-              return Array.from(grouped.entries()).map(([category, difficulties]) => {
-                const color = categoryColors[category] || "#4D34EF";
-                const sorted = difficulties.sort((a, b) => diffOrder.indexOf(a) - diffOrder.indexOf(b));
-                const bestDifficulty = sorted[sorted.length - 1];
-                const stat = statsMap.get(category);
-                const pct = stat ? Math.round((stat.avg_score / 5) * 100) : 0;
-                const label = !stat || stat.attempts === 0
-                  ? "New"
-                  : stat.avg_score >= 3.5
-                    ? "Mastery"
-                    : stat.avg_score >= 2.5
-                      ? "Proficient"
-                      : "Developing";
+              return categorySections
+                .map((section) => {
+                  const sectionCats = section.categories.filter((c) => grouped.has(c));
+                  if (sectionCats.length === 0) return null;
+                  return (
+                    <div key={section.label}>
+                      <h3 className="text-[10px] font-semibold text-cm-muted/60 uppercase tracking-widest mb-2">
+                        {section.label}
+                      </h3>
+                      <div className="grid grid-cols-2 sm:grid-cols-3 gap-2">
+                        {sectionCats.map((category) => {
+                          const difficulties = grouped.get(category)!;
+                          const color = categoryColors[category] || "#4D34EF";
+                          const sorted = difficulties.sort((a, b) => diffOrder.indexOf(a) - diffOrder.indexOf(b));
+                          const bestDifficulty = sorted[sorted.length - 1];
+                          const stat = statsMap.get(category);
+                          const pct = stat ? Math.round((stat.avg_score / 5) * 100) : 0;
+                          const label = !stat || stat.attempts === 0
+                            ? "New"
+                            : stat.avg_score >= 3.5
+                              ? "Mastery"
+                              : stat.avg_score >= 2.5
+                                ? "Proficient"
+                                : "Developing";
+                          const strokeDash = circumference * (pct / 100);
 
-                return (
-                  <button
-                    key={category}
-                    onClick={() => {
-                      const cat = { category, difficulty: bestDifficulty };
-                      setSelectedCat(cat);
-                      generateStreaming(cat);
-                    }}
-                    className="cm-surface-interactive p-4 w-full text-left"
-                    style={{ borderColor: `${color}40` }}
-                  >
-                    <div className="flex items-center justify-between mb-2">
-                      <div className="flex items-center gap-2">
-                        <span
-                          className="w-2 h-2 rounded-full flex-shrink-0"
-                          style={{ backgroundColor: color }}
-                        />
-                        <span className="text-cm-text font-semibold text-sm">
-                          {categoryDisplay[category] || category.replace(/_/g, " ")}
-                        </span>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <button
-                          onClick={(e) => { e.stopPropagation(); setPrimerCategory(category); }}
-                          className="flex items-center gap-1 text-xs text-cm-muted hover:text-cm-primary border border-cm-border hover:border-cm-primary/40 rounded px-2 py-0.5 transition-all"
-                          aria-label={`Learn ${categoryDisplay[category] || category} concepts`}
-                        >
-                          <BookOpen size={12} />
-                          Learn
-                        </button>
-                        <span className={`text-[11px] font-medium ${
-                          label === "Mastery" ? "text-cm-emerald" :
-                          label === "Proficient" ? "text-cm-amber" :
-                          label === "Developing" ? "text-cm-primary" :
-                          "text-cm-muted"
-                        }`}>
-                          {label}
-                        </span>
+                          return (
+                            <button
+                              key={category}
+                              onClick={() => {
+                                const cat = { category, difficulty: bestDifficulty };
+                                setSelectedCat(cat);
+                                generateStreaming(cat);
+                              }}
+                              className="cm-surface-interactive p-3 text-left flex items-center gap-3"
+                              style={{ borderColor: `${color}40` }}
+                            >
+                              {/* Progress ring */}
+                              <div className="relative w-10 h-10 flex-shrink-0">
+                                <svg width="40" height="40" viewBox="0 0 40 40" className="-rotate-90">
+                                  <circle cx="20" cy="20" r={radius} fill="none" stroke="currentColor" className="text-cm-bg" strokeWidth="3" />
+                                  <circle cx="20" cy="20" r={radius} fill="none" stroke={color} strokeWidth="3" strokeLinecap="round" strokeDasharray={`${strokeDash} ${circumference}`} className="transition-all duration-500" />
+                                </svg>
+                                <span className="absolute inset-0 flex items-center justify-center text-[10px] font-bold text-cm-text">
+                                  {stat && stat.attempts > 0 ? stat.avg_score.toFixed(1) : "—"}
+                                </span>
+                              </div>
+
+                              {/* Text content */}
+                              <div className="flex-1 min-w-0">
+                                <span className="text-cm-text font-semibold text-sm leading-tight block truncate">
+                                  {categoryShortDisplay[category] || category.replace(/_/g, " ")}
+                                </span>
+                                <div className="flex items-center gap-1.5 mt-0.5">
+                                  <span className={`text-[11px] font-medium ${
+                                    label === "Mastery" ? "text-cm-emerald" :
+                                    label === "Proficient" ? "text-cm-amber" :
+                                    label === "Developing" ? "text-cm-primary" :
+                                    "text-cm-muted"
+                                  }`}>
+                                    {label}
+                                  </span>
+                                  {stat && stat.attempts > 0 && (
+                                    <span className="text-[10px] text-cm-muted">
+                                      · {stat.attempts} done
+                                    </span>
+                                  )}
+                                </div>
+                              </div>
+
+                              {/* Learn */}
+                              <button
+                                onClick={(e) => { e.stopPropagation(); setPrimerCategory(category); }}
+                                className="flex-shrink-0 text-cm-muted hover:text-cm-primary transition-colors p-1"
+                                aria-label={`Learn ${categoryShortDisplay[category] || category} concepts`}
+                              >
+                                <BookOpen size={14} />
+                              </button>
+                            </button>
+                          );
+                        })}
                       </div>
                     </div>
-                    <div className="flex items-center gap-2">
-                      <div className="flex-1 h-1.5 bg-cm-bg rounded-full overflow-hidden">
-                        <div
-                          className="h-full rounded-full transition-all duration-500"
-                          style={{
-                            width: `${pct}%`,
-                            backgroundColor: color,
-                            opacity: pct > 0 ? 1 : 0,
-                          }}
-                        />
-                      </div>
-                      {stat && stat.attempts > 0 && (
-                        <span className="text-[10px] text-cm-muted whitespace-nowrap">
-                          {stat.avg_score.toFixed(1)}/5 · {stat.attempts} done
-                        </span>
-                      )}
-                    </div>
-                  </button>
-                );
-              });
+                  );
+                })
+                .filter(Boolean);
             })()}
           </div>
         </div>
@@ -493,7 +504,7 @@ export default function TrainingPage({
               </div>
               {selectedCat && (
                 <div className="text-cm-muted text-xs">
-                  {categoryDisplay[selectedCat.category] || selectedCat.category.replace(/_/g, " ")} &middot;{" "}
+                  {categoryShortDisplay[selectedCat.category] || selectedCat.category.replace(/_/g, " ")} &middot;{" "}
                   {selectedCat.difficulty}
                 </div>
               )}

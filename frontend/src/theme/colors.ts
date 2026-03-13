@@ -42,6 +42,63 @@ export const categoryDisplay: Record<string, string> = {
   portfolio_mgmt: "Portfolio Management Metrics",
 };
 
+export const categoryShortDisplay: Record<string, string> = {
+  iv_analysis: "IV Analysis",
+  realized_vol: "Realized Vol",
+  greeks: "Greeks",
+  order_flow: "Order Flow",
+  macro: "Macro",
+  term_structure: "Term Structure",
+  skew: "IV Skew",
+  correlation: "Correlation",
+  event_vol: "Event Vol",
+  tail_risk: "Tail Risk",
+  position_sizing: "Position Sizing",
+  trade_structuring: "Trade Structuring",
+  vol_surface: "Vol Surface",
+  microstructure: "Microstructure",
+  risk_management: "Risk Mgmt",
+  capman_tooling: "CapMan Tools",
+  sentiment: "Sentiment",
+  technical_analysis: "Technicals",
+  fixed_income: "Fixed Income",
+  seasonality: "Seasonality",
+  exotic_structures: "Exotics",
+  fundamentals: "Fundamentals",
+  commodities: "Commodities",
+  crypto: "Crypto",
+  geopolitical: "Geopolitical",
+  alt_data: "Alt Data",
+  portfolio_mgmt: "Portfolio Mgmt",
+};
+
+export const categorySections: { label: string; categories: string[] }[] = [
+  {
+    label: "Volatility",
+    categories: ["iv_analysis", "realized_vol", "term_structure", "vol_surface", "skew", "event_vol"],
+  },
+  {
+    label: "Greeks & Risk",
+    categories: ["greeks", "tail_risk", "risk_management", "position_sizing", "correlation"],
+  },
+  {
+    label: "Trading",
+    categories: ["order_flow", "microstructure", "trade_structuring", "capman_tooling"],
+  },
+  {
+    label: "Macro & Rates",
+    categories: ["macro", "fixed_income", "seasonality"],
+  },
+  {
+    label: "Data & Analysis",
+    categories: ["fundamentals", "sentiment", "technical_analysis", "alt_data", "exotic_structures"],
+  },
+  {
+    label: "Markets",
+    categories: ["commodities", "crypto", "geopolitical", "portfolio_mgmt"],
+  },
+];
+
 export const categoryColors: Record<string, string> = {
   iv_analysis: "#4D34EF",
   realized_vol: "#7C3AED",
