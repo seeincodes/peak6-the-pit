@@ -58,10 +58,12 @@ def compute_xp_breakdown(
         penalty = min(hints_used * HINT_XP_PENALTY, 0.8)
         base = int(base * (1.0 - penalty))
 
-    streak_bonus = min(streak_days * STREAK_XP_PER_DAY, STREAK_XP_MAX)
+    # Keep XP intentionally low for weak answers by suppressing non-base bonuses.
+    bonus_eligible = overall_score >= 3.0
+    streak_bonus = min(streak_days * STREAK_XP_PER_DAY, STREAK_XP_MAX) if bonus_eligible else 0
     perfect_bonus = PERFECT_SCORE_BONUS if overall_score >= 4.5 else 0
-    no_hints_bonus = NO_HINTS_BONUS if hints_used == 0 else 0
-    daily_first_bonus = DAILY_FIRST_SCENARIO_BONUS if is_daily_first else 0
+    no_hints_bonus = NO_HINTS_BONUS if (hints_used == 0 and bonus_eligible) else 0
+    daily_first_bonus = DAILY_FIRST_SCENARIO_BONUS if (is_daily_first and bonus_eligible) else 0
 
     total = base + streak_bonus + perfect_bonus + no_hints_bonus + daily_first_bonus
     total = max(total, XP_FLOOR)
