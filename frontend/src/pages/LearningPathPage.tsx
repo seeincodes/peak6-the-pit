@@ -80,10 +80,10 @@ function getIcon(name: string) {
 
 function DifficultyBadge({ level }: { level: string }) {
   const colors: Record<string, string> = {
-    beginner: "bg-cm-emerald/15 text-cm-emerald border-cm-emerald/30",
-    intermediate: "bg-cm-amber/15 text-cm-amber border-cm-amber/30",
-    advanced: "bg-cm-red/15 text-cm-red border-cm-red/30",
-    mixed: "bg-cm-primary/15 text-cm-primary border-cm-primary/30",
+    beginner: "bg-cm-card-raised text-cm-emerald border-cm-emerald",
+    intermediate: "bg-cm-card-raised text-cm-amber border-cm-amber",
+    advanced: "bg-cm-card-raised text-cm-red border-cm-red",
+    mixed: "bg-cm-card-raised text-cm-primary border-cm-primary",
   };
   return (
     <span className={`text-xs px-2 py-0.5 rounded-full capitalize border ${colors[level] || colors.mixed}`}>
@@ -111,10 +111,10 @@ function PathCard({
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.05 }}
       onClick={onClick}
-      className="cm-surface p-5 cursor-pointer hover:border-cm-primary/30 transition-all"
+      className="cm-surface p-5 cursor-pointer hover:border-cm-primary hover:shadow-lg transition-all"
     >
       <div className="flex items-start gap-4">
-        <div className="w-10 h-10 rounded-lg bg-cm-primary/10 flex items-center justify-center shrink-0">
+        <div className="w-10 h-10 rounded-lg bg-cm-card-raised flex items-center justify-center shrink-0">
           <Icon size={20} className="text-cm-primary" />
         </div>
         <div className="flex-1 min-w-0">
@@ -233,7 +233,7 @@ function PathDetailView({
       {/* Header */}
       <div className="cm-surface p-5">
         <div className="flex items-start gap-4">
-          <div className="w-12 h-12 rounded-lg bg-cm-primary/10 flex items-center justify-center shrink-0">
+          <div className="w-12 h-12 rounded-lg bg-cm-card-raised flex items-center justify-center shrink-0">
             <Icon size={24} className="text-cm-primary" />
           </div>
           <div className="flex-1">
@@ -302,9 +302,9 @@ function PathDetailView({
                 <div
                   className={`w-8 h-8 rounded-full flex items-center justify-center shrink-0 ${
                     step.status === "completed"
-                      ? "bg-cm-emerald/15 border-2 border-cm-emerald"
+                      ? "bg-cm-card-raised border-2 border-cm-emerald"
                       : step.status === "current"
-                        ? "bg-cm-primary/15 border-2 border-cm-primary"
+                        ? "bg-cm-card-raised border-2 border-cm-primary"
                         : "bg-cm-card-raised border-2 border-cm-border"
                   }`}
                 >
@@ -313,13 +313,13 @@ function PathDetailView({
                   ) : step.status === "current" ? (
                     <Play size={12} className="text-cm-primary" />
                   ) : (
-                    <Lock size={12} className="text-cm-muted/50" />
+                    <Lock size={12} className="text-cm-muted" />
                   )}
                 </div>
                 {!isLast && (
                   <div
                     className={`w-0.5 flex-1 min-h-[24px] ${
-                      step.status === "completed" ? "bg-cm-emerald/40" : "bg-cm-border"
+                      step.status === "completed" ? "bg-cm-emerald" : "bg-cm-border"
                     }`}
                   />
                 )}
@@ -328,7 +328,7 @@ function PathDetailView({
               {/* Step content */}
               <div
                 className={`cm-surface flex-1 p-4 mb-3 ${
-                  step.status === "current" ? "border-cm-primary/30" : ""
+                  step.status === "current" ? "border-cm-primary" : ""
                 } ${step.status === "locked" ? "opacity-60" : ""}`}
               >
                 <div className="flex items-start justify-between">
@@ -336,7 +336,7 @@ function PathDetailView({
                     <div className="flex items-center gap-2 mb-1">
                       <span className="text-xs text-cm-muted">Step {step.step_number}</span>
                       {step.step_type === "mcq" && (
-                        <span className="text-xs px-1.5 py-0.5 rounded bg-cm-amber/15 text-cm-amber border border-cm-amber/30">
+                        <span className="text-xs px-1.5 py-0.5 rounded-full bg-cm-card-raised text-cm-amber border border-cm-amber">
                           Quiz
                         </span>
                       )}

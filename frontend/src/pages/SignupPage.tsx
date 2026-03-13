@@ -40,19 +40,19 @@ export default function SignupPage() {
         className="w-full max-w-md"
       >
         {/* Branding */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-1">
+        <div className="text-center mb-7">
+          <h1 className="text-5xl font-bold mb-1">
             <span className="text-cm-text">The </span>
             <span className="text-cm-primary">
               Pit
             </span>
           </h1>
-          <p className="text-cm-muted text-sm">Create your trading profile</p>
+          <p className="text-cm-muted text-base">Create your profile and start leveling up.</p>
         </div>
 
         {/* Card */}
-        <div className="rounded-md border border-cm-border bg-cm-card p-8">
-          <h2 className="text-xl font-bold text-cm-text mb-6">Sign Up</h2>
+        <div className="cm-surface-raised p-8">
+          <h2 className="text-2xl font-bold text-cm-text mb-6">Sign Up</h2>
 
           {error && (
             <div role="alert" aria-live="assertive" className="mb-4 p-3 rounded-md bg-cm-red/10 border border-cm-red/30 text-cm-red text-sm">
@@ -72,7 +72,7 @@ export default function SignupPage() {
                 onChange={(e) => setDisplayName(e.target.value)}
                 required
                 aria-invalid={!!error}
-                className="w-full px-4 py-2.5 rounded-md bg-cm-bg border border-cm-border text-cm-text placeholder-cm-muted/50 focus:outline-none focus:border-cm-primary/50 transition-all duration-300 focus-ring"
+                className="cm-input"
                 placeholder="TradingAce"
               />
             </div>
@@ -88,7 +88,7 @@ export default function SignupPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 aria-invalid={!!error}
-                className="w-full px-4 py-2.5 rounded-md bg-cm-bg border border-cm-border text-cm-text placeholder-cm-muted/50 focus:outline-none focus:border-cm-primary/50 transition-all duration-300 focus-ring"
+                className="cm-input"
                 placeholder="trader@example.com"
               />
             </div>
@@ -105,7 +105,7 @@ export default function SignupPage() {
                 required
                 minLength={6}
                 aria-invalid={!!error}
-                className="w-full px-4 py-2.5 rounded-md bg-cm-bg border border-cm-border text-cm-text placeholder-cm-muted/50 focus:outline-none focus:border-cm-primary/50 transition-all duration-300 focus-ring"
+                className="cm-input"
                 placeholder="Min. 6 characters"
               />
             </div>
@@ -114,7 +114,7 @@ export default function SignupPage() {
               type="submit"
               disabled={loading}
               aria-busy={loading}
-              className="w-full py-3 rounded bg-cm-primary text-white font-bold text-sm hover:bg-cm-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 focus-ring"
+              className="cm-btn-primary-lg w-full py-3 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               {loading ? (
                 <span className="animate-pulse">Creating account...</span>

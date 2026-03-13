@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Menu } from "lucide-react";
 import { useAuth } from "./context/AuthContext";
 import Sidebar from "./components/Sidebar";
+import ThemeToggle from "./components/ThemeToggle";
 import TrainingPage from "./pages/TrainingPage";
 import ProfilePage from "./pages/ProfilePage";
 import LandingPage from "./pages/LandingPage";
@@ -35,12 +36,17 @@ function App() {
   // Not authenticated — show public routes only
   if (!authUser) {
     return (
-      <Routes>
-        <Route path="/" element={<LandingPage />} />
-        <Route path="/login" element={<LoginPage />} />
-        <Route path="/signup" element={<SignupPage />} />
-        <Route path="*" element={<Navigate to="/" replace />} />
-      </Routes>
+      <div className="min-h-screen bg-cm-bg">
+        <div className="fixed top-4 right-4 z-50">
+          <ThemeToggle compact />
+        </div>
+        <Routes>
+          <Route path="/" element={<LandingPage />} />
+          <Route path="/login" element={<LoginPage />} />
+          <Route path="/signup" element={<SignupPage />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </div>
     );
   }
 
@@ -99,6 +105,9 @@ function AuthenticatedApp({
               <span className="text-white font-bold text-[10px] tracking-tight">CM</span>
             </div>
             <span className="text-cm-text font-bold text-sm">CapMan AI</span>
+          </div>
+          <div className="ml-auto">
+            <ThemeToggle compact />
           </div>
         </div>
 

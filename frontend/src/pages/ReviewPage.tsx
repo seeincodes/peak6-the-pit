@@ -57,7 +57,7 @@ export default function ReviewPage() {
           <select
             value={categoryFilter}
             onChange={(e) => setCategoryFilter(e.target.value)}
-            className="bg-cm-bg border border-cm-border rounded px-2 py-1 text-xs text-cm-text focus:outline-none focus:border-cm-primary/50"
+            className="bg-cm-bg border border-cm-border rounded-lg px-2 py-1.5 text-xs text-cm-text focus:outline-none focus:ring-2 focus:ring-cm-primary"
           >
             <option value="">All Categories</option>
             {Object.entries(categoryDisplay).map(([key, label]) => (
@@ -68,9 +68,9 @@ export default function ReviewPage() {
 
         <button
           onClick={() => setShowLowOnly(!showLowOnly)}
-          className={`text-xs px-3 py-1 rounded-full border transition-colors ${
+          className={`text-xs px-3 py-1.5 rounded-full border transition-colors ${
             showLowOnly
-              ? "border-cm-red/40 bg-cm-red/10 text-cm-red"
+              ? "border-cm-red bg-cm-card-raised text-cm-red"
               : "border-cm-border text-cm-muted hover:text-cm-text"
           }`}
         >
@@ -106,7 +106,7 @@ export default function ReviewPage() {
                 {/* Summary row */}
                 <button
                   onClick={() => setExpandedId(expanded ? null : item.response_id)}
-                  className="w-full flex items-center gap-3 p-4 text-left hover:bg-cm-card-raised/50 transition-colors"
+                  className="w-full flex items-center gap-3 p-4 text-left hover:bg-cm-card-raised transition-colors"
                 >
                   <span
                     className="w-2 h-2 rounded-full flex-shrink-0"
@@ -124,7 +124,7 @@ export default function ReviewPage() {
                       <Star
                         key={i}
                         size={10}
-                        className={i <= diffLevel ? "text-cm-amber fill-cm-amber" : "text-cm-amber/30"}
+                        className={i <= diffLevel ? "text-cm-amber fill-cm-amber" : "text-cm-muted"}
                       />
                     ))}
                   </span>
@@ -145,7 +145,7 @@ export default function ReviewPage() {
                       initial={{ height: 0, opacity: 0 }}
                       animate={{ height: "auto", opacity: 1 }}
                       exit={{ height: 0, opacity: 0 }}
-                      className="border-t border-cm-border/50"
+                      className="border-t border-cm-border"
                     >
                       <div className="p-4 space-y-4">
                         {/* Question */}
@@ -161,10 +161,10 @@ export default function ReviewPage() {
                             {item.conversation.map((turn, i) => (
                               <div
                                 key={i}
-                                className={`text-sm p-3 rounded-md ${
+                                className={`text-sm p-3 rounded-lg ${
                                   turn.role === "user"
-                                    ? "bg-cm-primary/5 border border-cm-primary/20 text-cm-text"
-                                    : "bg-cm-amber/5 border border-cm-amber/20 text-cm-text"
+                                    ? "bg-cm-card-raised border border-cm-border text-cm-text"
+                                    : "bg-cm-card border border-cm-border text-cm-text"
                                 }`}
                               >
                                 <span className="text-xs font-semibold text-cm-muted block mb-1">

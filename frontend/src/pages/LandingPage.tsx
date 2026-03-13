@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
-import { Zap, Brain, Trophy } from "lucide-react";
+import { Zap, Brain, Trophy, BookText, Sparkles } from "lucide-react";
 
 const features = [
   {
@@ -41,19 +41,20 @@ const itemVariants = {
 
 export default function LandingPage() {
   return (
-    <main role="main" className="h-screen bg-cm-bg flex flex-col overflow-hidden">
+    <main role="main" className="min-h-screen bg-cm-bg flex flex-col">
       {/* Hero Section */}
       <motion.section
-        className="flex-1 flex flex-col items-center justify-center px-8"
+        className="flex-1 flex flex-col items-center justify-center px-6 py-10 sm:py-14"
         variants={containerVariants}
         initial="hidden"
         animate="visible"
       >
         <motion.div
-          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cm-primary/10 border border-cm-primary/20 mb-5"
+          className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-cm-card border border-cm-border mb-5"
           variants={itemVariants}
         >
-          <span className="text-cm-lime text-xs font-semibold tracking-wide uppercase">
+          <Sparkles size={14} className="text-cm-primary" />
+          <span className="text-cm-primary text-xs font-semibold tracking-wide uppercase">
             CapMan AI Training Platform
           </span>
         </motion.div>
@@ -77,34 +78,41 @@ export default function LandingPage() {
           className="text-sm text-cm-muted/70 mb-8 text-center max-w-md"
           variants={itemVariants}
         >
-          AI-generated scenarios. Socratic grading. Real progression.
+          Learn first, test second. AI-generated scenarios, Socratic feedback, and measurable progression.
         </motion.p>
 
-        <motion.div className="flex gap-4 mb-10" variants={itemVariants}>
+        <motion.div className="flex flex-wrap justify-center gap-3 mb-8" variants={itemVariants}>
           <Link
             to="/signup"
-            className="px-8 py-3 rounded bg-cm-primary text-white font-bold text-sm hover:bg-cm-primary/90 transition-all duration-300 focus-ring"
+            className="cm-btn-primary-lg px-8 py-3"
           >
             Get Started
           </Link>
           <Link
             to="/login"
-            className="px-8 py-3 rounded border-2 border-cm-border text-cm-text font-bold text-sm hover:border-cm-primary/50 hover:text-cm-primary transition-all duration-300 focus-ring"
+            className="cm-btn-secondary px-8 py-3"
           >
             Sign In
+          </Link>
+          <Link
+            to="/signup"
+            className="cm-btn-ghost px-4 py-3 text-sm inline-flex items-center gap-1"
+          >
+            <BookText size={14} />
+            Start with onboarding
           </Link>
         </motion.div>
 
         {/* Feature Cards */}
         <h2 className="sr-only">Features</h2>
         <motion.div
-          className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-3xl w-full"
+          className="grid grid-cols-1 sm:grid-cols-3 gap-4 max-w-4xl w-full"
           variants={containerVariants}
         >
           {features.map((feature) => (
             <motion.div
               key={feature.title}
-              className="rounded bg-cm-card border border-cm-border p-5 hover:border-cm-primary/30 transition-all duration-300"
+              className="cm-surface-interactive p-5"
               variants={itemVariants}
             >
               <feature.icon
@@ -113,10 +121,10 @@ export default function LandingPage() {
                 className="mb-3"
                 aria-hidden="true"
               />
-              <h3 className="text-cm-text font-bold text-sm mb-1">
+              <h3 className="text-cm-text font-bold text-base mb-1">
                 {feature.title}
               </h3>
-              <p className="text-cm-muted text-xs leading-relaxed">
+              <p className="text-cm-muted text-sm leading-relaxed">
                 {feature.description}
               </p>
             </motion.div>

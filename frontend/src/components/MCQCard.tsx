@@ -52,7 +52,7 @@ export default function MCQCard({
             <Star
               key={i}
               size={14}
-              className={i <= difficultyLevel ? "text-cm-amber fill-cm-amber" : "text-cm-amber/30"}
+              className={i <= difficultyLevel ? "text-cm-amber fill-cm-amber" : "text-cm-muted"}
               aria-hidden="true"
             />
           ))}
@@ -74,10 +74,10 @@ export default function MCQCard({
             onClick={() => onSelect(choice.key)}
             disabled={disabled}
             aria-pressed={selectedKey === choice.key}
-            className={`w-full text-left p-3 rounded-md border transition-all focus-ring ${
+            className={`w-full text-left p-3 rounded-lg border transition-all focus-ring ${
               selectedKey === choice.key
-                ? "border-cm-primary bg-cm-primary/10 text-cm-text"
-                : "border-cm-border bg-cm-card hover:border-cm-primary/40 text-cm-muted hover:text-cm-text"
+                ? "border-cm-primary bg-cm-card-raised text-cm-text"
+                : "border-cm-border bg-cm-card hover:border-cm-primary text-cm-muted hover:text-cm-text"
             } ${disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}`}
           >
             <span className="font-mono text-cm-primary mr-3">{choice.key}.</span>

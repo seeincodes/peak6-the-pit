@@ -41,10 +41,10 @@ export default function DifficultySuggestion({
         return (
           <div
             key={key}
-            className={`flex items-center gap-3 p-3 rounded-md border text-sm ${
+            className={`flex items-center gap-3 p-3 rounded-lg border text-sm ${
               isPromote
-                ? "border-cm-emerald/30 bg-cm-emerald/5"
-                : "border-cm-amber/30 bg-cm-amber/5"
+                ? "border-cm-emerald bg-cm-card-raised"
+                : "border-cm-amber bg-cm-card-raised"
             }`}
           >
             {isPromote ? (
@@ -64,10 +64,10 @@ export default function DifficultySuggestion({
             </div>
             <button
               onClick={() => onAccept(s.category, s.suggested_difficulty)}
-              className={`px-3 py-1 rounded text-xs font-semibold transition-colors flex-shrink-0 ${
+              className={`px-3 py-1 rounded-lg text-xs font-semibold transition-colors flex-shrink-0 ${
                 isPromote
-                  ? "bg-cm-emerald/15 text-cm-emerald hover:bg-cm-emerald/25"
-                  : "bg-cm-amber/15 text-cm-amber hover:bg-cm-amber/25"
+                  ? "bg-cm-card text-cm-emerald border border-cm-emerald hover:opacity-80"
+                  : "bg-cm-card text-cm-amber border border-cm-amber hover:opacity-80"
               }`}
             >
               Go

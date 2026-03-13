@@ -94,10 +94,10 @@ export default function DailyChallengeCard({
             return (
               <motion.div
                 key={c.id}
-                className={`flex items-center gap-3 p-2 rounded-md border transition-colors ${
+                className={`flex items-center gap-3 p-2 rounded-lg border transition-colors ${
                   c.completed
-                    ? "border-cm-lime/30 bg-cm-lime/5"
-                    : "border-cm-border/30"
+                    ? "border-cm-lime bg-cm-card-raised"
+                    : "border-cm-border"
                 }`}
               >
                 {c.completed ? (
@@ -110,7 +110,7 @@ export default function DailyChallengeCard({
                     {c.description}
                   </p>
                   {!c.completed && (
-                    <div className="mt-1 h-1 rounded-full bg-cm-border/40 overflow-hidden">
+                    <div className="mt-1 h-1 rounded-full bg-cm-border overflow-hidden">
                       <div
                         className="h-full rounded-full bg-cm-primary transition-all duration-500"
                         style={{ width: `${pct}%` }}

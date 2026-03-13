@@ -47,7 +47,7 @@ function StarRating({ value, onChange }: { value: number; onChange: (v: number) 
         >
           <Star
             size={20}
-            className={n <= value ? "text-cm-amber fill-cm-amber" : "text-cm-muted/30"}
+            className={n <= value ? "text-cm-amber fill-cm-amber" : "text-cm-muted"}
           />
         </button>
       ))}
@@ -62,8 +62,8 @@ function ConversationBubble({ role, content }: { role: string; content: string }
       <div
         className={`max-w-[80%] rounded-lg px-3 py-2 text-sm ${
           isUser
-            ? "bg-cm-primary/15 text-cm-text border border-cm-primary/20"
-            : "bg-cm-card-raised text-cm-text border border-cm-border"
+            ? "bg-cm-card-raised text-cm-text border border-cm-border"
+            : "bg-cm-card text-cm-text border border-cm-border"
         }`}
       >
         <div className="text-xs text-cm-muted mb-1 font-medium">
@@ -92,7 +92,7 @@ function CategoryFilter({
         onClick={() => onSelect(null)}
         className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
           selected === null
-            ? "bg-cm-primary/15 text-cm-primary border border-cm-primary/30"
+            ? "bg-cm-card-raised text-cm-primary border border-cm-primary"
             : "bg-cm-card-raised text-cm-muted border border-cm-border hover:text-cm-text"
         }`}
       >
@@ -104,7 +104,7 @@ function CategoryFilter({
           onClick={() => onSelect(c.category === selected ? null : c.category)}
           className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all capitalize ${
             selected === c.category
-              ? "bg-cm-primary/15 text-cm-primary border border-cm-primary/30"
+              ? "bg-cm-card-raised text-cm-primary border border-cm-primary"
               : "bg-cm-card-raised text-cm-muted border border-cm-border hover:text-cm-text"
           }`}
         >
@@ -153,7 +153,7 @@ function QueueView({
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ delay: i * 0.05 }}
-              className="cm-surface p-4 cursor-pointer hover:border-cm-primary/30 transition-all"
+              className="cm-surface p-4 cursor-pointer hover:border-cm-primary transition-all"
               onClick={() => onSelect(item)}
             >
               <div className="flex items-start justify-between">
@@ -162,7 +162,7 @@ function QueueView({
                     {item.scenario_title || `${item.scenario_category.replace(/_/g, " ")} (${item.scenario_difficulty})`}
                   </div>
                   <div className="flex items-center gap-2 mt-1">
-                    <span className="text-xs px-2 py-0.5 rounded-full bg-cm-primary/10 text-cm-primary capitalize">
+                    <span className="text-xs px-2 py-0.5 rounded-full bg-cm-card-raised text-cm-primary capitalize">
                       {item.scenario_category.replace(/_/g, " ")}
                     </span>
                     <span className="text-xs text-cm-muted capitalize">
@@ -231,7 +231,7 @@ function ReviewForm({
           {item.scenario_title || `${item.scenario_category.replace(/_/g, " ")} (${item.scenario_difficulty})`}
         </h4>
         <div className="flex items-center gap-2 mb-3">
-          <span className="text-xs px-2 py-0.5 rounded-full bg-cm-primary/10 text-cm-primary capitalize">
+          <span className="text-xs px-2 py-0.5 rounded-full bg-cm-card-raised text-cm-primary capitalize">
             {item.scenario_category.replace(/_/g, " ")}
           </span>
           <span className="text-xs text-cm-muted capitalize">
@@ -286,7 +286,7 @@ function ReviewForm({
         </div>
 
         {mutation.isError && (
-          <div className="text-red-400 text-xs">
+          <div className="text-cm-red text-xs">
             {(mutation.error as any)?.response?.data?.detail || "Failed to submit review"}
           </div>
         )}
@@ -323,7 +323,7 @@ function SuccessView({
       animate={{ opacity: 1, scale: 1 }}
       className="cm-surface p-8 text-center space-y-4"
     >
-      <div className="w-16 h-16 rounded-full bg-cm-lime/15 flex items-center justify-center mx-auto">
+      <div className="w-16 h-16 rounded-full bg-cm-card-raised flex items-center justify-center mx-auto">
         <Award size={32} className="text-cm-lime" />
       </div>
 

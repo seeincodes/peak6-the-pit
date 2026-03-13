@@ -79,6 +79,9 @@ export default function OnboardingModal({ show, onComplete }: OnboardingModalPro
             </motion.div>
 
             <h2 className="text-xl font-bold text-cm-text mb-3">{current.title}</h2>
+            <p className="text-xs text-cm-primary font-semibold mb-2">
+              Step {step + 1} of {STEPS.length}
+            </p>
             <p className="text-sm text-cm-muted leading-relaxed whitespace-pre-line mb-6">
               {current.body}
             </p>
