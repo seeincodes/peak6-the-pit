@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Link } from "react-router-dom";
@@ -9,6 +10,7 @@ import {
   CheckCircle2,
   Map,
   Zap,
+  ChevronDown,
 } from "lucide-react";
 import { AVATAR_PRESETS } from "../constants/avatars";
 import api from "../api/client";
@@ -111,7 +113,18 @@ function FeedItem({ event, index }: { event: FeedEvent; index: number }) {
   );
 }
 
+const COMPLETED_TYPES = new Set([
+  "completed_scenario",
+  "completed_mcq",
+  "path_step_completed",
+  "path_completed",
+]);
+
+const INITIAL_LIMIT = 8;
+
 export default function FeedPage() {
+  const [expanded, setExpanded] = useState(false);
+
   const { data: events, isLoading } = useQuery({
     queryKey: ["activity-feed"],
     queryFn: async () => {
@@ -121,6 +134,10 @@ export default function FeedPage() {
     refetchInterval: 30_000,
   });
 
+  const completed = events?.filter((e) => COMPLETED_TYPES.has(e.event_type));
+  const visible = expanded ? completed : completed?.slice(0, INITIAL_LIMIT);
+  const hasMore = (completed?.length || 0) > INITIAL_LIMIT;
+
   return (
     <div className="cm-page max-w-2xl">
       <div className="flex items-center gap-3 mb-4">
@@ -129,25 +146,36 @@ export default function FeedPage() {
       </div>
 
       {isLoading && (
-        <div className="text-cm-primary animate-pulse text-center py-12 text-sm">
-          Loading feed...
+        <div className="flex items-center justify-center gap-3 py-12">
+          <div className="w-5 h-5 border-2 border-cm-primary/30 border-t-cm-primary rounded-full animate-spin" />
+          <span className="text-cm-muted text-sm">Loading feed...</span>
         </div>
       )}
 
-      {events && events.length === 0 && (
+      {visible && visible.length === 0 && (
         <div className="cm-surface p-8 text-center">
           <Activity size={32} className="text-cm-muted mx-auto mb-3" />
           <div className="text-cm-muted text-sm">
-            No recent activity. Complete a scenario or quiz to get things started!
+            No completed scenarios yet. Finish a scenario or quiz to see it here!
           </div>
         </div>
       )}
 
-      {events && events.length > 0 && (
+      {visible && visible.length > 0 && (
         <div className="space-y-2">
-          {events.map((event, i) => (
+          {visible.map((event, i) => (
             <FeedItem key={event.id} event={event} index={i} />
           ))}
+
+          {hasMore && !expanded && (
+            <button
+              onClick={() => setExpanded(true)}
+              className="w-full flex items-center justify-center gap-2 py-3 rounded-lg border border-cm-border text-cm-muted hover:text-cm-text hover:border-cm-primary/40 transition-all text-sm"
+            >
+              <ChevronDown size={16} />
+              Show older ({(completed?.length || 0) - INITIAL_LIMIT} more)
+            </button>
+          )}
         </div>
       )}
     </div>

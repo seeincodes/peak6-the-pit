@@ -1,14 +1,16 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Check, Lock, Pencil } from "lucide-react";
+import { Check, Lock, LogOut, Pencil } from "lucide-react";
 import SkillTree from "../components/SkillTree";
 import BadgeGrid from "../components/BadgeGrid";
 import ProfileEditor from "../components/ProfileEditor";
 import { AVATAR_PRESETS } from "../constants/avatars";
+import { useAuth } from "../context/AuthContext";
 import api from "../api/client";
 
 export default function ProfilePage() {
   const [editing, setEditing] = useState(false);
+  const { logout } = useAuth();
 
   const { data: user } = useQuery({
     queryKey: ["user"],
@@ -81,6 +83,15 @@ export default function ProfilePage() {
           />
         </div>
       </div>
+
+      {/* Logout */}
+      <button
+        onClick={logout}
+        className="flex items-center gap-2 text-cm-muted hover:text-cm-red transition-colors text-sm focus-ring rounded px-1 py-1"
+      >
+        <LogOut size={16} />
+        Log out
+      </button>
     </div>
   );
 }

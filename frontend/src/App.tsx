@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
-import { Routes, Route, Navigate, useLocation } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation, Link } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Menu } from "lucide-react";
+import { AVATAR_PRESETS } from "./constants/avatars";
 import { useAuth } from "./context/AuthContext";
 import Sidebar from "./components/Sidebar";
 import TrainingPage from "./pages/TrainingPage";
@@ -22,7 +23,7 @@ import { XPToastProvider } from "./context/XPToastContext";
 import api from "./api/client";
 
 function App() {
-  const { user: authUser, isLoading: authLoading, logout } = useAuth();
+  const { user: authUser, isLoading: authLoading } = useAuth();
 
   // Show loading spinner while auth state is being determined
   if (authLoading) {
@@ -49,14 +50,10 @@ function App() {
   }
 
   // Authenticated — show protected layout
-  return <AuthenticatedApp logout={logout} />;
+  return <AuthenticatedApp />;
 }
 
-function AuthenticatedApp({
-  logout,
-}: {
-  logout: () => void;
-}) {
+function AuthenticatedApp() {
   const { data: user, isLoading } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
@@ -67,7 +64,6 @@ function AuthenticatedApp({
     gcTime: 10 * 60_000,
   });
 
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
 
   // Close mobile sidebar on route change
@@ -93,27 +89,34 @@ function AuthenticatedApp({
         <a href="#main-content" className="skip-link">Skip to main content</a>
 
         {/* Mobile top bar */}
-        <div className="fixed top-0 left-0 right-0 h-14 bg-cm-card border-b border-cm-border flex items-center px-4 z-30 lg:hidden">
-          <button
-            onClick={() => setMobileSidebarOpen(true)}
-            className="text-cm-muted hover:text-cm-text transition-colors p-1 -ml-1"
-            aria-label="Open menu"
-          >
-            <Menu size={22} />
-          </button>
-          <div className="flex items-center gap-2 ml-3">
-            <div className="w-7 h-7 rounded-md bg-gradient-to-br from-cm-primary to-cm-emerald flex items-center justify-center shrink-0">
-              <span className="text-white font-bold text-[10px] tracking-tight">CM</span>
+        <div className="fixed top-0 left-0 right-0 h-14 bg-cm-card border-b border-cm-border flex items-center justify-between px-4 z-30 lg:hidden">
+          <div className="flex items-center">
+            <button
+              onClick={() => setMobileSidebarOpen(true)}
+              className="text-cm-muted hover:text-cm-text transition-colors p-1 -ml-1"
+              aria-label="Open menu"
+            >
+              <Menu size={22} />
+            </button>
+            <div className="flex items-center gap-2 ml-3">
+              <div className="w-7 h-7 rounded-md bg-gradient-to-br from-cm-primary to-cm-emerald flex items-center justify-center shrink-0">
+                <span className="text-white font-bold text-[10px] tracking-tight">CM</span>
+              </div>
+              <span className="text-cm-text font-bold text-sm">CapMan AI</span>
             </div>
-            <span className="text-cm-text font-bold text-sm">CapMan AI</span>
           </div>
+          {user && (
+            <Link to="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
+              <span className="text-sm font-medium text-cm-text hidden xs:inline">{user.display_name}</span>
+              <div className="w-8 h-8 rounded-full bg-cm-card-raised border border-cm-border flex items-center justify-center text-base">
+                {AVATAR_PRESETS[user.avatar_id || "default"] || "👤"}
+              </div>
+            </Link>
+          )}
         </div>
 
         <Sidebar
           user={user}
-          logout={logout}
-          collapsed={sidebarCollapsed}
-          onToggleCollapse={() => setSidebarCollapsed((c) => !c)}
           mobileOpen={mobileSidebarOpen}
           onMobileClose={() => setMobileSidebarOpen(false)}
         />
@@ -124,9 +127,24 @@ function AuthenticatedApp({
             flex-1 min-h-0 overflow-y-auto overflow-x-hidden
             pt-14 lg:pt-0
             transition-[margin-left] duration-300 ease-in-out
-            ml-0 ${sidebarCollapsed ? "lg:ml-16" : "lg:ml-[220px]"}
+            ml-0 lg:ml-[220px]
           `}
         >
+          {/* Desktop top bar */}
+          {user && (
+            <div className="hidden lg:flex items-center justify-end h-16 px-6 border-b border-cm-border bg-cm-card/50 sticky top-0 z-20 backdrop-blur-sm">
+              <Link to="/profile" className="flex items-center gap-3 hover:opacity-80 transition-opacity">
+                <div className="text-right">
+                  <div className="text-sm font-semibold text-cm-text leading-tight">{user.display_name}</div>
+                  <div className="text-[11px] text-cm-primary">{user.level_title}</div>
+                </div>
+                <div className="w-9 h-9 rounded-full bg-cm-card-raised border border-cm-border flex items-center justify-center text-lg">
+                  {AVATAR_PRESETS[user.avatar_id || "default"] || "👤"}
+                </div>
+              </Link>
+            </div>
+          )}
+
           <Routes>
             <Route
               path="/"
