@@ -11,6 +11,7 @@ import {
   X,
   Activity,
   Zap,
+  BookText,
 } from "lucide-react";
 import DailyChallengeCard from "./DailyChallengeCard";
 import StreakFlame from "./StreakFlame";
@@ -44,6 +45,7 @@ const NAV_GROUPS = [
     items: [
       { to: "/review", icon: BookOpen, label: "Review", matchExact: false },
       { to: "/bookmarks", icon: Bookmark, label: "Bookmarks", matchExact: false },
+      { to: "/dictionary", icon: BookText, label: "Dictionary", matchExact: false },
     ],
   },
   {

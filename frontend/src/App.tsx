@@ -19,6 +19,7 @@ import LearningPathPage from "./pages/LearningPathPage";
 import FeedPage from "./pages/FeedPage";
 import UserProfilePage from "./pages/UserProfilePage";
 import QuickFirePage from "./pages/QuickFirePage";
+import DictionaryPage from "./pages/DictionaryPage";
 import { XPToastProvider } from "./context/XPToastContext";
 import api from "./api/client";
 
@@ -159,6 +160,7 @@ function AuthenticatedApp() {
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/review" element={<ReviewPage />} />
             <Route path="/bookmarks" element={<BookmarksPage />} />
+            <Route path="/dictionary" element={<DictionaryPage />} />
             <Route path="/progress" element={<ProgressPage />} />
             <Route path="/leaderboard" element={<LeaderboardPage />} />
             <Route path="/peer-review" element={<PeerReviewPage />} />
