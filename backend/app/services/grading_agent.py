@@ -1,11 +1,14 @@
 """Grading and Socratic probing service using Claude."""
 import json
 import re
+import uuid as _uuid
 
 from anthropic import AsyncAnthropic
+from sqlalchemy import select
 
 from app.config import settings
 from app.database import async_session as session_factory
+from app.models.model_answer_bank import ModelAnswerBank
 from app.services.rag import build_retrieval_query, retrieve_chunks
 from app.constants import (
     DIFFICULTY_MULTIPLIER, XP_BASE, HINT_XP_PENALTY,
@@ -163,8 +166,24 @@ async def generate_model_answer(
     scenario_content: dict,
     category: str = "",
     difficulty: str = "beginner",
+    scenario_id: _uuid.UUID | str | None = None,
 ) -> str:
-    """Generate a model (ideal) answer for a scenario."""
+    """Generate a model (ideal) answer for a scenario.
+
+    Checks the model_answer_bank first. On cache miss, generates via AI
+    and persists the result for future requests.
+    """
+    # Check bank if we have a scenario_id
+    if scenario_id:
+        sid = _uuid.UUID(str(scenario_id)) if not isinstance(scenario_id, _uuid.UUID) else scenario_id
+        async with session_factory() as db:
+            result = await db.execute(
+                select(ModelAnswerBank.answer_text).where(ModelAnswerBank.scenario_id == sid)
+            )
+            cached = result.scalar_one_or_none()
+            if cached is not None:
+                return cached
+
     rag_context = await _get_grading_context(category, difficulty) if category else "No specific reference material available."
 
     prompt = MODEL_ANSWER_TEMPLATE.format(
@@ -182,8 +201,20 @@ async def generate_model_answer(
         temperature=0.3,
     )
 
-    result = _parse_json(message.content[0].text)
-    return result["model_answer"]
+    parsed = _parse_json(message.content[0].text)
+    answer_text = parsed["model_answer"]
+
+    # Persist to bank for future requests
+    if scenario_id:
+        sid = _uuid.UUID(str(scenario_id)) if not isinstance(scenario_id, _uuid.UUID) else scenario_id
+        try:
+            async with session_factory() as db:
+                db.add(ModelAnswerBank(scenario_id=sid, answer_text=answer_text))
+                await db.commit()
+        except Exception:
+            pass
+
+    return answer_text
 
 
 async def grade_mcq_justification(

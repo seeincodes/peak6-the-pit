@@ -4,6 +4,16 @@ set -e
 echo "Running migrations..."
 alembic upgrade heads
 
+if [ "${SEED_ON_STARTUP:-true}" = "true" ]; then
+  echo "Running seed (idempotent)..."
+  python -m app.seed
+fi
+
+if [ "${INGEST_ON_STARTUP:-true}" = "true" ]; then
+  echo "Running document ingestion (idempotent)..."
+  python -m app.ingest_docs
+fi
+
 PORT=${PORT:-8000}
 
 echo "Starting server on port $PORT..."

@@ -10,7 +10,8 @@ from app.models.user import User
 from app.middleware.auth import get_current_user
 from app.services.scenario_engine import generate_scenario
 from app.services.recommendation import get_recommendations
-from app.services.difficulty_engine import get_difficulty_suggestions
+from app.services.difficulty_engine import get_difficulty_suggestions, get_effective_difficulties
+from app.services.progression import get_mastery_gated_unlocks
 from app.services.rag import retrieve_chunks, build_retrieval_query, CATEGORY_QUERIES
 
 router = APIRouter(prefix="/api/scenarios", tags=["scenarios"])
@@ -59,7 +60,10 @@ async def recommended(
     db: AsyncSession = Depends(get_db),
 ):
     """Return recommended categories based on spaced repetition analysis."""
-    unlocked = current_user.unlocked_categories or []
+    unlocked = [
+        {"category": ct.category, "difficulty": ct.difficulty}
+        for ct in await get_mastery_gated_unlocks(db, current_user.id, current_user.level)
+    ]
     recs = await get_recommendations(db, current_user.id, unlocked, limit=limit)
     return recs
 
@@ -70,8 +74,29 @@ async def difficulty_suggestions(
     db: AsyncSession = Depends(get_db),
 ):
     """Return adaptive difficulty suggestions based on recent performance."""
-    unlocked = current_user.unlocked_categories or []
+    unlocked = [
+        {"category": ct.category, "difficulty": ct.difficulty}
+        for ct in await get_mastery_gated_unlocks(db, current_user.id, current_user.level)
+    ]
     return await get_difficulty_suggestions(db, current_user.id, unlocked)
+
+
+@router.get("/effective-difficulties")
+async def effective_difficulties(
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Return the adaptive starting difficulty for each unlocked category.
+
+    Every category starts at beginner. The engine auto-promotes when the
+    user demonstrates consistent high scores, and demotes on consistent
+    low scores — so the user always trains at their appropriate level.
+    """
+    unlocked = [
+        {"category": ct.category, "difficulty": ct.difficulty}
+        for ct in await get_mastery_gated_unlocks(db, current_user.id, current_user.level)
+    ]
+    return await get_effective_difficulties(db, current_user.id, unlocked)
 
 
 @router.get("/categories/{slug}/primer")

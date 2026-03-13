@@ -108,11 +108,11 @@ describe("ProfilePage", () => {
     });
   });
 
-  it("shows Skill Tree section", async () => {
+  it("shows Skill Nodes section", async () => {
     const { container } = renderProfilePage();
 
     await waitFor(() => {
-      expect(within(container).getByText(/Skill Tree/)).toBeTruthy();
+      expect(within(container).getByText(/Skill Nodes/)).toBeTruthy();
     });
   });
 });

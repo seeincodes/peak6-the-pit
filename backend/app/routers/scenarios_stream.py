@@ -5,10 +5,12 @@ import time
 from fastapi import APIRouter, Depends
 from fastapi.responses import StreamingResponse
 from pydantic import BaseModel
+from sqlalchemy import select, update
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.database import get_db
 from app.models.scenario import Scenario
+from app.models.scenario_bank import ScenarioBank
 from app.models.user import User
 from app.services.scenario_engine import (
     _get_context,
@@ -23,6 +25,33 @@ from app.middleware.auth import get_current_user
 
 router = APIRouter(prefix="/api/scenarios", tags=["scenarios"])
 logger = logging.getLogger(__name__)
+
+
+async def _serve_from_bank(db: AsyncSession, category: str, difficulty: str) -> dict | None:
+    """Try to serve a scenario from the pre-generated bank (least-served first)."""
+    result = await db.execute(
+        select(ScenarioBank)
+        .where(ScenarioBank.category == category, ScenarioBank.difficulty == difficulty)
+        .order_by(ScenarioBank.times_served, ScenarioBank.created_at)
+        .limit(1)
+    )
+    bank_row = result.scalar_one_or_none()
+    if bank_row is None:
+        return None
+
+    await db.execute(
+        update(ScenarioBank)
+        .where(ScenarioBank.id == bank_row.id)
+        .values(times_served=ScenarioBank.times_served + 1)
+    )
+    await db.commit()
+    return bank_row.content
+
+
+async def _save_to_bank(db: AsyncSession, category: str, difficulty: str, content: dict) -> None:
+    """Save a freshly generated scenario into the bank for future reuse."""
+    db.add(ScenarioBank(category=category, difficulty=difficulty, content=content))
+    await db.commit()
 
 
 class StreamGenerateRequest(BaseModel):
@@ -48,6 +77,32 @@ async def generate_stream(
 
     async def event_stream():
         full_text = ""
+
+        # 1) Try pre-generated bank first (0 AI calls)
+        bank_content = await _serve_from_bank(db, req.category, req.difficulty)
+        if bank_content:
+            try:
+                scenario = Scenario(
+                    category=req.category,
+                    difficulty=req.difficulty,
+                    content=bank_content,
+                    context_chunks=trimmed_chunks,
+                )
+                db.add(scenario)
+                await db.commit()
+                await db.refresh(scenario)
+                logger.info(
+                    "scenario.stream bank_hit category=%s difficulty=%s total_ms=%d",
+                    req.category,
+                    req.difficulty,
+                    int((time.perf_counter() - started) * 1000),
+                )
+                yield f"data: {json.dumps({'type': 'done', 'id': str(scenario.id), 'content': bank_content})}\n\n"
+                return
+            except Exception as e:
+                logger.warning("Bank scenario save failed, falling through: %s", e)
+
+        # 2) Try in-memory generation cache
         cached = await get_cached_scenario_for_user(prompt, str(user.id))
         if cached:
             try:
@@ -83,7 +138,7 @@ async def generate_stream(
             yield f"data: {json.dumps({'type': 'error', 'message': f'AI generation failed: {e}'})}\n\n"
             return
 
-        # Parse the complete response and save to DB
+        # Parse the complete response, save to caches and bank
         try:
             scenario_data = parse_scenario_json(full_text)
             await cache_scenario_from_prompt(
@@ -96,6 +151,11 @@ async def generate_stream(
                 },
                 user_id=str(user.id),
             )
+            # Save to bank for future zero-AI serving
+            try:
+                await _save_to_bank(db, req.category, req.difficulty, scenario_data)
+            except Exception:
+                pass
         except (json.JSONDecodeError, ValueError) as e:
             yield f"data: {json.dumps({'type': 'error', 'message': f'Failed to parse scenario: {e}'})}\n\n"
             return

@@ -236,6 +236,7 @@ async def get_model_answer(
         scenario.content,
         category=scenario.category,
         difficulty=scenario.difficulty,
+        scenario_id=scenario.id,
     )
     return {"model_answer": model_answer}
 

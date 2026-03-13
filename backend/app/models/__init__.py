@@ -13,5 +13,14 @@ from app.models.learning_path import LearningPath, UserPathProgress
 from app.models.activity_event import ActivityEvent
 from app.models.study_group import StudyGroup, StudyGroupMember
 from app.models.chat import ChatSession, ChatMessage
+from app.models.scenario_bank import ScenarioBank
+from app.models.mcq_bank import MCQBank
+from app.models.model_answer_bank import ModelAnswerBank
 
-__all__ = ["User", "Scenario", "Response", "Grade", "Document", "XPTransaction", "Badge", "UserBadge", "EmbeddingCache", "Bookmark", "DailyChallenge", "PeerReview", "LearningPath", "UserPathProgress", "ActivityEvent", "StudyGroup", "StudyGroupMember", "ChatSession", "ChatMessage"]
+__all__ = [
+    "User", "Scenario", "Response", "Grade", "Document", "XPTransaction",
+    "Badge", "UserBadge", "EmbeddingCache", "Bookmark", "DailyChallenge",
+    "PeerReview", "LearningPath", "UserPathProgress", "ActivityEvent",
+    "StudyGroup", "StudyGroupMember", "ChatSession", "ChatMessage",
+    "ScenarioBank", "MCQBank", "ModelAnswerBank",
+]

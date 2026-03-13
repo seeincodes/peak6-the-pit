@@ -21,72 +21,109 @@ LEVEL_TITLES = {
 }
 
 LEVEL_UNLOCKS: dict[int, list[CategoryTier]] = {
+    # Foundation — absolute basics
     1: [
         CategoryTier("iv_analysis", "beginner"),
         CategoryTier("realized_vol", "beginner"),
-    ],
-    2: [
-        CategoryTier("greeks", "beginner"),
-        CategoryTier("iv_analysis", "intermediate"),
         CategoryTier("fundamentals", "beginner"),
     ],
-    3: [
+    # Core — builds on foundation
+    2: [
+        CategoryTier("greeks", "beginner"),
         CategoryTier("order_flow", "beginner"),
-        CategoryTier("greeks", "intermediate"),
+        CategoryTier("iv_analysis", "intermediate"),
+    ],
+    3: [
         CategoryTier("technical_analysis", "beginner"),
         CategoryTier("sentiment", "beginner"),
-    ],
-    4: [
         CategoryTier("macro", "beginner"),
-        CategoryTier("term_structure", "beginner"),
-        CategoryTier("fixed_income", "beginner"),
-        CategoryTier("seasonality", "beginner"),
+        CategoryTier("greeks", "intermediate"),
     ],
-    5: [
+    # Specialization — domain-specific
+    4: [
         CategoryTier("skew", "beginner"),
-        CategoryTier("correlation", "beginner"),
+        CategoryTier("term_structure", "beginner"),
         CategoryTier("event_vol", "beginner"),
         CategoryTier("tail_risk", "beginner"),
+    ],
+    5: [
+        CategoryTier("correlation", "beginner"),
+        CategoryTier("microstructure", "beginner"),
+        CategoryTier("fixed_income", "beginner"),
+        CategoryTier("seasonality", "beginner"),
         CategoryTier("commodities", "beginner"),
         CategoryTier("geopolitical", "beginner"),
     ],
+    # Advanced — combining specializations
     6: [
-        CategoryTier("order_flow", "intermediate"),
-        CategoryTier("macro", "intermediate"),
+        CategoryTier("vol_surface", "beginner"),
         CategoryTier("position_sizing", "beginner"),
         CategoryTier("trade_structuring", "beginner"),
-        CategoryTier("crypto", "beginner"),
-        CategoryTier("alt_data", "beginner"),
-    ],
-    7: [
-        CategoryTier("vol_surface", "beginner"),
-        CategoryTier("microstructure", "beginner"),
         CategoryTier("risk_management", "beginner"),
-        CategoryTier("capman_tooling", "beginner"),
+        CategoryTier("alt_data", "beginner"),
+        CategoryTier("crypto", "beginner"),
+    ],
+    # Expert — mastery-level synthesis
+    7: [
         CategoryTier("exotic_structures", "beginner"),
         CategoryTier("portfolio_mgmt", "beginner"),
+        CategoryTier("capman_tooling", "beginner"),
     ],
+    # Intermediate tiers
     8: [CategoryTier(c, "intermediate") for c in [
-        "skew", "correlation", "event_vol", "tail_risk",
-        "position_sizing", "trade_structuring",
-        "realized_vol", "technical_analysis", "sentiment",
-        "fundamentals", "fixed_income", "seasonality",
+        "realized_vol", "fundamentals", "order_flow",
+        "technical_analysis", "sentiment", "macro",
+        "skew", "term_structure", "event_vol", "tail_risk",
     ]],
     9: [CategoryTier(c, "intermediate") for c in [
-        "vol_surface", "microstructure", "risk_management", "capman_tooling",
-        "commodities", "geopolitical", "crypto", "alt_data",
-        "exotic_structures", "portfolio_mgmt",
+        "correlation", "microstructure", "fixed_income", "seasonality",
+        "commodities", "geopolitical", "vol_surface", "position_sizing",
+        "trade_structuring", "risk_management", "alt_data", "crypto",
     ]] + [CategoryTier(c, "advanced") for c in [
         "iv_analysis", "greeks", "order_flow",
     ]],
+    # Advanced tiers
     10: [CategoryTier(c, "advanced") for c in [
-        "macro", "term_structure", "skew", "correlation", "event_vol",
-        "tail_risk", "position_sizing", "trade_structuring",
-        "vol_surface", "microstructure", "risk_management", "capman_tooling",
-        "realized_vol", "technical_analysis", "sentiment", "fundamentals",
-        "fixed_income", "seasonality", "commodities", "geopolitical",
-        "crypto", "alt_data", "exotic_structures", "portfolio_mgmt",
+        "realized_vol", "fundamentals", "technical_analysis", "sentiment",
+        "macro", "skew", "term_structure", "event_vol", "tail_risk",
+        "correlation", "microstructure", "fixed_income", "seasonality",
+        "commodities", "geopolitical", "vol_surface", "position_sizing",
+        "trade_structuring", "risk_management", "alt_data", "crypto",
+        "exotic_structures", "portfolio_mgmt", "capman_tooling",
     ]],
+}
+
+# Prerequisite map: category → parent category that must be mastered first.
+# Foundation categories (iv_analysis, realized_vol, fundamentals) have no prerequisites.
+CATEGORY_PREREQUISITES: dict[str, str] = {
+    # Core ← Foundation
+    "greeks": "iv_analysis",
+    "order_flow": "realized_vol",
+    "technical_analysis": "realized_vol",
+    "sentiment": "fundamentals",
+    "macro": "fundamentals",
+    # Specialization ← Core
+    "skew": "greeks",
+    "term_structure": "greeks",
+    "event_vol": "greeks",
+    "tail_risk": "greeks",
+    "correlation": "order_flow",
+    "microstructure": "order_flow",
+    "fixed_income": "macro",
+    "seasonality": "technical_analysis",
+    "commodities": "macro",
+    "geopolitical": "sentiment",
+    # Advanced ← Specialization
+    "vol_surface": "skew",
+    "position_sizing": "correlation",
+    "trade_structuring": "term_structure",
+    "risk_management": "tail_risk",
+    "alt_data": "seasonality",
+    "crypto": "microstructure",
+    # Expert ← Advanced
+    "exotic_structures": "vol_surface",
+    "portfolio_mgmt": "position_sizing",
+    "capman_tooling": "risk_management",
 }
 
 MASTERY_THRESHOLD = 3.5

@@ -46,7 +46,7 @@ _configure_langsmith()
 _model = ChatAnthropic(
     model="claude-haiku-4-5-20251001",
     temperature=0.7,
-    max_tokens=600,
+    max_tokens=1500,
     api_key=settings.anthropic_api_key,
 )
 

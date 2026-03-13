@@ -117,6 +117,12 @@ export default function TrainingPage({
     staleTime: 60_000,
   });
 
+  const { data: effectiveDifficulties } = useQuery<Record<string, string>>({
+    queryKey: ["effective-difficulties"],
+    queryFn: async () => (await api.get("/scenarios/effective-difficulties")).data,
+    staleTime: 30_000,
+  });
+
   // Auto-start scenario or MCQ when navigated from a learning path
   useEffect(() => {
     const state = location.state as {
@@ -182,6 +188,8 @@ export default function TrainingPage({
       queryClient.invalidateQueries({ queryKey: ["user"] });
       queryClient.invalidateQueries({ queryKey: ["paths"] });
       queryClient.invalidateQueries({ queryKey: ["path-detail"] });
+      queryClient.invalidateQueries({ queryKey: ["effective-difficulties"] });
+      queryClient.invalidateQueries({ queryKey: ["category-summary"] });
     },
   });
 
@@ -398,7 +406,7 @@ export default function TrainingPage({
                           const difficulties = grouped.get(category)!;
                           const color = categoryColors[category] || "#4D34EF";
                           const sorted = difficulties.sort((a, b) => diffOrder.indexOf(a) - diffOrder.indexOf(b));
-                          const bestDifficulty = sorted[sorted.length - 1];
+                          const adaptiveDifficulty = effectiveDifficulties?.[category] || sorted[0];
                           const stat = statsMap.get(category);
                           const pct = stat ? Math.round((stat.avg_score / 5) * 100) : 0;
                           const label = !stat || stat.attempts === 0
@@ -414,7 +422,7 @@ export default function TrainingPage({
                             <button
                               key={category}
                               onClick={() => {
-                                const cat = { category, difficulty: bestDifficulty };
+                                const cat = { category, difficulty: adaptiveDifficulty };
                                 setSelectedCat(cat);
                                 generateStreaming(cat);
                               }}
@@ -438,6 +446,13 @@ export default function TrainingPage({
                                   {categoryShortDisplay[category] || category.replace(/_/g, " ")}
                                 </span>
                                 <div className="flex items-center gap-1.5 mt-0.5">
+                                  <span className={`text-[10px] font-medium capitalize px-1.5 py-0.5 rounded ${
+                                    adaptiveDifficulty === "advanced" ? "bg-cm-red/15 text-cm-red" :
+                                    adaptiveDifficulty === "intermediate" ? "bg-cm-amber/15 text-cm-amber" :
+                                    "bg-cm-primary/15 text-cm-primary"
+                                  }`}>
+                                    {adaptiveDifficulty}
+                                  </span>
                                   <span className={`text-[11px] font-medium ${
                                     label === "Mastery" ? "text-cm-emerald" :
                                     label === "Proficient" ? "text-cm-amber" :

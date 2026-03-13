@@ -1,5 +1,6 @@
 """Seed the database with demo data for all features. Run via: python -m app.seed"""
 import asyncio
+import hashlib
 import os
 import uuid
 from datetime import datetime, timedelta
@@ -18,6 +19,12 @@ from app.models.learning_path import LearningPath, UserPathProgress
 from app.models.peer_review import PeerReview
 from app.services.auth import hash_password
 
+
+def _stable_uuid(namespace: str, index: int) -> uuid.UUID:
+    """Deterministic UUID from namespace + index so seed is idempotent."""
+    return uuid.UUID(hashlib.md5(f"{namespace}:{index}".encode()).hexdigest())
+
+
 # ───────────────────────── Stable UUIDs ──────────────────────────
 
 # Users
@@ -32,14 +39,8 @@ P1 = uuid.UUID("00000000-0000-0000-0000-000000000010")
 P2 = uuid.UUID("00000000-0000-0000-0000-000000000011")
 P3 = uuid.UUID("00000000-0000-0000-0000-000000000012")
 
-# Scenarios
-S = [uuid.UUID(f"20000000-0000-0000-0000-{str(i).zfill(12)}") for i in range(1, 21)]
-
-# Responses
-R = [uuid.UUID(f"30000000-0000-0000-0000-{str(i).zfill(12)}") for i in range(1, 21)]
-
-# Grades
-G = [uuid.UUID(f"40000000-0000-0000-0000-{str(i).zfill(12)}") for i in range(1, 21)]
+# Scenarios — sized for all 27 categories
+S = [uuid.UUID(f"20000000-0000-0000-0000-{str(i).zfill(12)}") for i in range(1, 30)]
 
 # Bookmarks
 BK = [uuid.UUID(f"50000000-0000-0000-0000-{str(i).zfill(12)}") for i in range(1, 11)]
@@ -76,8 +77,8 @@ TEST_USERS = [
         "avatar_id": "chart",
         "bio": "Learning the ropes of options trading.",
         "ta_phase": 1,
-        "xp_total": 120,
-        "level": 2,
+        "xp_total": 50,          # Level 1 (< 60)
+        "level": 1,
         "streak_days": 3,
         "cohort": "spring-2026",
         "has_onboarded": True,
@@ -91,7 +92,7 @@ TEST_USERS = [
         "avatar_id": "lightning",
         "bio": "Volatility enthusiast. Delta-neutral or bust.",
         "ta_phase": 2,
-        "xp_total": 3125,
+        "xp_total": 400,         # Level 4 (380–719)
         "level": 4,
         "streak_days": 5,
         "cohort": "spring-2026",
@@ -106,7 +107,7 @@ TEST_USERS = [
         "avatar_id": "crown",
         "bio": "Former physicist turned quant. Skew is my edge.",
         "ta_phase": 3,
-        "xp_total": 7000,
+        "xp_total": 2100,        # Level 7 (2050–3249)
         "level": 7,
         "streak_days": 12,
         "cohort": "spring-2026",
@@ -121,7 +122,7 @@ TEST_USERS = [
         "avatar_id": "rocket",
         "bio": "Finance major grinding levels. Catch me on the leaderboard.",
         "ta_phase": None,
-        "xp_total": 1125,
+        "xp_total": 200,         # Level 3 (180–379)
         "level": 3,
         "streak_days": 2,
         "cohort": "spring-2026",
@@ -136,7 +137,7 @@ TEST_USERS = [
         "avatar_id": "brain",
         "bio": "Risk manager at heart. Building systematic frameworks.",
         "ta_phase": 4,
-        "xp_total": 8000,
+        "xp_total": 8000,        # Level 10 (8000+)
         "level": 10,
         "streak_days": 15,
         "cohort": "spring-2026",
@@ -154,7 +155,7 @@ PROD_USERS = [
         "avatar_id": "chart",
         "bio": "Demo account for exploring CapMan AI.",
         "ta_phase": 2,
-        "xp_total": 650,
+        "xp_total": 200,         # Level 3 (180–379)
         "level": 3,
         "streak_days": 3,
         "cohort": "demo",
@@ -169,7 +170,7 @@ PROD_USERS = [
         "avatar_id": "shield",
         "bio": None,
         "ta_phase": None,
-        "xp_total": 0,
+        "xp_total": 0,           # Level 1
         "level": 1,
         "streak_days": 0,
         "cohort": "demo",
@@ -184,7 +185,7 @@ PROD_USERS = [
         "avatar_id": "diamond",
         "bio": "Power user showcasing all features.",
         "ta_phase": 4,
-        "xp_total": 8750,
+        "xp_total": 8000,        # Level 10 (8000+)
         "level": 10,
         "streak_days": 21,
         "cohort": "demo",
@@ -196,226 +197,238 @@ PROD_USERS = [
 # ───────────────────────── Scenarios ─────────────────────────────
 
 DEMO_SCENARIOS = [
-    {
-        "id": S[0], "category": "iv_analysis", "difficulty": "beginner",
-        "content": {
-            "title": "SPY IV Spike Analysis",
-            "question": "SPY 30-day IV has jumped from 18 to 28 over two sessions while the index dropped 3%. Is this IV level justified or overshooting? What trades would you consider?",
-            "context": "S&P 500 ETF options chain showing elevated put skew and term structure in backwardation.",
-        },
-    },
-    {
-        "id": S[1], "category": "greeks", "difficulty": "beginner",
-        "content": {
-            "title": "Delta Hedging a Long Straddle",
-            "question": "You're long a 30-delta straddle on AAPL with 14 DTE. The stock rallies 2%. Walk through your delta-hedging decision.",
-            "context": "AAPL at $185, straddle struck at $185, current delta +0.15 after the move.",
-        },
-    },
-    {
-        "id": S[2], "category": "order_flow", "difficulty": "beginner",
-        "content": {
-            "title": "Unusual Options Activity",
-            "question": "You notice 10x average volume in NVDA weekly 140 calls with mostly buying on the ask. How do you interpret this flow and would you follow it?",
-            "context": "NVDA trading at $135, earnings in 8 days. IV rank at 75th percentile.",
-        },
-    },
-    {
-        "id": S[3], "category": "macro", "difficulty": "beginner",
-        "content": {
-            "title": "FOMC Volatility Setup",
-            "question": "FOMC announces rates unchanged but signals hawkish forward guidance. VIX drops from 22 to 19. Explain this reaction and identify trading opportunities.",
-            "context": "Market was pricing 70% chance of a hold. Treasury yields jumped 8bps on the long end.",
-        },
-    },
-    {
-        "id": S[4], "category": "term_structure", "difficulty": "beginner",
-        "content": {
-            "title": "Vol Term Structure Inversion",
-            "question": "TSLA's vol term structure is deeply inverted — 1-week IV at 65%, 1-month at 48%, 3-month at 42%. What is the market telling you? How would you trade this?",
-            "context": "TSLA earnings in 4 days. Stock has moved 8%+ on the last 3 earnings.",
-        },
-    },
-    {
-        "id": S[5], "category": "skew", "difficulty": "intermediate",
-        "content": {
-            "title": "Put Skew Flattening Trade",
-            "question": "QQQ 25-delta put skew has flattened from 8 vol points to 3 over a month while the index rallied 5%. Is this normal? How would you position?",
-            "context": "Historically QQQ skew averages 5-7 vol points in low-vol environments.",
-        },
-    },
-    {
-        "id": S[6], "category": "position_sizing", "difficulty": "beginner",
-        "content": {
-            "title": "Sizing a Butterfly Spread",
-            "question": "You want to put on an iron butterfly on SPX with max risk of 2% of your $500K portfolio. Walk through your sizing process.",
-            "context": "SPX at 5200, targeting the 5200 butterfly. Wings 50 points wide.",
-        },
-    },
-    {
-        "id": S[7], "category": "trade_structuring", "difficulty": "intermediate",
-        "content": {
-            "title": "Earnings Straddle vs Strangle",
-            "question": "META earnings tomorrow. IV at 55%, expected move $18. Compare a straddle vs 25-delta strangle. Which do you prefer and why?",
-            "context": "META at $520. Last 4 earnings moves: +12%, -4%, +7%, -9%.",
-        },
-    },
-    {
-        "id": S[8], "category": "risk_management", "difficulty": "intermediate",
-        "content": {
-            "title": "Portfolio Stress Test",
-            "question": "Your portfolio is long gamma on tech names, short vega on financials. A banking crisis headline hits. Walk through your immediate risk management steps.",
-            "context": "Correlation spike to 0.85 across sectors. VIX jumps 6 points.",
-        },
-    },
-    {
-        "id": S[9], "category": "realized_vol", "difficulty": "beginner",
-        "content": {
-            "title": "Realized vs Implied Divergence",
-            "question": "AMZN 30-day realized vol is 22% but 30-day IV is 35%. Is this a systematic selling opportunity? What could go wrong?",
-            "context": "AMZN has earnings in 3 weeks. Historical vol tends to pick up 2 weeks before earnings.",
-        },
-    },
-    {
-        "id": S[10], "category": "correlation", "difficulty": "beginner",
-        "content": {
-            "title": "Cross-Asset Correlation Breakdown",
-            "question": "Stock-bond correlation just flipped positive after being negative for 2 years. What are the implications for a multi-asset options portfolio?",
-            "context": "Fed signaling higher-for-longer. Both equities and bonds selling off.",
-        },
-    },
-    {
-        "id": S[11], "category": "event_vol", "difficulty": "beginner",
-        "content": {
-            "title": "Binary Event Pricing",
-            "question": "A biotech has FDA approval decision tomorrow. Options are pricing a 40% move. The stock is at $50. How would you trade this binary event?",
-            "context": "Historical FDA events show 60% approval rate for this drug type. Similar biotechs moved 30-50%.",
-        },
-    },
-    {
-        "id": S[12], "category": "tail_risk", "difficulty": "beginner",
-        "content": {
-            "title": "Tail Hedge Construction",
-            "question": "Design a tail risk hedge for a $10M equity portfolio that costs no more than 50bps per quarter. What instruments and strikes would you use?",
-            "context": "VIX at 14. SPX put skew is rich at 25-delta. Seeking protection for a >10% drawdown.",
-        },
-    },
-    {
-        "id": S[13], "category": "fundamentals", "difficulty": "beginner",
-        "content": {
-            "title": "Call vs Put Basics",
-            "question": "Explain the difference between buying a call and buying a put. When would you use each? Give an example with a stock at $100.",
-            "context": "Introductory options scenario for new traders.",
-        },
-    },
-    {
-        "id": S[14], "category": "sentiment", "difficulty": "beginner",
-        "content": {
-            "title": "Put-Call Ratio Signal",
-            "question": "The equity put-call ratio has spiked to 1.4, well above its 90-day average of 0.85. Is this bullish or bearish? How would you use this signal?",
-            "context": "Market has sold off 4% in a week. Fear & Greed index at 'Extreme Fear'.",
-        },
-    },
-    {
-        "id": S[15], "category": "technical_analysis", "difficulty": "beginner",
-        "content": {
-            "title": "Support Level Vol Play",
-            "question": "SPY is sitting on its 200-day moving average after a 7% pullback. How do you combine technical analysis with options strategy selection?",
-            "context": "SPY at 480 (200 DMA). RSI oversold at 28. Volume elevated on down days.",
-        },
-    },
-    {
-        "id": S[16], "category": "vol_surface", "difficulty": "beginner",
-        "content": {
-            "title": "Vol Surface Anomaly",
-            "question": "You notice MSFT's vol surface has a kink — the 95-strike put has 2 vol points more than the 90 or 100 strikes. What could cause this and would you trade it?",
-            "context": "MSFT at $420. The 95-put corresponds to a key technical support level.",
-        },
-    },
-    {
-        "id": S[17], "category": "microstructure", "difficulty": "beginner",
-        "content": {
-            "title": "Bid-Ask Spread Analysis",
-            "question": "You want to sell a vertical spread on a mid-cap stock. The bid-ask on each leg is $0.10 wide but the spread's combined market is $0.30 wide. How do you get executed?",
-            "context": "Average daily volume is 5,000 contracts. Open interest is 20,000 at your strikes.",
-        },
-    },
-    {
-        "id": S[18], "category": "fixed_income", "difficulty": "beginner",
-        "content": {
-            "title": "Yield Curve Implications",
-            "question": "The 2s10s yield curve just uninverted after being inverted for 18 months. What does this mean for equity markets and how does it affect your options positioning?",
-            "context": "Fed expected to cut rates 3 times this year. Long end yields rising.",
-        },
-    },
-    {
-        "id": S[19], "category": "seasonality", "difficulty": "beginner",
-        "content": {
-            "title": "January Effect & Vol Seasonality",
-            "question": "It's late December. Historically, vol tends to compress into year-end and expand in January. How would you position for this seasonal pattern?",
-            "context": "VIX at 13. Tax-loss selling complete. Low volume holiday trading.",
-        },
-    },
+    # ── Foundation (Level 1) ──
+    {"id": S[0], "category": "iv_analysis", "difficulty": "beginner",
+     "content": {"title": "SPY IV Spike Analysis",
+                 "question": "SPY 30-day IV has jumped from 18 to 28 over two sessions while the index dropped 3%. Is this IV level justified or overshooting? What trades would you consider?",
+                 "context": "S&P 500 ETF options chain showing elevated put skew and term structure in backwardation."}},
+    {"id": S[1], "category": "realized_vol", "difficulty": "beginner",
+     "content": {"title": "Realized vs Implied Divergence",
+                 "question": "AMZN 30-day realized vol is 22% but 30-day IV is 35%. Is this a systematic selling opportunity? What could go wrong?",
+                 "context": "AMZN has earnings in 3 weeks. Historical vol tends to pick up 2 weeks before earnings."}},
+    {"id": S[2], "category": "fundamentals", "difficulty": "beginner",
+     "content": {"title": "Call vs Put Basics",
+                 "question": "Explain the difference between buying a call and buying a put. When would you use each? Give an example with a stock at $100.",
+                 "context": "Introductory options scenario for new traders."}},
+    # ── Core (Level 2–3) ──
+    {"id": S[3], "category": "greeks", "difficulty": "beginner",
+     "content": {"title": "Delta Hedging a Long Straddle",
+                 "question": "You're long a 30-delta straddle on AAPL with 14 DTE. The stock rallies 2%. Walk through your delta-hedging decision.",
+                 "context": "AAPL at $185, straddle struck at $185, current delta +0.15 after the move."}},
+    {"id": S[4], "category": "order_flow", "difficulty": "beginner",
+     "content": {"title": "Unusual Options Activity",
+                 "question": "You notice 10x average volume in NVDA weekly 140 calls with mostly buying on the ask. How do you interpret this flow and would you follow it?",
+                 "context": "NVDA trading at $135, earnings in 8 days. IV rank at 75th percentile."}},
+    {"id": S[5], "category": "technical_analysis", "difficulty": "beginner",
+     "content": {"title": "Support Level Vol Play",
+                 "question": "SPY is sitting on its 200-day moving average after a 7% pullback. How do you combine technical analysis with options strategy selection?",
+                 "context": "SPY at 480 (200 DMA). RSI oversold at 28. Volume elevated on down days."}},
+    {"id": S[6], "category": "sentiment", "difficulty": "beginner",
+     "content": {"title": "Put-Call Ratio Signal",
+                 "question": "The equity put-call ratio has spiked to 1.4, well above its 90-day average of 0.85. Is this bullish or bearish? How would you use this signal?",
+                 "context": "Market has sold off 4% in a week. Fear & Greed index at 'Extreme Fear'."}},
+    {"id": S[7], "category": "macro", "difficulty": "beginner",
+     "content": {"title": "FOMC Volatility Setup",
+                 "question": "FOMC announces rates unchanged but signals hawkish forward guidance. VIX drops from 22 to 19. Explain this reaction and identify trading opportunities.",
+                 "context": "Market was pricing 70% chance of a hold. Treasury yields jumped 8bps on the long end."}},
+    # ── Specialization (Level 4–5) ──
+    {"id": S[8], "category": "skew", "difficulty": "beginner",
+     "content": {"title": "Put Skew Flattening Trade",
+                 "question": "QQQ 25-delta put skew has flattened from 8 vol points to 3 over a month while the index rallied 5%. Is this normal? How would you position?",
+                 "context": "Historically QQQ skew averages 5-7 vol points in low-vol environments."}},
+    {"id": S[9], "category": "term_structure", "difficulty": "beginner",
+     "content": {"title": "Vol Term Structure Inversion",
+                 "question": "TSLA's vol term structure is deeply inverted — 1-week IV at 65%, 1-month at 48%, 3-month at 42%. What is the market telling you?",
+                 "context": "TSLA earnings in 4 days. Stock has moved 8%+ on the last 3 earnings."}},
+    {"id": S[10], "category": "event_vol", "difficulty": "beginner",
+     "content": {"title": "Binary Event Pricing",
+                 "question": "A biotech has FDA approval decision tomorrow. Options are pricing a 40% move. How would you trade this binary event?",
+                 "context": "Historical FDA events show 60% approval rate for this drug type. Similar biotechs moved 30-50%."}},
+    {"id": S[11], "category": "tail_risk", "difficulty": "beginner",
+     "content": {"title": "Tail Hedge Construction",
+                 "question": "Design a tail risk hedge for a $10M equity portfolio that costs no more than 50bps per quarter.",
+                 "context": "VIX at 14. SPX put skew is rich at 25-delta. Seeking protection for a >10% drawdown."}},
+    {"id": S[12], "category": "correlation", "difficulty": "beginner",
+     "content": {"title": "Cross-Asset Correlation Breakdown",
+                 "question": "Stock-bond correlation just flipped positive after being negative for 2 years. What are the implications for a multi-asset options portfolio?",
+                 "context": "Fed signaling higher-for-longer. Both equities and bonds selling off."}},
+    {"id": S[13], "category": "microstructure", "difficulty": "beginner",
+     "content": {"title": "Bid-Ask Spread Analysis",
+                 "question": "You want to sell a vertical spread on a mid-cap stock. The bid-ask on each leg is $0.10 wide but the spread's combined market is $0.30 wide. How do you get executed?",
+                 "context": "Average daily volume is 5,000 contracts. Open interest is 20,000 at your strikes."}},
+    {"id": S[14], "category": "fixed_income", "difficulty": "beginner",
+     "content": {"title": "Yield Curve Implications",
+                 "question": "The 2s10s yield curve just uninverted after being inverted for 18 months. What does this mean for equity markets?",
+                 "context": "Fed expected to cut rates 3 times this year. Long end yields rising."}},
+    {"id": S[15], "category": "seasonality", "difficulty": "beginner",
+     "content": {"title": "January Effect & Vol Seasonality",
+                 "question": "It's late December. Historically, vol compresses into year-end and expands in January. How would you position?",
+                 "context": "VIX at 13. Tax-loss selling complete. Low volume holiday trading."}},
+    {"id": S[16], "category": "commodities", "difficulty": "beginner",
+     "content": {"title": "Oil Vol Regime Change",
+                 "question": "Crude oil IV has doubled in a week after OPEC surprise cuts. How do you evaluate commodity vol regimes vs equity vol?",
+                 "context": "WTI at $85. Backwardation steepening. Gasoline crack spreads widening."}},
+    {"id": S[17], "category": "geopolitical", "difficulty": "beginner",
+     "content": {"title": "Geopolitical Risk Premium",
+                 "question": "A major shipping lane disruption sends defense stocks up 8% and travel stocks down 5%. How do you price geopolitical risk in options?",
+                 "context": "VIX jumped 4 points. Safe-haven flows into treasuries and gold."}},
+    # ── Advanced (Level 6) ──
+    {"id": S[18], "category": "vol_surface", "difficulty": "beginner",
+     "content": {"title": "Vol Surface Anomaly",
+                 "question": "MSFT's vol surface has a kink — the 95-strike put has 2 vol points more than the 90 or 100 strikes. What could cause this?",
+                 "context": "MSFT at $420. The 95-put corresponds to a key technical support level."}},
+    {"id": S[19], "category": "position_sizing", "difficulty": "beginner",
+     "content": {"title": "Sizing a Butterfly Spread",
+                 "question": "You want to put on an iron butterfly on SPX with max risk of 2% of your $500K portfolio. Walk through your sizing process.",
+                 "context": "SPX at 5200, targeting the 5200 butterfly. Wings 50 points wide."}},
+    {"id": S[20], "category": "trade_structuring", "difficulty": "beginner",
+     "content": {"title": "Earnings Straddle vs Strangle",
+                 "question": "META earnings tomorrow. IV at 55%, expected move $18. Compare a straddle vs 25-delta strangle. Which do you prefer?",
+                 "context": "META at $520. Last 4 earnings moves: +12%, -4%, +7%, -9%."}},
+    {"id": S[21], "category": "risk_management", "difficulty": "beginner",
+     "content": {"title": "Portfolio Stress Test",
+                 "question": "Your portfolio is long gamma on tech names, short vega on financials. A banking crisis headline hits. Walk through your risk management steps.",
+                 "context": "Correlation spike to 0.85 across sectors. VIX jumps 6 points."}},
+    {"id": S[22], "category": "alt_data", "difficulty": "beginner",
+     "content": {"title": "Satellite Data for Earnings",
+                 "question": "Satellite imagery shows Target store parking lots 30% fuller than last year pre-earnings. How do you incorporate this into an options trade?",
+                 "context": "TGT earnings in 3 days. IV at 40%. Consensus expects flat same-store sales."}},
+    {"id": S[23], "category": "crypto", "difficulty": "beginner",
+     "content": {"title": "BTC Vol Around Halving",
+                 "question": "Bitcoin halving is 2 weeks away. BTC options IV term structure is steeply inverted. How do you trade the event?",
+                 "context": "BTC at $65K. 1-week IV 80%, 1-month IV 55%. Deribit OI concentrated at $70K strike."}},
+    # ── Expert (Level 7) ──
+    {"id": S[24], "category": "exotic_structures", "difficulty": "beginner",
+     "content": {"title": "Barrier Option Pricing",
+                 "question": "A client wants a knock-in put on SPX that activates if the index drops below 4800. How do you price and hedge this vs a vanilla put?",
+                 "context": "SPX at 5200. Client wants downside protection but at a lower premium than vanilla."}},
+    {"id": S[25], "category": "portfolio_mgmt", "difficulty": "beginner",
+     "content": {"title": "Multi-Strategy Portfolio Allocation",
+                 "question": "You manage a $50M options portfolio with vol arb, dispersion, and tail hedge strategies. How do you allocate risk budget across them?",
+                 "context": "VIX at 16. Correlation at 0.35. Realized < implied by 3 vol points across the board."}},
+    {"id": S[26], "category": "capman_tooling", "difficulty": "beginner",
+     "content": {"title": "CapMan Risk Dashboard Design",
+                 "question": "Design the key metrics and alerts for a real-time options portfolio risk dashboard. What should a PM see at a glance?",
+                 "context": "Building internal tooling for a multi-PM options desk."}},
 ]
 
 # ───────────────────────── Responses & Grades ────────────────────
 
+# Build a lookup from category → scenario index
+_CAT_TO_SCENARIO = {}
+for _i, _s in enumerate(DEMO_SCENARIOS):
+    _CAT_TO_SCENARIO[_s["category"]] = _i
+
+# Categories each user has mastered (determines which nodes they can unlock).
+# Must align with CATEGORY_PREREQUISITES chains and user levels.
+_USER_MASTERY: dict[uuid.UUID, list[str]] = {
+    # Level 1 — no mastery needed, only foundation categories visible
+    U1: ["iv_analysis", "realized_vol", "fundamentals"],
+    # Level 4 — mastered foundation + some core
+    U2: ["iv_analysis", "realized_vol", "fundamentals",
+         "greeks", "order_flow", "technical_analysis", "sentiment", "macro"],
+    # Level 7 — deep mastery through specialization and advanced
+    U3: ["iv_analysis", "realized_vol", "fundamentals",
+         "greeks", "order_flow", "technical_analysis", "sentiment", "macro",
+         "skew", "term_structure", "event_vol", "tail_risk", "correlation",
+         "microstructure", "fixed_income", "seasonality", "commodities", "geopolitical",
+         "vol_surface", "position_sizing", "trade_structuring", "risk_management"],
+    # Level 3 — foundation mastered
+    U4: ["iv_analysis", "realized_vol", "fundamentals"],
+    # Level 10 — everything mastered
+    U5: ["iv_analysis", "realized_vol", "fundamentals",
+         "greeks", "order_flow", "technical_analysis", "sentiment", "macro",
+         "skew", "term_structure", "event_vol", "tail_risk", "correlation",
+         "microstructure", "fixed_income", "seasonality", "commodities", "geopolitical",
+         "vol_surface", "position_sizing", "trade_structuring", "risk_management",
+         "alt_data", "crypto",
+         "exotic_structures", "portfolio_mgmt", "capman_tooling"],
+}
+
+FEEDBACKS = [
+    "Good analysis of the IV dynamics. Consider discussing the vol risk premium more explicitly.",
+    "Solid understanding of the basics. Work on connecting Greek sensitivities to P&L impact.",
+    "Excellent work! Your systematic approach to risk management is impressive.",
+    "Decent attempt. Try to incorporate more quantitative reasoning into your trade rationale.",
+    "Strong trade logic. Your skew analysis shows deep understanding of vol surface dynamics.",
+]
+
+# Score patterns for 5 attempts. All average >= 3.5 for mastery.
+# "typical" — mixed scores, avg ~3.7, does NOT trigger 3-consecutive >= 4.0 promotion.
+# "strong"  — all high scores, avg ~4.3, DOES trigger promotion suggestion.
+# "growing" — starts weak, finishes strong, avg ~3.7, does NOT trigger promotion
+#             (consecutive check is most-recent-first, and the most recent score dips).
+_SCORE_TYPICAL = [3.5, 4.0, 3.5, 3.8, 3.7]
+_SCORE_STRONG = [4.5, 4.2, 4.0, 4.3, 4.5]
+_SCORE_GROWING = [3.2, 3.5, 3.8, 4.0, 3.6]
+
+# Per-user, which categories get "strong" scores (trigger 1-2 promotion suggestions).
+# Everything else gets "typical" or "growing".
+_STRONG_CATEGORIES: dict[uuid.UUID, set[str]] = {
+    U1: set(),                          # Level 1, no promotions
+    U2: {"greeks"},                     # 1 promotion
+    U3: {"greeks", "skew"},             # 2 promotions
+    U4: set(),                          # Level 3, no promotions
+    U5: {"greeks", "vol_surface"},      # 2 promotions
+}
+
+
 def _make_responses_and_grades(now: datetime):
-    """Generate demo responses and grades for multiple users across scenarios."""
+    """Generate 5 graded responses per mastered category per user for mastery proof."""
+    from app.constants import MASTERY_SCENARIO_COUNT
     items = []
-    dim_scores_templates = [
-        {"reasoning": 4.0, "terminology": 4.5, "trade_logic": 3.5, "risk_awareness": 4.0},
-        {"reasoning": 3.5, "terminology": 3.0, "trade_logic": 4.0, "risk_awareness": 3.5},
-        {"reasoning": 5.0, "terminology": 4.5, "trade_logic": 4.5, "risk_awareness": 5.0},
-        {"reasoning": 3.0, "terminology": 3.5, "trade_logic": 3.0, "risk_awareness": 3.0},
-        {"reasoning": 4.5, "terminology": 4.0, "trade_logic": 4.5, "risk_awareness": 4.0},
-    ]
-    feedbacks = [
-        "Good analysis of the IV dynamics. Consider discussing the vol risk premium more explicitly.",
-        "Solid understanding of the basics. Work on connecting Greek sensitivities to P&L impact.",
-        "Excellent work! Your systematic approach to risk management is impressive.",
-        "Decent attempt. Try to incorporate more quantitative reasoning into your trade rationale.",
-        "Strong trade logic. Your skew analysis shows deep understanding of vol surface dynamics.",
-    ]
-    overall_scores = [4.0, 3.5, 4.8, 3.0, 4.3]
+    counter = 0
 
-    # User assignments: (user_id, scenario_indices, response_indices, grade_indices)
-    assignments = [
-        (U1, [0, 1, 13], [0, 1, 2], [0, 1, 2]),
-        (U2, [2, 3, 4, 5], [3, 4, 5, 6], [3, 4, 5, 6]),
-        (U3, [6, 7, 8, 9, 10], [7, 8, 9, 10, 11], [7, 8, 9, 10, 11]),
-        (U4, [11, 12], [12, 13], [12, 13]),
-        (U5, [14, 15, 16, 17, 18, 19], [14, 15, 16, 17, 18, 19], [14, 15, 16, 17, 18, 19]),
-    ]
+    for user_id, categories in _USER_MASTERY.items():
+        strong = _STRONG_CATEGORIES.get(user_id, set())
+        for cat_idx, cat in enumerate(categories):
+            si = _CAT_TO_SCENARIO.get(cat)
+            if si is None:
+                continue
+            scenario = DEMO_SCENARIOS[si]
 
-    for user_id, s_idxs, r_idxs, g_idxs in assignments:
-        for i, (si, ri, gi) in enumerate(zip(s_idxs, r_idxs, g_idxs)):
-            template_i = i % len(dim_scores_templates)
-            items.append({
-                "response": {
-                    "id": R[ri],
-                    "user_id": user_id,
-                    "scenario_id": S[si],
-                    "conversation": {
-                        "turns": [
-                            {"role": "system", "content": DEMO_SCENARIOS[si]["content"]["question"]},
-                            {"role": "user", "content": f"[Demo response for {DEMO_SCENARIOS[si]['content']['title']}]"},
-                        ],
+            if cat in strong:
+                scores = _SCORE_STRONG
+            elif cat_idx % 3 == 0:
+                scores = _SCORE_GROWING
+            else:
+                scores = _SCORE_TYPICAL
+
+            for attempt in range(MASTERY_SCENARIO_COUNT):
+                counter += 1
+                r_id = _stable_uuid("response", counter)
+                g_id = _stable_uuid("grade", counter)
+                score = scores[attempt]
+                items.append({
+                    "response": {
+                        "id": r_id,
+                        "user_id": user_id,
+                        "scenario_id": S[si],
+                        "conversation": {
+                            "turns": [
+                                {"role": "system", "content": scenario["content"]["question"]},
+                                {"role": "user", "content": f"[Demo attempt {attempt+1} for {scenario['content']['title']}]"},
+                            ],
+                        },
+                        "is_complete": True,
+                        "submitted_at": now - timedelta(hours=counter * 2),
                     },
-                    "is_complete": True,
-                    "submitted_at": now - timedelta(hours=ri * 6),
-                },
-                "grade": {
-                    "id": G[gi],
-                    "response_id": R[ri],
-                    "dimension_scores": dim_scores_templates[template_i],
-                    "overall_score": overall_scores[template_i],
-                    "feedback": feedbacks[template_i],
-                    "confidence": 0.85,
-                    "graded_by": "ai",
-                    "graded_at": now - timedelta(hours=ri * 6 - 1),
-                },
-            })
+                    "grade": {
+                        "id": g_id,
+                        "response_id": r_id,
+                        "dimension_scores": {
+                            "reasoning": score,
+                            "terminology": min(score + 0.2, 5.0),
+                            "trade_logic": max(score - 0.2, 1.0),
+                            "risk_awareness": score,
+                        },
+                        "overall_score": round(score, 1),
+                        "feedback": FEEDBACKS[attempt % len(FEEDBACKS)],
+                        "confidence": 0.85,
+                        "graded_by": "ai",
+                        "graded_at": now - timedelta(hours=counter * 2 - 1),
+                    },
+                })
     return items
 
 
@@ -537,12 +550,12 @@ DEMO_BOOKMARKS = [
     {"id": BK[0], "user_id": U1, "scenario_id": S[0], "tag": "reference"},
     {"id": BK[1], "user_id": U1, "scenario_id": S[1], "tag": "retry"},
     {"id": BK[2], "user_id": U2, "scenario_id": S[3], "tag": "reference"},
-    {"id": BK[3], "user_id": U2, "scenario_id": S[5], "tag": "retry"},
-    {"id": BK[4], "user_id": U3, "scenario_id": S[8], "tag": "reference"},
-    {"id": BK[5], "user_id": U3, "scenario_id": S[9], "tag": "reference"},
-    {"id": BK[6], "user_id": U4, "scenario_id": S[11], "tag": "retry"},
-    {"id": BK[7], "user_id": U5, "scenario_id": S[14], "tag": "reference"},
-    {"id": BK[8], "user_id": U5, "scenario_id": S[16], "tag": "reference"},
+    {"id": BK[3], "user_id": U2, "scenario_id": S[8], "tag": "retry"},
+    {"id": BK[4], "user_id": U3, "scenario_id": S[18], "tag": "reference"},
+    {"id": BK[5], "user_id": U3, "scenario_id": S[21], "tag": "reference"},
+    {"id": BK[6], "user_id": U4, "scenario_id": S[2], "tag": "retry"},
+    {"id": BK[7], "user_id": U5, "scenario_id": S[24], "tag": "reference"},
+    {"id": BK[8], "user_id": U5, "scenario_id": S[25], "tag": "reference"},
     {"id": BK[9], "user_id": U5, "scenario_id": S[19], "tag": "retry"},
 ]
 
@@ -683,38 +696,33 @@ async def seed():
         print(f"  Path Progress: {len(DEMO_PATH_PROGRESS)}")
 
         # ── 8. Peer Reviews ──
-        demo_peer_reviews = [
-            {
-                "id": PR[0], "reviewer_id": U2, "response_id": R[0],
-                "dimension_scores": {"reasoning": 4.0, "terminology": 3.5, "trade_logic": 4.0, "risk_awareness": 3.5},
-                "feedback": "Good framework for analyzing the IV spike. Consider discussing vol mean reversion timelines.",
-                "quality_score": 0.82,
-            },
-            {
-                "id": PR[1], "reviewer_id": U3, "response_id": R[3],
-                "dimension_scores": {"reasoning": 3.5, "terminology": 4.0, "trade_logic": 3.5, "risk_awareness": 4.0},
-                "feedback": "Nice order flow interpretation. Be more specific about position sizing based on the unusual activity.",
-                "quality_score": 0.78,
-            },
-            {
-                "id": PR[2], "reviewer_id": U5, "response_id": R[7],
-                "dimension_scores": {"reasoning": 4.5, "terminology": 4.5, "trade_logic": 5.0, "risk_awareness": 4.5},
-                "feedback": "Excellent butterfly sizing methodology. The risk budgeting approach is well thought out.",
-                "quality_score": 0.95,
-            },
-            {
-                "id": PR[3], "reviewer_id": U1, "response_id": R[12],
-                "dimension_scores": {"reasoning": 3.0, "terminology": 3.0, "trade_logic": 3.5, "risk_awareness": 3.0},
-                "feedback": "Decent start on binary event pricing. Look into the breakeven analysis more carefully.",
-                "quality_score": 0.65,
-            },
-            {
-                "id": PR[4], "reviewer_id": U3, "response_id": R[14],
-                "dimension_scores": {"reasoning": 4.0, "terminology": 4.5, "trade_logic": 4.0, "risk_awareness": 4.5},
-                "feedback": "Strong sentiment analysis. Good connection between put-call ratio and contrarian positioning.",
-                "quality_score": 0.88,
-            },
+        # Grab first response ID from each of a few users to link reviews to
+        first_responses: dict[uuid.UUID, uuid.UUID] = {}
+        for item in rg_items:
+            uid = item["response"]["user_id"]
+            if uid not in first_responses:
+                first_responses[uid] = item["response"]["id"]
+
+        demo_peer_reviews = []
+        review_pairs = [
+            (U2, U1, "Good framework for analyzing the IV spike. Consider discussing vol mean reversion timelines.", 0.82),
+            (U3, U2, "Nice order flow interpretation. Be more specific about position sizing.", 0.78),
+            (U5, U3, "Excellent butterfly sizing methodology. The risk budgeting approach is well thought out.", 0.95),
+            (U1, U4, "Decent start. Look into the breakeven analysis more carefully.", 0.65),
+            (U3, U5, "Strong sentiment analysis. Good connection between put-call ratio and contrarian positioning.", 0.88),
         ]
+        for i, (reviewer, author, fb, qs) in enumerate(review_pairs):
+            resp_id = first_responses.get(author)
+            if not resp_id:
+                continue
+            demo_peer_reviews.append({
+                "id": PR[i],
+                "reviewer_id": reviewer,
+                "response_id": resp_id,
+                "dimension_scores": {"reasoning": 4.0, "terminology": 3.5, "trade_logic": 4.0, "risk_awareness": 3.5},
+                "feedback": fb,
+                "quality_score": qs,
+            })
 
         for pr_data in demo_peer_reviews:
             if not await session.get(PeerReview, pr_data["id"]):
@@ -727,7 +735,6 @@ async def seed():
     print(f"\nSeed complete ({env})")
     print(f"  Users: {len(users_to_seed)}")
     print(f"  Scenarios: {len(DEMO_SCENARIOS)}")
-    print(f"  Feed Events: 30")
     print(f"  All features populated for demo!")
 
 

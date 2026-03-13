@@ -29,13 +29,17 @@ def test_level_titles():
 def test_level_unlocks_level_1():
     unlocks = LEVEL_UNLOCKS[1]
     assert CategoryTier("iv_analysis", "beginner") in unlocks
-    assert len(unlocks) == 2
+    assert CategoryTier("realized_vol", "beginner") in unlocks
+    assert CategoryTier("fundamentals", "beginner") in unlocks
+    assert len(unlocks) == 3
 
 
 def test_level_unlocks_level_2():
     unlocks = LEVEL_UNLOCKS[2]
     assert CategoryTier("greeks", "beginner") in unlocks
+    assert CategoryTier("order_flow", "beginner") in unlocks
     assert CategoryTier("iv_analysis", "intermediate") in unlocks
+    assert len(unlocks) == 3
 
 
 def test_mastery_constants():

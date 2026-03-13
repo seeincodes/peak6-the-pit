@@ -123,6 +123,17 @@ Scenarios are not static. The RAG pipeline ingests the Volatility Framework and 
 
 This keeps scenarios grounded in CapMan's proprietary framework and lexicon.
 
+### Adaptive Difficulty Progression
+
+Every training category starts at **beginner** difficulty. The system automatically adapts based on performance:
+
+- **Auto-promote:** If you score ≥ 4.0 on 3 consecutive attempts at a difficulty level, and the next level is unlocked, you automatically move up to intermediate (then advanced).
+- **Auto-demote:** If you score ≤ 2.0 on 3 consecutive attempts, you drop back down.
+- **Visible on the UI:** Each category card now shows a colored badge with the current adaptive difficulty level (blue for beginner, amber for intermediate, red for advanced).
+- **Refreshes after each grading:** The effective difficulties are re-fetched after every scenario completion, so the difficulty updates immediately.
+
+The backend computes effective difficulty per category via `GET /api/scenarios/effective-difficulties`, which walks the user's score history from beginner upward, promoting at each level where the streak criteria are met.
+
 ### Socratic Probing Before Final Grade
 
 Grading evaluates **reasoning quality**, not just final answers. The flow is:

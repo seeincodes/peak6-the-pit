@@ -4,50 +4,63 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Lock, Check } from "lucide-react";
 import { categoryColors, categoryDisplay } from "../theme/colors";
 
-interface SkillTreeProps {
+interface SkillNodeProps {
   allCategories: string[];
   unlockedCategories: { category: string; difficulty: string }[];
   level: number;
 }
 
-// Tree structure: root -> branches -> leaves. Order matches unlock progression (levels 1-7+).
-const TREE_LAYERS: string[][] = [
-  // Level 1
-  ["iv_analysis", "realized_vol"],
-  // Level 2-3
-  ["greeks", "order_flow", "fundamentals", "technical_analysis", "sentiment"],
-  // Level 4-5
-  ["macro", "term_structure", "fixed_income", "seasonality", "skew", "correlation", "event_vol", "tail_risk", "commodities", "geopolitical"],
-  // Level 6
-  ["position_sizing", "trade_structuring", "crypto", "alt_data"],
-  // Level 7
-  ["vol_surface", "microstructure", "risk_management", "capman_tooling", "exotic_structures", "portfolio_mgmt"],
+// Node layers: pedagogical hierarchy — fundamentals at top, advanced at bottom.
+// Each child requires mastering its parent before unlocking.
+const NODE_LAYERS: string[][] = [
+  // Foundation (Level 1) — absolute basics every trader starts with
+  ["iv_analysis", "realized_vol", "fundamentals"],
+  // Core (Level 2-3) — build directly on foundation knowledge
+  ["greeks", "order_flow", "technical_analysis", "sentiment", "macro"],
+  // Specialization (Level 4-5) — domain-specific skills derived from core
+  ["skew", "term_structure", "event_vol", "tail_risk", "correlation", "microstructure", "fixed_income", "seasonality", "commodities", "geopolitical"],
+  // Advanced (Level 6) — combining specializations
+  ["vol_surface", "position_sizing", "trade_structuring", "risk_management", "alt_data", "crypto"],
+  // Expert (Level 7) — mastery-level synthesis
+  ["exotic_structures", "portfolio_mgmt", "capman_tooling"],
 ];
 
-// Parent indices for each layer (parent row, parent col in that row)
+// Parent links encode prerequisite relationships.
+// Each entry maps a child node (by layer + col) to its parent (by layer + col).
 const PARENT_LINKS: { layer: number; parentCol: number }[][] = [
+  // Layer 0 (Foundation) — no parents
   [],
-  // Layer 1 → Layer 0
+  // Layer 1 (Core) → Layer 0 (Foundation)
+  // greeks←iv_analysis, order_flow←realized_vol, tech_analysis←realized_vol,
+  // sentiment←fundamentals, macro←fundamentals
   [
-    { layer: 0, parentCol: 0 }, { layer: 0, parentCol: 0 },
-    { layer: 0, parentCol: 1 }, { layer: 0, parentCol: 1 }, { layer: 0, parentCol: 1 },
+    { layer: 0, parentCol: 0 }, { layer: 0, parentCol: 1 },
+    { layer: 0, parentCol: 1 }, { layer: 0, parentCol: 2 }, { layer: 0, parentCol: 2 },
   ],
-  // Layer 2 → Layer 1
+  // Layer 2 (Specialization) → Layer 1 (Core)
+  // skew←greeks, term_structure←greeks, event_vol←greeks, tail_risk←greeks,
+  // correlation←order_flow, microstructure←order_flow,
+  // fixed_income←macro, seasonality←tech_analysis, commodities←macro, geopolitical←sentiment
   [
-    { layer: 1, parentCol: 0 }, { layer: 1, parentCol: 0 }, { layer: 1, parentCol: 2 }, { layer: 1, parentCol: 4 },
-    { layer: 1, parentCol: 0 }, { layer: 1, parentCol: 1 }, { layer: 1, parentCol: 1 }, { layer: 1, parentCol: 1 },
-    { layer: 1, parentCol: 3 }, { layer: 1, parentCol: 4 },
+    { layer: 1, parentCol: 0 }, { layer: 1, parentCol: 0 },
+    { layer: 1, parentCol: 0 }, { layer: 1, parentCol: 0 },
+    { layer: 1, parentCol: 1 }, { layer: 1, parentCol: 1 },
+    { layer: 1, parentCol: 4 }, { layer: 1, parentCol: 2 },
+    { layer: 1, parentCol: 4 }, { layer: 1, parentCol: 3 },
   ],
-  // Layer 3 → Layer 2
+  // Layer 3 (Advanced) → Layer 2 (Specialization)
+  // vol_surface←skew, position_sizing←correlation, trade_structuring←term_structure,
+  // risk_management←tail_risk, alt_data←seasonality, crypto←microstructure
   [
     { layer: 2, parentCol: 0 }, { layer: 2, parentCol: 4 },
-    { layer: 2, parentCol: 9 }, { layer: 2, parentCol: 3 },
+    { layer: 2, parentCol: 1 }, { layer: 2, parentCol: 3 },
+    { layer: 2, parentCol: 7 }, { layer: 2, parentCol: 5 },
   ],
-  // Layer 4 → Layer 3
+  // Layer 4 (Expert) → Layer 3 (Advanced)
+  // exotic_structures←vol_surface, portfolio_mgmt←position_sizing, capman_tooling←risk_management
   [
-    { layer: 3, parentCol: 0 }, { layer: 3, parentCol: 0 },
-    { layer: 3, parentCol: 1 }, { layer: 3, parentCol: 1 },
-    { layer: 3, parentCol: 1 }, { layer: 3, parentCol: 0 },
+    { layer: 3, parentCol: 0 }, { layer: 3, parentCol: 1 },
+    { layer: 3, parentCol: 3 },
   ],
 ];
 
@@ -55,7 +68,7 @@ const NODE_SIZE = 80;
 const LAYER_GAP = 48;
 const NODE_GAP = 12;
 
-// Short display labels for skill tree nodes
+// Short display labels for skill nodes
 const DISPLAY_LABELS: Record<string, string> = {
   iv_analysis: "IV\nANALYSIS",
   realized_vol: "REALIZED\nVOL",
@@ -86,15 +99,15 @@ const DISPLAY_LABELS: Record<string, string> = {
   portfolio_mgmt: "PORT\nFOLIO",
 };
 
-// Level at which each category first unlocks (beginner difficulty)
+// Minimum level at which each category can first unlock (also requires parent mastery)
 const UNLOCK_LEVELS: Record<string, number> = {
-  iv_analysis: 1, realized_vol: 1,
-  greeks: 2, fundamentals: 2,
-  order_flow: 3, technical_analysis: 3, sentiment: 3,
-  macro: 4, term_structure: 4, fixed_income: 4, seasonality: 4,
-  skew: 5, correlation: 5, event_vol: 5, tail_risk: 5, commodities: 5, geopolitical: 5,
-  position_sizing: 6, trade_structuring: 6, crypto: 6, alt_data: 6,
-  vol_surface: 7, microstructure: 7, risk_management: 7, capman_tooling: 7, exotic_structures: 7, portfolio_mgmt: 7,
+  iv_analysis: 1, realized_vol: 1, fundamentals: 1,
+  greeks: 2, order_flow: 2,
+  technical_analysis: 3, sentiment: 3, macro: 3,
+  skew: 4, term_structure: 4, event_vol: 4, tail_risk: 4,
+  correlation: 5, microstructure: 5, fixed_income: 5, seasonality: 5, commodities: 5, geopolitical: 5,
+  vol_surface: 6, position_sizing: 6, trade_structuring: 6, risk_management: 6, alt_data: 6, crypto: 6,
+  exotic_structures: 7, portfolio_mgmt: 7, capman_tooling: 7,
 };
 
 const LAYER_LABELS = ["Foundation", "Core", "Specialization", "Advanced", "Expert"];
@@ -104,14 +117,14 @@ function getUnlockLevel(cat: string): number {
 }
 
 function getLayerLabel(cat: string): string {
-  const layerIdx = TREE_LAYERS.findIndex((layer) => layer.includes(cat));
+  const layerIdx = NODE_LAYERS.findIndex((layer) => layer.includes(cat));
   return LAYER_LABELS[layerIdx] ?? "";
 }
 
-export default function SkillTree({ allCategories, unlockedCategories, level }: SkillTreeProps) {
+export default function SkillNode({ allCategories, unlockedCategories, level }: SkillNodeProps) {
   const unlockedSet = new Set(unlockedCategories.map((c) => c.category));
 
-  const displayLayers = TREE_LAYERS.map((layer) =>
+  const displayLayers = NODE_LAYERS.map((layer) =>
     layer.filter((c) => allCategories.includes(c))
   ).filter((l) => l.length > 0);
 
@@ -197,7 +210,7 @@ export default function SkillTree({ allCategories, unlockedCategories, level }: 
   return (
     <>
       <h3 className="sr-only">
-        Skill tree: {unlockedCategories.length} of {allCategories.length} categories unlocked
+        Skill nodes: {unlockedCategories.length} of {allCategories.length} categories unlocked
       </h3>
       <div
         ref={wrapperRef}

@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Check, Lock, LogOut, Pencil } from "lucide-react";
-import SkillTree from "../components/SkillTree";
+import SkillNode from "../components/SkillNode";
 import BadgeGrid from "../components/BadgeGrid";
 import ProfileEditor from "../components/ProfileEditor";
 import { AVATAR_PRESETS } from "../constants/avatars";
@@ -67,7 +67,7 @@ export default function ProfilePage() {
         </button>
       </div>
 
-      {/* Badges & Skill Tree — combined card */}
+      {/* Badges & Skill Nodes — combined card */}
       <div className="cm-surface-section p-4 sm:p-6">
         {/* Badges section */}
         <BadgeGrid />
@@ -75,9 +75,9 @@ export default function ProfilePage() {
         {/* Divider */}
         <div className="my-8 cm-divider" />
 
-        {/* Skill Tree section */}
+        {/* Skill Nodes section */}
         <div>
-          <h3 className="cm-subtitle mb-2">Skill Tree</h3>
+          <h3 className="cm-subtitle mb-2">Skill Nodes</h3>
           <p className="cm-body mb-6">
             Unlock categories by leveling up. Master each area to progress.
           </p>
@@ -85,7 +85,7 @@ export default function ProfilePage() {
             <span className="flex items-center gap-2"><Check size={14} className="text-cm-emerald shrink-0" /> Unlocked</span>
             <span className="flex items-center gap-2"><Lock size={14} className="shrink-0" /> Locked</span>
           </div>
-          <SkillTree
+          <SkillNode
             allCategories={user.all_categories}
             unlockedCategories={user.unlocked_categories}
             level={user.level}
