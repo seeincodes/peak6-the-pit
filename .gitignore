@@ -19,6 +19,7 @@ dist/
 
 # Docker
 *.log
+.tmp-compose-config.yml
 
 # Plans
 docs/plans/

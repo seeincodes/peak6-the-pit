@@ -14,10 +14,8 @@ import {
   X,
   Activity,
 } from "lucide-react";
-import { AVATAR_PRESETS } from "../constants/avatars";
 import DailyChallengeCard from "./DailyChallengeCard";
 import StreakFlame from "./StreakFlame";
-import ThemeToggle from "./ThemeToggle";
 
 interface SidebarProps {
   user: {
@@ -164,15 +162,6 @@ export default function Sidebar({ user, logout, collapsed, onToggleCollapse, mob
         <div className="border-t border-cm-border px-3 py-4 shrink-0">
           {collapsed && !isMobile ? (
             <div className="flex flex-col items-center gap-3">
-              <Link
-                to="/profile"
-                onClick={isMobile ? onMobileClose : undefined}
-                aria-label="Go to profile"
-                className="w-8 h-8 rounded-full bg-cm-card-raised border border-cm-border flex items-center justify-center text-base focus-ring hover:border-cm-primary/40 transition-colors"
-                title={user.display_name}
-              >
-                {AVATAR_PRESETS[user.avatar_id || "default"] || "👤"}
-              </Link>
               <button
                 onClick={logout}
                 className="flex items-center justify-center w-8 h-8 rounded-md text-cm-muted hover:text-cm-red hover:bg-cm-red/10 transition-all focus-ring"
@@ -216,26 +205,6 @@ export default function Sidebar({ user, logout, collapsed, onToggleCollapse, mob
                 <DailyChallengeCard compact />
               </div>
 
-              {/* User avatar + name */}
-              <Link
-                to="/profile"
-                onClick={isMobile ? onMobileClose : undefined}
-                aria-label="Go to profile"
-                className="flex items-center gap-3 mb-2 rounded-lg px-2 py-1 -mx-2 text-left hover:bg-cm-card-raised transition-colors focus-ring"
-              >
-                <div className="w-8 h-8 rounded-full bg-cm-card-raised border border-cm-border flex items-center justify-center shrink-0 text-base">
-                  {AVATAR_PRESETS[user.avatar_id || "default"] || "👤"}
-                </div>
-                <div className="min-w-0">
-                  <div className="text-sm font-medium text-cm-text truncate">
-                    {user.display_name}
-                  </div>
-                  <div className="text-[11px] text-cm-muted truncate">
-                    {user.level_title}
-                  </div>
-                </div>
-              </Link>
-
               {/* Logout */}
               <button
                 onClick={logout}
@@ -244,9 +213,6 @@ export default function Sidebar({ user, logout, collapsed, onToggleCollapse, mob
                 <LogOut size={18} className="shrink-0" />
                 <span className="text-sm font-medium">Logout</span>
               </button>
-              <div className="mt-2">
-                <ThemeToggle />
-              </div>
             </>
           )}
         </div>

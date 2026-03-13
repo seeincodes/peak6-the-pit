@@ -1,15 +1,15 @@
 export const colors = {
-  bg: "#0B0B1A",
-  card: "#16163a",
-  border: "#2e2e5a",
-  primary: "#4D34EF",
-  cyan: "#4D34EF",
-  lime: "#C8FB50",
-  emerald: "#34D399",
-  amber: "#FCD34D",
-  red: "#FB7185",
-  text: "#F1F1F8",
-  muted: "#A0A0C0",
+  bg: "rgb(var(--cm-bg))",
+  card: "rgb(var(--cm-card))",
+  border: "rgb(var(--cm-border))",
+  primary: "rgb(var(--cm-primary))",
+  cyan: "rgb(var(--cm-primary))",
+  lime: "rgb(var(--cm-lime))",
+  emerald: "rgb(var(--cm-emerald))",
+  amber: "rgb(var(--cm-amber))",
+  red: "rgb(var(--cm-red))",
+  text: "rgb(var(--cm-text))",
+  muted: "rgb(var(--cm-muted))",
 } as const;
 
 export const categoryDisplay: Record<string, string> = {

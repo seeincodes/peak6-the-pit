@@ -204,7 +204,7 @@ export default function SkillTree({ allCategories, unlockedCategories, level }: 
         className="relative rounded-2xl w-full"
         style={{
           background:
-            "radial-gradient(ellipse 80% 80% at 50% 0%, rgba(77, 52, 239, 0.12) 0%, transparent 60%)",
+            "radial-gradient(ellipse 80% 80% at 50% 0%, rgb(var(--cm-primary) / 0.12) 0%, transparent 60%)",
           height: scaledHeight + scaledPadY * 2 + 48,
         }}
       >
@@ -239,7 +239,7 @@ export default function SkillTree({ allCategories, unlockedCategories, level }: 
                 if (!childPos || !parentPos) return null;
 
                 const isPathUnlocked = unlockedSet.has(parentPos.cat) || unlockedSet.has(childPos.cat);
-                const parentColor = categoryColors[parentPos.cat] || "#4D34EF";
+                const parentColor = categoryColors[parentPos.cat] || "rgb(var(--cm-primary))";
                 const parentCx = parentPos.x + NODE_SIZE / 2;
                 const parentBottom = parentPos.y + NODE_SIZE;
                 const childCx = childPos.x + NODE_SIZE / 2;
@@ -251,7 +251,7 @@ export default function SkillTree({ allCategories, unlockedCategories, level }: 
                     key={`${layerIdx}-${colIdx}`}
                     d={`M ${parentCx} ${parentBottom} C ${parentCx} ${midY}, ${childCx} ${midY}, ${childCx} ${childTop}`}
                     fill="none"
-                    stroke={isPathUnlocked ? `${parentColor}50` : "#2e2e5a44"}
+                    stroke={isPathUnlocked ? `${parentColor}50` : "rgb(var(--cm-border) / 0.35)"}
                     strokeWidth={isPathUnlocked ? 2 : 1}
                     strokeDasharray={isPathUnlocked ? "none" : "4 4"}
                   />
@@ -263,7 +263,7 @@ export default function SkillTree({ allCategories, unlockedCategories, level }: 
           {/* Nodes */}
           {nodePositions.map(({ cat, x, y }, i) => {
             const isUnlocked = unlockedSet.has(cat);
-            const color = categoryColors[cat] || "#4D34EF";
+            const color = categoryColors[cat] || "rgb(var(--cm-primary))";
 
             return (
               <motion.div
@@ -282,8 +282,8 @@ export default function SkillTree({ allCategories, unlockedCategories, level }: 
                   opacity: isUnlocked ? 1 : 0.55,
                   background: isUnlocked
                     ? `linear-gradient(135deg, ${color}35 0%, ${color}15 100%)`
-                    : "linear-gradient(135deg, #1a1a3a 0%, #12122a 100%)",
-                  border: `2px solid ${isUnlocked ? `${color}99` : "#2e2e5a"}`,
+                    : "linear-gradient(135deg, rgb(var(--cm-card-raised)) 0%, rgb(var(--cm-card)) 100%)",
+                  border: `2px solid ${isUnlocked ? `${color}99` : "rgb(var(--cm-border))"}`,
                   boxShadow: isUnlocked
                     ? `0 0 16px ${color}40, inset 0 1px 0 rgba(255,255,255,0.08)`
                     : "inset 0 2px 4px rgba(0,0,0,0.3)",
@@ -313,7 +313,7 @@ export default function SkillTree({ allCategories, unlockedCategories, level }: 
                   )}
                   <span
                     className="text-[10px] font-semibold text-center leading-[1.2] whitespace-pre-line max-w-full tracking-wide"
-                    style={{ color: isUnlocked ? color : "#A0A0C0" }}
+                    style={{ color: isUnlocked ? color : "rgb(var(--cm-muted))" }}
                     title={categoryDisplay[cat] || cat.replace(/_/g, " ")}
                   >
                     {DISPLAY_LABELS[cat] || cat.replace(/_/g, " ").toUpperCase()}
@@ -370,7 +370,7 @@ export default function SkillTree({ allCategories, unlockedCategories, level }: 
                 {/* Accent bar */}
                 <div
                   className="h-0.5 rounded-full mt-2 mb-2.5 opacity-60"
-                  style={{ background: categoryColors[activeNode] || "#4D34EF" }}
+                  style={{ background: categoryColors[activeNode] || "rgb(var(--cm-primary))" }}
                 />
 
                 {/* Status row */}

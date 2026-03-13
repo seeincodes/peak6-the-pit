@@ -10,14 +10,10 @@
   </head>
   <body>
     <script>
-      // Sync theme class BEFORE React mounts to prevent FOUC
+      // Force dark mode before React mounts
       (function(){
-        var t = localStorage.getItem('cm_theme');
-        if (t === 'dark' || (!t && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
-          document.documentElement.classList.add('dark');
-        } else {
-          document.documentElement.classList.remove('dark');
-        }
+        localStorage.setItem('cm_theme', 'dark');
+        document.documentElement.classList.add('dark');
       })();
     </script>
     <div id="root"></div>

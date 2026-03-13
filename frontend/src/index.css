@@ -11,43 +11,43 @@
 
 :root {
   /* Base neutrals (warm daylight palette) — RGB channels for Tailwind opacity support */
-  --cm-bg: 251 247 241;
-  --cm-card: 255 253 248;
-  --cm-card-raised: 246 239 228;
-  --cm-border: 233 220 200;
+  --cm-bg: 251, 247, 241;
+  --cm-card: 255, 253, 248;
+  --cm-card-raised: 246, 239, 228;
+  --cm-border: 233, 220, 200;
 
   /* Brand + semantic accents */
-  --cm-primary: 124 92 255;
-  --cm-accent: 178 154 255;
-  --cm-lime: 18 184 134;
-  --cm-emerald: 18 184 134;
-  --cm-amber: 241 183 94;
-  --cm-red: 239 106 106;
+  --cm-primary: 124, 92, 255;
+  --cm-accent: 178, 154, 255;
+  --cm-lime: 18, 184, 134;
+  --cm-emerald: 18, 184, 134;
+  --cm-amber: 241, 183, 94;
+  --cm-red: 239, 106, 106;
 
   /* Text hierarchy */
-  --cm-text: 47 42 36;
-  --cm-muted: 117 104 91;
+  --cm-text: 47, 42, 36;
+  --cm-muted: 117, 104, 91;
 
   /* Additional custom properties */
-  --cm-bg-subtle: 243 232 216;
-  --cm-focus-ring: 143 116 255;
+  --cm-bg-subtle: 243, 232, 216;
+  --cm-focus-ring: 143, 116, 255;
 }
 
 .dark {
-  --cm-bg: 22 18 23;
-  --cm-card: 34 27 34;
-  --cm-card-raised: 42 33 41;
-  --cm-border: 58 48 64;
-  --cm-primary: 138 112 255;
-  --cm-lime: 77 215 170;
-  --cm-emerald: 77 215 170;
-  --cm-amber: 243 201 113;
-  --cm-red: 255 138 138;
-  --cm-text: 247 239 230;
-  --cm-muted: 186 169 154;
-  --cm-accent: 200 183 255;
-  --cm-bg-subtle: 47 38 48;
-  --cm-focus-ring: 169 146 255;
+  --cm-bg: 22, 18, 23;
+  --cm-card: 34, 27, 34;
+  --cm-card-raised: 42, 33, 41;
+  --cm-border: 58, 48, 64;
+  --cm-primary: 138, 112, 255;
+  --cm-lime: 77, 215, 170;
+  --cm-emerald: 77, 215, 170;
+  --cm-amber: 243, 201, 113;
+  --cm-red: 255, 138, 138;
+  --cm-text: 247, 239, 230;
+  --cm-muted: 186, 169, 154;
+  --cm-accent: 200, 183, 255;
+  --cm-bg-subtle: 47, 38, 48;
+  --cm-focus-ring: 169, 146, 255;
 }
 
 /* ============================================================

@@ -9,7 +9,7 @@ export const CHART_COLORS = {
     text: colors.text,
   },
   radar: {
-    fill: `${colors.primary}30`,
+    fill: "rgba(124, 92, 255, 0.22)",
     stroke: colors.primary,
   },
 } as const;

@@ -1,6 +1,6 @@
 import { createContext, useContext, useEffect, useMemo, useState } from "react";
 
-type Theme = "light" | "dark";
+type Theme = "dark";
 
 interface ThemeContextValue {
   theme: Theme;
@@ -12,22 +12,36 @@ const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 
 const THEME_STORAGE_KEY = "cm_theme";
 
+const THEME_VARS: Record<Theme, Record<string, string>> = {
+  dark: {
+    "--cm-bg": "22, 18, 23",
+    "--cm-card": "34, 27, 34",
+    "--cm-card-raised": "42, 33, 41",
+    "--cm-border": "58, 48, 64",
+    "--cm-primary": "138, 112, 255",
+    "--cm-lime": "77, 215, 170",
+    "--cm-emerald": "77, 215, 170",
+    "--cm-amber": "243, 201, 113",
+    "--cm-red": "255, 138, 138",
+    "--cm-text": "247, 239, 230",
+    "--cm-muted": "186, 169, 154",
+    "--cm-accent": "200, 183, 255",
+    "--cm-bg-subtle": "47, 38, 48",
+    "--cm-focus-ring": "169, 146, 255",
+  },
+};
+
 function resolveInitialTheme(): Theme {
-  try {
-    const saved = localStorage.getItem(THEME_STORAGE_KEY);
-    if (saved === "light" || saved === "dark") return saved;
-  } catch {
-    // localStorage may be unavailable
-  }
-  return window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+  return "dark";
 }
 
 function applyThemeClass(theme: Theme) {
   const root = document.documentElement;
-  if (theme === "dark") {
-    root.classList.add("dark");
-  } else {
-    root.classList.remove("dark");
+  root.setAttribute("data-theme", "dark");
+  root.classList.add("dark");
+  const vars = THEME_VARS[theme];
+  for (const [name, value] of Object.entries(vars)) {
+    root.style.setProperty(name, value);
   }
 }
 
@@ -50,11 +64,11 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
 
   const value = useMemo<ThemeContextValue>(
     () => ({
-      theme,
-      toggleTheme: () => setThemeState((prev) => (prev === "dark" ? "light" : "dark")),
-      setTheme: (next) => setThemeState(next),
+      theme: "dark",
+      toggleTheme: () => setThemeState("dark"),
+      setTheme: () => setThemeState("dark"),
     }),
-    [theme],
+    [],
   );
 
   return <ThemeContext.Provider value={value}>{children}</ThemeContext.Provider>;
