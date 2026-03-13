@@ -38,7 +38,10 @@ export default function BookmarksPage() {
       </div>
 
       {isLoading && (
-        <div className="text-center text-cm-primary animate-pulse py-12">Loading bookmarks...</div>
+        <div className="flex flex-col items-center gap-3 py-12">
+          <div className="w-6 h-6 border-2 border-cm-primary/30 border-t-cm-primary rounded-full animate-spin" />
+          <span className="text-cm-muted text-sm">Loading bookmarks...</span>
+        </div>
       )}
 
       {bookmarks && bookmarks.length === 0 && (
@@ -76,7 +79,7 @@ export default function BookmarksPage() {
                 {[1, 2, 3].map((j) => (
                   <Star
                     key={j}
-                    size={10}
+                    size={12}
                     className={j <= diffLevel ? "text-cm-amber fill-cm-amber" : "text-cm-amber/30"}
                   />
                 ))}

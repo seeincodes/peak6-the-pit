@@ -13,6 +13,7 @@ import {
   ChevronRight,
   X,
   Activity,
+  Zap,
 } from "lucide-react";
 import DailyChallengeCard from "./DailyChallengeCard";
 import StreakFlame from "./StreakFlame";
@@ -35,15 +36,31 @@ interface SidebarProps {
 
 const LEVEL_XP = [0, 0, 60, 180, 380, 720, 1250, 2050, 3250, 5050, 8000];
 
-const NAV_ITEMS = [
-  { to: "/", icon: Crosshair, label: "Training", matchExact: true },
-  { to: "/paths", icon: Map, label: "Lessons", matchExact: false },
-  { to: "/feed", icon: Activity, label: "Feed", matchExact: false },
-  { to: "/review", icon: BookOpen, label: "Review", matchExact: false },
-  { to: "/bookmarks", icon: Bookmark, label: "Bookmarks", matchExact: false },
-  { to: "/peer-review", icon: Users, label: "Peer Review", matchExact: false },
-  { to: "/progress", icon: Target, label: "Progress", matchExact: false },
-  { to: "/leaderboard", icon: Trophy, label: "Leaderboard", matchExact: false },
+const NAV_GROUPS = [
+  {
+    label: "Train",
+    items: [
+      { to: "/", icon: Crosshair, label: "Training", matchExact: true },
+      { to: "/quick-fire", icon: Zap, label: "Quick Fire", matchExact: false },
+      { to: "/paths", icon: Map, label: "Lessons", matchExact: false },
+    ],
+  },
+  {
+    label: "Review",
+    items: [
+      { to: "/review", icon: BookOpen, label: "Review", matchExact: false },
+      { to: "/bookmarks", icon: Bookmark, label: "Bookmarks", matchExact: false },
+      { to: "/feed", icon: Activity, label: "Feed", matchExact: false },
+      { to: "/peer-review", icon: Users, label: "Peer Review", matchExact: false },
+    ],
+  },
+  {
+    label: "Stats",
+    items: [
+      { to: "/progress", icon: Target, label: "Progress", matchExact: false },
+      { to: "/leaderboard", icon: Trophy, label: "Leaderboard", matchExact: false },
+    ],
+  },
 ];
 
 export default function Sidebar({ user, logout, collapsed, onToggleCollapse, mobileOpen, onMobileClose }: SidebarProps) {
@@ -112,47 +129,60 @@ export default function Sidebar({ user, logout, collapsed, onToggleCollapse, mob
       </div>
 
       {/* Navigation */}
-      <nav aria-label="Main navigation" className="flex-1 flex flex-col gap-1 px-3 py-4">
-        {NAV_ITEMS.map((item) => {
-          const active = isActive(item.to, item.matchExact);
-          const Icon = item.icon;
-          const isCollapsed = collapsed && !isMobile;
+      <nav aria-label="Main navigation" className="flex-1 flex flex-col gap-4 px-3 py-4 overflow-y-auto">
+        {NAV_GROUPS.map((group) => {
+          const isCol = collapsed && !isMobile;
           return (
-            <Link
-              key={item.to}
-              to={item.to}
-              onClick={isMobile ? onMobileClose : undefined}
-              aria-current={active ? "page" : undefined}
-              title={isCollapsed ? item.label : undefined}
-              className={`
-                relative flex items-center gap-3 rounded-lg h-11
-                transition-all duration-200 group focus-ring
-                ${isCollapsed ? "justify-center px-0" : "px-3"}
-                ${active
-                  ? "bg-cm-primary/12 text-cm-primary"
-                  : "text-cm-muted hover:bg-cm-card-raised hover:text-cm-text"
-                }
-              `}
-            >
-              {active && (
-                <motion.div
-                  layoutId={isMobile ? "sidebar-active-mobile" : "sidebar-active"}
-                  className="absolute left-0 top-2 bottom-2 w-[3px] rounded-r-full bg-cm-primary"
-                  transition={{ type: "spring", stiffness: 350, damping: 30 }}
-                />
+            <div key={group.label}>
+              {!isCol && (
+                <p className="text-[10px] font-semibold text-cm-muted/60 uppercase tracking-widest px-3 mb-1">
+                  {group.label}
+                </p>
               )}
-              <Icon
-                size={20}
-                className={`shrink-0 transition-colors duration-200 ${
-                  active ? "text-cm-primary" : "text-cm-muted group-hover:text-cm-text"
-                }`}
-              />
-              {!isCollapsed && (
-                <span className="text-sm font-medium whitespace-nowrap">
-                  {item.label}
-                </span>
-              )}
-            </Link>
+              <div className="flex flex-col gap-0.5">
+                {group.items.map((item) => {
+                  const active = isActive(item.to, item.matchExact);
+                  const Icon = item.icon;
+                  return (
+                    <Link
+                      key={item.to}
+                      to={item.to}
+                      onClick={isMobile ? onMobileClose : undefined}
+                      aria-current={active ? "page" : undefined}
+                      title={isCol ? item.label : undefined}
+                      className={`
+                        relative flex items-center gap-3 rounded-lg h-9
+                        transition-all duration-200 group focus-ring
+                        ${isCol ? "justify-center px-0" : "px-3"}
+                        ${active
+                          ? "bg-cm-primary/10 text-cm-primary"
+                          : "text-cm-muted hover:bg-cm-card-raised hover:text-cm-text"
+                        }
+                      `}
+                    >
+                      {active && (
+                        <motion.div
+                          layoutId={isMobile ? "sidebar-active-mobile" : "sidebar-active"}
+                          className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r-full bg-cm-primary"
+                          transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                        />
+                      )}
+                      <Icon
+                        size={18}
+                        className={`shrink-0 transition-colors duration-200 ${
+                          active ? "text-cm-primary" : "text-cm-muted group-hover:text-cm-text"
+                        }`}
+                      />
+                      {!isCol && (
+                        <span className="text-sm font-medium whitespace-nowrap">
+                          {item.label}
+                        </span>
+                      )}
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
           );
         })}
       </nav>
@@ -164,7 +194,7 @@ export default function Sidebar({ user, logout, collapsed, onToggleCollapse, mob
             <div className="flex flex-col items-center gap-3">
               <button
                 onClick={logout}
-                className="flex items-center justify-center w-8 h-8 rounded-md text-cm-muted hover:text-cm-red hover:bg-cm-red/8 transition-all focus-ring"
+                className="flex items-center justify-center w-8 h-8 rounded-md text-cm-muted hover:text-cm-red hover:bg-cm-red/10 transition-all focus-ring"
                 title="Logout"
               >
                 <LogOut size={18} />
@@ -208,7 +238,7 @@ export default function Sidebar({ user, logout, collapsed, onToggleCollapse, mob
               {/* Logout */}
               <button
                 onClick={logout}
-                className="flex items-center gap-3 w-full rounded-lg px-3 h-9 text-cm-muted hover:text-cm-red hover:bg-cm-red/8 transition-all duration-200 focus-ring"
+                className="flex items-center gap-3 w-full rounded-lg px-3 h-9 text-cm-muted hover:text-cm-red hover:bg-cm-red/10 transition-all duration-200 focus-ring"
               >
                 <LogOut size={18} className="shrink-0" />
                 <span className="text-sm font-medium">Logout</span>

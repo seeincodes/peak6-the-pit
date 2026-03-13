@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef, useCallback } from "react";
 
 interface ResponseInputProps {
   onSubmit: (text: string) => void;
@@ -9,30 +9,42 @@ interface ResponseInputProps {
 export default function ResponseInput({ onSubmit, placeholder, loading }: ResponseInputProps) {
   const [text, setText] = useState("");
   const [pasteBlocked, setPasteBlocked] = useState(false);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
+
+  const autoGrow = useCallback(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = "auto";
+    el.style.height = `${Math.max(128, el.scrollHeight)}px`;
+  }, []);
 
   const handleSubmit = () => {
     if (text.trim() && !loading) {
       onSubmit(text.trim());
       setText("");
+      if (textareaRef.current) textareaRef.current.style.height = "128px";
     }
   };
+
+  const isMac = typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.userAgent);
 
   return (
     <div className="cm-surface p-4">
       <label htmlFor="response-input" className="sr-only">Your analysis</label>
       <textarea
+        ref={textareaRef}
         id="response-input"
         value={text}
-        onChange={(e) => setText(e.target.value)}
+        onChange={(e) => { setText(e.target.value); autoGrow(); }}
         placeholder={placeholder || "Type your analysis..."}
-        className="w-full h-32 bg-transparent text-cm-text placeholder-cm-muted resize-none outline-none text-sm leading-relaxed focus-ring"
+        className="w-full min-h-[8rem] bg-transparent text-cm-text placeholder-cm-muted resize-none outline-none text-sm leading-relaxed focus-ring"
         onPaste={(e) => {
           e.preventDefault();
           setPasteBlocked(true);
           setTimeout(() => setPasteBlocked(false), 2500);
         }}
         onKeyDown={(e) => {
-          if (e.key === "Enter" && e.metaKey) handleSubmit();
+          if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleSubmit();
         }}
       />
       {pasteBlocked && (
@@ -41,11 +53,11 @@ export default function ResponseInput({ onSubmit, placeholder, loading }: Respon
         </div>
       )}
       <div className="flex justify-between items-center mt-2">
-        <span className="text-cm-muted text-xs">Cmd+Enter to submit</span>
+        <span className="text-cm-muted text-xs">{isMac ? "Cmd" : "Ctrl"}+Enter to submit</span>
         <button
           onClick={handleSubmit}
           disabled={!text.trim() || loading}
-          className="cm-btn-primary px-6 py-2"
+          className="cm-btn-primary"
         >
           {loading ? "Analyzing..." : "Submit"}
         </button>

@@ -5,6 +5,24 @@
 @tailwind utilities;
 
 /* ============================================================
+   CapMan AI — Color Tokens (RGB channels for Tailwind opacity)
+   ============================================================ */
+
+:root {
+  --cm-bg: 11 11 26;
+  --cm-card: 22 22 58;
+  --cm-card-raised: 30 30 74;
+  --cm-border: 46 46 90;
+  --cm-primary: 77 52 239;
+  --cm-lime: 200 251 80;
+  --cm-emerald: 52 211 153;
+  --cm-amber: 252 211 77;
+  --cm-red: 251 113 133;
+  --cm-text: 241 241 248;
+  --cm-muted: 160 160 192;
+}
+
+/* ============================================================
    CapMan AI — Component Design System
    All reusable patterns live here so every screen stays cohesive.
    Use these classes alongside Tailwind utilities.
@@ -36,12 +54,21 @@
   /* ── Buttons ─────────────────────────────────────────────── */
   .cm-btn-primary {
     @apply rounded bg-cm-primary text-white font-semibold text-sm
+           px-4 py-2
            hover:bg-cm-primary/90 transition-all
            disabled:opacity-40 disabled:cursor-not-allowed focus-ring;
   }
   .cm-btn-primary-lg {
-    @apply rounded bg-cm-primary text-white font-bold
-           hover:bg-cm-primary/90 transition-all focus-ring;
+    @apply rounded bg-cm-primary text-white font-bold text-sm
+           px-8 py-3
+           hover:bg-cm-primary/90 transition-all focus-ring
+           disabled:opacity-40 disabled:cursor-not-allowed;
+  }
+  .cm-btn-secondary {
+    @apply rounded border border-cm-border text-cm-text font-semibold text-sm
+           px-4 py-2
+           hover:border-cm-primary/50 hover:text-cm-primary transition-all focus-ring
+           disabled:opacity-40 disabled:cursor-not-allowed;
   }
   .cm-btn-ghost {
     @apply rounded text-cm-muted hover:text-cm-text transition-colors focus-ring;

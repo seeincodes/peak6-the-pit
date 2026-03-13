@@ -54,7 +54,7 @@ export default function QuickFireScoreCard({
       </p>
 
       <div className="flex gap-3 justify-center">
-        <button onClick={onPlayAgain} className="cm-btn-primary-lg px-6 py-2">
+        <button onClick={onPlayAgain} className="cm-btn-primary-lg">
           Play Again
         </button>
         <button

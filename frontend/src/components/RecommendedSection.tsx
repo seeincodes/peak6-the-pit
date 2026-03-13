@@ -58,7 +58,7 @@ export default function RecommendedSection({
                   {[1, 2, 3].map((i) => (
                     <Star
                       key={i}
-                      size={10}
+                      size={12}
                       className={i <= diffLevel ? "text-cm-amber fill-cm-amber" : "text-cm-amber/30"}
                     />
                   ))}

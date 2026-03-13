@@ -80,7 +80,7 @@ export default function BadgeUnlockModal({ show, badges, onClose }: BadgeUnlockM
             <button
               autoFocus
               onClick={onClose}
-              className="cm-btn-primary-lg px-8 py-2"
+              className="cm-btn-primary-lg"
             >
               Nice!
             </button>

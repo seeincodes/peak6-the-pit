@@ -90,7 +90,7 @@ export default function ConceptPrimer({
           )}
 
           <div className="mt-4 text-center">
-            <button onClick={onClose} className="cm-btn-primary-lg px-6 py-2">
+            <button onClick={onClose} className="cm-btn-primary-lg">
               Start Practicing
             </button>
           </div>

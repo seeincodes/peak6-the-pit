@@ -78,7 +78,7 @@ export default function LevelUpModal({ show, level, title, newUnlocks, onClose }
             <button
               autoFocus
               onClick={onClose}
-              className="cm-btn-primary-lg px-8 py-2"
+              className="cm-btn-primary-lg"
             >
               Continue
             </button>

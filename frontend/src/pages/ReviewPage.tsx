@@ -79,7 +79,10 @@ export default function ReviewPage() {
       </div>
 
       {isLoading && (
-        <div className="text-center text-cm-primary animate-pulse py-12">Loading history...</div>
+        <div className="flex flex-col items-center gap-3 py-12">
+          <div className="w-6 h-6 border-2 border-cm-primary/30 border-t-cm-primary rounded-full animate-spin" />
+          <span className="text-cm-muted text-sm">Loading history...</span>
+        </div>
       )}
 
       {items && items.length === 0 && (
@@ -123,7 +126,7 @@ export default function ReviewPage() {
                     {[1, 2, 3].map((i) => (
                       <Star
                         key={i}
-                        size={10}
+                        size={12}
                         className={i <= diffLevel ? "text-cm-amber fill-cm-amber" : "text-cm-amber/30"}
                       />
                     ))}

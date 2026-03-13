@@ -8,7 +8,6 @@ import ResponseInput from "../components/ResponseInput";
 import GradeReveal from "../components/GradeReveal";
 import LevelUpModal from "../components/LevelUpModal";
 import BadgeUnlockModal from "../components/BadgeUnlockModal";
-import CategoryProgress from "../components/CategoryProgress";
 import RecommendedSection from "../components/RecommendedSection";
 import DifficultySuggestion from "../components/DifficultySuggestion";
 import ConceptPrimer from "../components/ConceptPrimer";
@@ -365,7 +364,9 @@ export default function TrainingPage({
                 generateStreaming(cat);
               }}
             />
-            <CategoryProgress />
+            <h3 className="text-xs font-semibold text-cm-muted uppercase tracking-wider mt-2">
+              Browse by Category
+            </h3>
             {(() => {
               const grouped = new Map<string, string[]>();
               for (const cat of unlockedCategories) {
@@ -404,18 +405,18 @@ export default function TrainingPage({
                       <div className="flex items-center gap-2">
                         <button
                           onClick={(e) => { e.stopPropagation(); setPrimerCategory(category); }}
-                          className="text-cm-muted hover:text-cm-primary transition-colors p-1"
+                          className="flex items-center gap-1 text-xs text-cm-muted hover:text-cm-primary border border-cm-border hover:border-cm-primary/40 rounded px-2 py-0.5 transition-all"
                           aria-label={`Learn ${categoryDisplay[category] || category} concepts`}
-                          title="Learn First"
                         >
-                          <BookOpen size={14} />
+                          <BookOpen size={12} />
+                          Learn
                         </button>
                         <span className="capitalize text-cm-muted text-xs">{sorted[0]}</span>
                         <span className="flex items-center gap-0.5">
                           {[1, 2, 3].map((i) => (
                             <Star
                               key={i}
-                              size={10}
+                              size={12}
                               className={i <= diffLevel ? "text-cm-amber fill-cm-amber" : "text-cm-amber/30"}
                             />
                           ))}
@@ -439,11 +440,11 @@ export default function TrainingPage({
                       </div>
                       <button
                         onClick={() => setPrimerCategory(category)}
-                        className="text-cm-muted hover:text-cm-primary transition-colors p-1"
+                        className="flex items-center gap-1 text-xs text-cm-muted hover:text-cm-primary border border-cm-border hover:border-cm-primary/40 rounded px-2 py-0.5 transition-all"
                         aria-label={`Learn ${categoryDisplay[category] || category} concepts`}
-                        title="Learn First"
                       >
-                        <BookOpen size={14} />
+                        <BookOpen size={12} />
+                        Learn
                       </button>
                     </div>
                     <div className="flex gap-2">
@@ -461,7 +462,7 @@ export default function TrainingPage({
                               {[1, 2, 3].map((i) => (
                                 <Star
                                   key={i}
-                                  size={10}
+                                  size={12}
                                   className={i <= diffLevel ? "text-cm-amber fill-cm-amber" : "text-cm-amber/30"}
                                 />
                               ))}
@@ -527,7 +528,7 @@ export default function TrainingPage({
             {selectedCat && (
               <button
                 onClick={() => generateStreaming(selectedCat)}
-                className="cm-btn-primary-lg px-6 py-2"
+                className="cm-btn-primary"
               >
                 Retry
               </button>
@@ -579,13 +580,16 @@ export default function TrainingPage({
       {/* Deep Analysis — Probe phase */}
       {mode === "deep-probe" && scenario && probeQuestion && (
         <>
-          <ScenarioCard
-            id={scenario.id}
-            category={scenario.category}
-            difficulty={scenario.difficulty}
-            content={scenario.content}
-            onHintsUsedChange={setHintsUsed}
-          />
+          <div className="cm-surface p-4 flex items-start gap-3">
+            <span
+              className="w-2 h-2 rounded-full mt-1.5 flex-shrink-0"
+              style={{ backgroundColor: categoryColors[scenario.category] || "#4D34EF" }}
+            />
+            <div className="min-w-0">
+              <p className="text-cm-text font-semibold text-sm">{scenario.content.title}</p>
+              <p className="text-cm-muted text-xs mt-0.5 line-clamp-2">{scenario.content.question}</p>
+            </div>
+          </div>
           <div className="rounded-md border border-cm-amber/30 bg-cm-amber/5 p-4">
             <h3 className="text-cm-amber font-semibold text-sm mb-2">Follow-up Question</h3>
             <p className="text-cm-text text-sm">{probeQuestion}</p>
@@ -649,7 +653,7 @@ export default function TrainingPage({
                 <button
                   onClick={startNextPathStep}
                   disabled={loadingNextStep}
-                  className="cm-btn-primary-lg px-8 py-3"
+                  className="cm-btn-primary-lg"
                 >
                   {loadingNextStep ? "Loading..." : "Next Lesson Step"}
                 </button>
@@ -663,7 +667,7 @@ export default function TrainingPage({
             ) : (
               <button
                 onClick={reset}
-                className="cm-btn-primary-lg px-8 py-3"
+                className="cm-btn-primary-lg"
               >
                 Next Scenario
               </button>

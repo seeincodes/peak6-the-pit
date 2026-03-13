@@ -106,7 +106,7 @@ export default function OnboardingModal({ show, onComplete }: OnboardingModalPro
               )}
               <button
                 onClick={isLast ? handleFinish : () => setStep(step + 1)}
-                className="cm-btn-primary-lg px-6 py-2 flex items-center gap-2"
+                className="cm-btn-primary-lg flex items-center gap-2"
               >
                 {isLast ? "Let's Go!" : "Next"}
                 {!isLast && <ArrowRight size={14} />}

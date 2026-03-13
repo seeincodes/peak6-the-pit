@@ -1,6 +1,6 @@
 import { motion } from "framer-motion";
 import { Star } from "lucide-react";
-import { categoryColors } from "../theme/colors";
+import { categoryColors, categoryDisplay } from "../theme/colors";
 import MarketChart from "./charts/MarketChart";
 
 interface Choice {
@@ -46,7 +46,7 @@ export default function MCQCard({
           className="cm-chip"
           style={{ color, borderColor: `${color}66`, backgroundColor: `${color}15` }}
         >
-          {category.replace(/_/g, " ").toUpperCase()}
+          {categoryDisplay[category] || category.replace(/_/g, " ")}
         </span>
         <span className="flex items-center gap-0.5" aria-label={`Difficulty: ${difficulty}`}>
           {[1, 2, 3].map((i) => (

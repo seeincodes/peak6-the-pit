@@ -102,7 +102,7 @@ export default function GradeReveal({
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
-          transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
+          transition={{ delay: 0.1, type: "spring", stiffness: 200 }}
           className="relative inline-flex items-center gap-3"
           aria-label={`Overall score: ${overallScore.toFixed(1)} out of 5`}
         >
@@ -118,7 +118,7 @@ export default function GradeReveal({
       <motion.div
         initial={{ opacity: 0, y: -10 }}
         animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.4 }}
+        transition={{ delay: 0.2 }}
         role="status"
         className="text-center mb-4"
       >
@@ -127,7 +127,7 @@ export default function GradeReveal({
             <motion.div
               initial={{ opacity: 0, x: -20 }}
               animate={{ opacity: 1, x: 0 }}
-              transition={{ delay: 0.5 }}
+              transition={{ delay: 0.3 }}
               className="text-cm-muted"
             >
               +{xpBreakdown.base} base
@@ -136,7 +136,7 @@ export default function GradeReveal({
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.6 }}
+                transition={{ delay: 0.35 }}
                 className="text-cm-amber"
               >
                 +{xpBreakdown.streak_bonus} Streak Bonus 🔥
@@ -146,7 +146,7 @@ export default function GradeReveal({
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.7 }}
+                transition={{ delay: 0.4 }}
                 className="text-cm-primary"
               >
                 +{xpBreakdown.perfect_bonus} Perfect Score!
@@ -156,7 +156,7 @@ export default function GradeReveal({
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.8 }}
+                transition={{ delay: 0.45 }}
                 className="text-cm-emerald"
               >
                 +{xpBreakdown.no_hints_bonus} No Hints
@@ -166,7 +166,7 @@ export default function GradeReveal({
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.9 }}
+                transition={{ delay: 0.5 }}
                 className="text-cm-amber"
               >
                 +{xpBreakdown.daily_first_bonus} Daily First 🔥
@@ -176,7 +176,7 @@ export default function GradeReveal({
               <motion.div
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 1.0 }}
+                transition={{ delay: 0.55 }}
                 className="text-cm-red/80"
               >
                 -{xpBreakdown.hint_penalty_pct}% Hint Penalty
@@ -185,7 +185,7 @@ export default function GradeReveal({
             <motion.div
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: 1, scale: 1 }}
-              transition={{ delay: 1.1, type: "spring", stiffness: 300 }}
+              transition={{ delay: 0.6, type: "spring", stiffness: 300 }}
               className="border-t border-cm-border pt-1 mt-1 w-full"
             >
               <span className="text-cm-lime font-bold text-lg">= {xpBreakdown.total} XP</span>
@@ -230,7 +230,7 @@ export default function GradeReveal({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.3 }}
+          transition={{ delay: 0.7 }}
           className="mb-4 px-4"
         >
           <XPProgressBar
@@ -247,7 +247,7 @@ export default function GradeReveal({
       <motion.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
-        transition={{ delay: 1.5 }}
+        transition={{ delay: 0.8 }}
         className="cm-divider pt-4"
       >
         <h3 className="cm-heading-sm text-cm-amber mb-2">Feedback</h3>
@@ -258,7 +258,7 @@ export default function GradeReveal({
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
-          transition={{ delay: 1.7 }}
+          transition={{ delay: 1.0 }}
           className="mt-4 flex items-center gap-4"
         >
           {scenarioId && (

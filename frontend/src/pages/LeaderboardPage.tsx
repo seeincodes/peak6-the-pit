@@ -239,7 +239,10 @@ export default function LeaderboardPage() {
       </div>
 
       {loading && (
-        <div role="status" aria-live="polite" className="text-cm-primary animate-pulse text-center py-12">Loading...</div>
+        <div role="status" aria-live="polite" className="flex flex-col items-center gap-3 py-12">
+          <div className="w-6 h-6 border-2 border-cm-primary/30 border-t-cm-primary rounded-full animate-spin" />
+          <span className="text-cm-muted text-sm">Loading...</span>
+        </div>
       )}
 
       {/* Individual leaderboard */}

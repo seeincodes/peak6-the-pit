@@ -17,6 +17,7 @@ import PeerReviewPage from "./pages/PeerReviewPage";
 import LearningPathPage from "./pages/LearningPathPage";
 import FeedPage from "./pages/FeedPage";
 import UserProfilePage from "./pages/UserProfilePage";
+import QuickFirePage from "./pages/QuickFirePage";
 import { XPToastProvider } from "./context/XPToastContext";
 import api from "./api/client";
 
@@ -27,7 +28,10 @@ function App() {
   if (authLoading) {
     return (
       <div className="min-h-screen bg-cm-bg flex items-center justify-center">
-        <div role="status" aria-live="polite" className="text-cm-primary animate-pulse text-xl">Loading...</div>
+        <div role="status" aria-live="polite" className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-2 border-cm-primary/30 border-t-cm-primary rounded-full animate-spin" />
+          <span className="text-cm-muted text-sm">Loading...</span>
+        </div>
       </div>
     );
   }
@@ -75,7 +79,10 @@ function AuthenticatedApp({
   if (isLoading) {
     return (
       <div className="min-h-screen bg-cm-bg flex items-center justify-center">
-        <div role="status" aria-live="polite" className="text-cm-primary animate-pulse text-xl">Loading...</div>
+        <div role="status" aria-live="polite" className="flex flex-col items-center gap-3">
+          <div className="w-8 h-8 border-2 border-cm-primary/30 border-t-cm-primary rounded-full animate-spin" />
+          <span className="text-cm-muted text-sm">Loading...</span>
+        </div>
       </div>
     );
   }
@@ -130,6 +137,7 @@ function AuthenticatedApp({
                 />
               }
             />
+            <Route path="/quick-fire" element={<QuickFireStandalone />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/review" element={<ReviewPage />} />
             <Route path="/bookmarks" element={<BookmarksPage />} />
@@ -144,6 +152,68 @@ function AuthenticatedApp({
         </main>
       </div>
     </XPToastProvider>
+  );
+}
+
+const QF_CATEGORIES = [
+  { value: "iv_analysis", label: "IV Analysis" },
+  { value: "greeks", label: "Greeks" },
+  { value: "order_flow", label: "Order Flow" },
+  { value: "macro", label: "Macro" },
+  { value: "term_structure", label: "Term Structure" },
+  { value: "skew", label: "IV Skew" },
+  { value: "position_sizing", label: "Position Sizing" },
+  { value: "trade_structuring", label: "Trade Structuring" },
+  { value: "risk_management", label: "Risk Management" },
+];
+
+function QuickFireStandalone() {
+  const [category, setCategory] = useState("");
+  const [difficulty, setDifficulty] = useState("beginner");
+
+  if (category) {
+    return (
+      <QuickFirePage
+        category={category}
+        difficulty={difficulty}
+        onExit={() => setCategory("")}
+      />
+    );
+  }
+
+  return (
+    <div className="cm-page max-w-xl">
+      <h2 className="cm-title mb-6">Quick Fire</h2>
+      <div className="cm-surface p-5 space-y-4">
+        <div>
+          <label className="cm-label mb-1.5 block">Category</label>
+          <select
+            className="cm-input"
+            value={category}
+            onChange={(e) => setCategory(e.target.value)}
+          >
+            <option value="">Select a category...</option>
+            {QF_CATEGORIES.map((c) => (
+              <option key={c.value} value={c.value}>{c.label}</option>
+            ))}
+          </select>
+        </div>
+        <div>
+          <label className="cm-label mb-1.5 block">Difficulty</label>
+          <div className="flex gap-2">
+            {["beginner", "intermediate", "advanced"].map((d) => (
+              <button
+                key={d}
+                onClick={() => setDifficulty(d)}
+                className={difficulty === d ? "cm-tab-active flex-1" : "cm-tab flex-1"}
+              >
+                {d.charAt(0).toUpperCase() + d.slice(1)}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+    </div>
   );
 }
 
