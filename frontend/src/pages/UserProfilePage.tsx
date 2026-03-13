@@ -204,12 +204,12 @@ export default function UserProfilePage() {
           </div>
         )}
 
-        {/* Paths completed */}
+        {/* Lessons completed */}
         {profile.stats.paths_completed > 0 && (
           <div className="cm-surface p-4 flex items-center gap-3">
             <Map size={18} className="text-cm-emerald" />
             <span className="text-sm text-cm-text">
-              <strong>{profile.stats.paths_completed}</strong> learning path{profile.stats.paths_completed > 1 ? "s" : ""} completed
+              <strong>{profile.stats.paths_completed}</strong> lesson{profile.stats.paths_completed > 1 ? "s" : ""} completed
             </span>
           </div>
         )}

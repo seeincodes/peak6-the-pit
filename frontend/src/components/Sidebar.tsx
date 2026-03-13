@@ -37,7 +37,7 @@ const LEVEL_XP = [0, 0, 60, 180, 380, 720, 1250, 2050, 3250, 5050, 8000];
 
 const NAV_ITEMS = [
   { to: "/", icon: Crosshair, label: "Training", matchExact: true },
-  { to: "/paths", icon: Map, label: "Paths", matchExact: false },
+  { to: "/paths", icon: Map, label: "Lessons", matchExact: false },
   { to: "/feed", icon: Activity, label: "Feed", matchExact: false },
   { to: "/review", icon: BookOpen, label: "Review", matchExact: false },
   { to: "/bookmarks", icon: Bookmark, label: "Bookmarks", matchExact: false },

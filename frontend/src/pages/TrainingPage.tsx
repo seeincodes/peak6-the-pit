@@ -98,6 +98,7 @@ export default function TrainingPage({
   const [mode, setMode] = useState<Mode>("select");
   const [selectedCat, setSelectedCat] = useState<{ category: string; difficulty: string } | null>(null);
   const [activePathId, setActivePathId] = useState<string | null>(null);
+  const [activePathLearningObjective, setActivePathLearningObjective] = useState<string | null>(null);
   const [scenario, setScenario] = useState<ScenarioData | null>(null);
   const [responseId, setResponseId] = useState<string | null>(null);
   const [probeQuestion, setProbeQuestion] = useState<string | null>(null);
@@ -123,8 +124,10 @@ export default function TrainingPage({
       const cat = { category: state.category, difficulty: state.difficulty };
       setSelectedCat(cat);
       if (state.stepType === "mcq") {
+        setActivePathLearningObjective(state.learningObjective || null);
         setMode("path-mcq");
       } else {
+        setActivePathLearningObjective(null);
         generateStreaming(cat, state.learningObjective);
       }
       // Clear location state to prevent re-trigger on remount
@@ -188,6 +191,7 @@ export default function TrainingPage({
     setHintsUsed(0);
     setEarnedBadges([]);
     setActivePathId(null);
+    setActivePathLearningObjective(null);
   };
 
   const [loadingNextStep, setLoadingNextStep] = useState(false);
@@ -210,8 +214,10 @@ export default function TrainingPage({
       const cat = { category, difficulty };
       setSelectedCat(cat);
       if (step_type === "mcq") {
+        setActivePathLearningObjective(step_description || null);
         setMode("path-mcq");
       } else {
+        setActivePathLearningObjective(null);
         generateStreaming(cat, step_description);
       }
     } catch {
@@ -535,6 +541,8 @@ export default function TrainingPage({
         <QuickFirePage
           category={selectedCat.category}
           difficulty={selectedCat.difficulty}
+          learningObjective={activePathLearningObjective ?? undefined}
+          requireJustification={false}
           onExit={() => {
             queryClient.invalidateQueries({ queryKey: ["paths"] });
             queryClient.invalidateQueries({ queryKey: ["path-detail"] });
@@ -624,7 +632,7 @@ export default function TrainingPage({
                   </div>
                   <div>
                     <p className={`font-semibold text-sm ${adv.path_completed ? "text-cm-emerald" : "text-cm-primary"}`}>
-                      {adv.path_completed ? "Path Completed!" : "Path Step Complete!"}
+                      {adv.path_completed ? "Lesson Completed!" : "Lesson Step Complete!"}
                     </p>
                     <p className="text-cm-muted text-xs">
                       {adv.step_title} in {adv.path_name}
@@ -643,13 +651,13 @@ export default function TrainingPage({
                   disabled={loadingNextStep}
                   className="cm-btn-primary-lg px-8 py-3"
                 >
-                  {loadingNextStep ? "Loading..." : "Next Path Step"}
+                  {loadingNextStep ? "Loading..." : "Next Lesson Step"}
                 </button>
                 <button
                   onClick={() => navigate("/paths")}
                   className="text-cm-muted hover:text-cm-text text-sm transition-colors"
                 >
-                  Back to Paths
+                  Back to Lessons
                 </button>
               </>
             ) : (

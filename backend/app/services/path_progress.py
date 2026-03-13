@@ -44,7 +44,11 @@ async def check_and_advance_paths(
         # Match category, difficulty, and step type
         if step["category"] != category or step["difficulty"] != difficulty:
             continue
-        if step.get("step_type", "scenario") != step_type:
+        expected_step_type = step.get("step_type", "scenario")
+        # All path steps are delivered as MCQs now, even legacy "scenario" seed rows.
+        if expected_step_type == "scenario":
+            expected_step_type = "mcq"
+        if expected_step_type != step_type:
             continue
 
         required_score = step.get("required_score", 3.5)

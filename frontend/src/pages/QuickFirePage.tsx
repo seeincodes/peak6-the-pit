@@ -13,6 +13,7 @@ interface MCQData {
   category: string;
   difficulty: string;
   content: {
+    concept_explainer?: string;
     context: string;
     question: string;
     choices: { key: string; text: string }[];
@@ -50,13 +51,17 @@ const LIGHTNING_ROUND_COUNT = 10;
 export default function QuickFirePage({
   category,
   difficulty,
+  learningObjective,
   onExit,
   initialMCQ,
+  requireJustification = true,
 }: {
   category: string;
   difficulty: string;
+  learningObjective?: string;
   onExit: () => void;
   initialMCQ?: MCQData | null;
+  requireJustification?: boolean;
 }) {
   const { showXPToast } = useXPToast();
   const [phase, setPhase] = useState<Phase>(initialMCQ ? "question" : "loading");
@@ -134,9 +139,13 @@ export default function QuickFirePage({
   }, [timeLeft]);
 
   const fetchMCQ = useCallback(async (): Promise<MCQData> => {
-    const res = await api.post("/mcq/generate", { category, difficulty });
+    const payload: Record<string, string> = { category, difficulty };
+    if (learningObjective) {
+      payload.learning_objective = learningObjective;
+    }
+    const res = await api.post("/mcq/generate", payload);
     return res.data;
-  }, [category, difficulty]);
+  }, [category, difficulty, learningObjective]);
 
   // Stable ref for fetchMCQ to use in advanceToNext
   const fetchMCQRef = useRef(fetchMCQ);
@@ -176,16 +185,29 @@ export default function QuickFirePage({
 
   const handleSelect = (key: string) => {
     setSelectedKey(key);
-    setPhase("justify");
     if (timerRef.current) clearInterval(timerRef.current);
+    if (requireJustification) {
+      setPhase("justify");
+      return;
+    }
+    submitMutation.mutate({ chosenKey: key, justificationText: "", pathMode: true });
   };
 
   const submitMutation = useMutation({
-    mutationFn: async () => {
+    mutationFn: async ({
+      chosenKey,
+      justificationText,
+      pathMode,
+    }: {
+      chosenKey: string;
+      justificationText: string;
+      pathMode: boolean;
+    }) => {
       const res = await api.post("/mcq/submit", {
         scenario_id: currentMCQ!.id,
-        chosen_key: selectedKey!,
-        justification,
+        chosen_key: chosenKey,
+        justification: justificationText,
+        path_mode: pathMode,
         streak_count: streak,
       });
       return res.data as MCQResult;
@@ -326,11 +348,11 @@ export default function QuickFirePage({
             difficulty={currentMCQ.difficulty}
             content={currentMCQ.content}
             onSelect={handleSelect}
-            disabled={phase === "justify"}
+            disabled={phase === "justify" || submitMutation.isPending}
             selectedKey={selectedKey}
           />
 
-          {phase === "justify" && (
+          {requireJustification && phase === "justify" && (
             <div className="space-y-2">
               <label htmlFor="justification" className="text-cm-amber text-sm font-semibold">
                 Why did you pick {selectedKey}?
@@ -347,7 +369,11 @@ export default function QuickFirePage({
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey && justification.trim()) {
                     e.preventDefault();
-                    submitMutation.mutate();
+                    submitMutation.mutate({
+                      chosenKey: selectedKey!,
+                      justificationText: justification.trim(),
+                      pathMode: false,
+                    });
                   }
                 }}
                 placeholder="Brief justification (1-2 sentences)..."
@@ -363,7 +389,13 @@ export default function QuickFirePage({
               <div className="flex items-center justify-between">
                 <span className="text-cm-muted text-xs" aria-live="off">{justification.length}/200</span>
                 <button
-                  onClick={() => submitMutation.mutate()}
+                  onClick={() =>
+                    submitMutation.mutate({
+                      chosenKey: selectedKey!,
+                      justificationText: justification.trim(),
+                      pathMode: false,
+                    })
+                  }
                   disabled={!justification.trim() || submitMutation.isPending}
                   className="px-4 py-2 rounded bg-cm-primary text-white text-sm font-bold hover:bg-cm-primary/90 transition-all disabled:opacity-40 focus-ring"
                 >

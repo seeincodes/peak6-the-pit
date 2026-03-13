@@ -63,6 +63,13 @@ interface PathDetail {
   is_enrolled: boolean;
 }
 
+const DIFFICULTY_ORDER: Record<string, number> = {
+  beginner: 0,
+  intermediate: 1,
+  mixed: 2,
+  advanced: 3,
+};
+
 const ICON_MAP: Record<string, React.ElementType> = {
   TrendingUp,
   BarChart3,
@@ -211,7 +218,7 @@ function PathDetailView({
 
   if (isLoading || !path) {
     return (
-      <div className="text-cm-primary animate-pulse text-center py-12 text-sm">Loading path...</div>
+      <div className="text-cm-primary animate-pulse text-center py-12 text-sm">Loading lesson...</div>
     );
   }
 
@@ -227,7 +234,7 @@ function PathDetailView({
         onClick={onBack}
         className="flex items-center gap-1 text-cm-muted hover:text-cm-text text-sm transition-colors"
       >
-        <ArrowLeft size={16} /> All Paths
+        <ArrowLeft size={16} /> All Lessons
       </button>
 
       {/* Header */}
@@ -257,7 +264,7 @@ function PathDetailView({
           <div className="mt-4">
             <div className="flex items-center justify-between mb-1">
               <span className="text-xs text-cm-muted">
-                {isCompleted ? "Path completed!" : `${completedSteps} of ${totalSteps} steps complete`}
+                {isCompleted ? "Lesson completed!" : `${completedSteps} of ${totalSteps} steps complete`}
               </span>
               <span className="text-xs font-medium text-cm-primary">{progressPct}%</span>
             </div>
@@ -278,7 +285,7 @@ function PathDetailView({
             className="cm-btn-primary mt-4 w-full flex items-center justify-center gap-2"
           >
             <Play size={16} />
-            {enrollMutation.isPending ? "Enrolling..." : "Start This Path"}
+            {enrollMutation.isPending ? "Enrolling..." : "Start This Lesson"}
           </button>
         )}
       </div>
@@ -397,6 +404,15 @@ export default function LearningPathPage() {
     },
   });
 
+  const sortedPaths = paths
+    ? [...paths].sort((a, b) => {
+        const da = DIFFICULTY_ORDER[a.difficulty_level] ?? Number.MAX_SAFE_INTEGER;
+        const db = DIFFICULTY_ORDER[b.difficulty_level] ?? Number.MAX_SAFE_INTEGER;
+        if (da !== db) return da - db;
+        return a.name.localeCompare(b.name);
+      })
+    : [];
+
   return (
     <div className="cm-page max-w-2xl">
       <AnimatePresence mode="wait">
@@ -410,18 +426,18 @@ export default function LearningPathPage() {
           <motion.div key="browser" initial={{ opacity: 0 }} animate={{ opacity: 1 }}>
             <div className="flex items-center gap-3 mb-4">
               <Map size={22} className="text-cm-primary" />
-              <h2 className="cm-title">Learning Paths</h2>
+              <h2 className="cm-title">Lessons</h2>
             </div>
 
             {isLoading && (
               <div className="text-cm-primary animate-pulse text-center py-12 text-sm">
-                Loading paths...
+                Loading lessons...
               </div>
             )}
 
             {paths && (
               <div className="space-y-3">
-                {paths.map((p, i) => (
+                {sortedPaths.map((p, i) => (
                   <PathCard
                     key={p.id}
                     path={p}
@@ -429,10 +445,10 @@ export default function LearningPathPage() {
                     index={i}
                   />
                 ))}
-                {paths.length === 0 && (
+                {sortedPaths.length === 0 && (
                   <div className="cm-surface p-8 text-center">
                     <Map size={32} className="text-cm-muted mx-auto mb-3" />
-                    <div className="text-cm-muted text-sm">No learning paths available yet.</div>
+                    <div className="text-cm-muted text-sm">No lessons available yet.</div>
                   </div>
                 )}
               </div>

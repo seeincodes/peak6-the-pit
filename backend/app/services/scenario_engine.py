@@ -18,6 +18,7 @@ from app.prompts.scenario_generation import (
 from app.prompts.mcq_generation import (
     MCQ_SYSTEM_PROMPT,
     MCQ_TEMPLATE,
+    MCQ_LEARNING_OBJECTIVE_SECTION,
 )
 from app.prompts.prompt_builder import get_category_display, get_genre_guidance
 from app.services.rag import build_retrieval_query, retrieve_chunks
@@ -299,6 +300,8 @@ async def generate_mcq(
     db,
     category: str,
     difficulty: str = "beginner",
+    user_id: str | None = None,
+    learning_objective: str | None = None,
 ) -> dict:
     """Generate a single MCQ using optional RAG context + Claude."""
     started = time.perf_counter()
@@ -307,27 +310,20 @@ async def generate_mcq(
 
     category_display = get_category_display(category)
     genre_guidance = get_genre_guidance(category, "mcq")
+    objective_section = ""
+    if learning_objective:
+        objective_section = MCQ_LEARNING_OBJECTIVE_SECTION.format(learning_objective=learning_objective)
 
     prompt = MCQ_TEMPLATE.format(
         difficulty=difficulty,
         category_display=category_display,
         genre_guidance=genre_guidance,
+        learning_objective_section=objective_section,
         rag_context=rag_context if rag_context else "No specific context available. Use general options trading knowledge.",
         market_snapshot=market_snapshot,
     )
-    cache_key = _cache_key("mcq", prompt)
+    # Intentionally bypass prompt cache for MCQs to reduce repeated-question risk.
     cache_started = time.perf_counter()
-    cached = await _cache_get(cache_key)
-    if cached:
-        total_ms = int((time.perf_counter() - started) * 1000)
-        record_perf_metric("mcq", cache_hit=True, total_ms=total_ms, model_ms=0)
-        logger.info(
-            "mcq.generate cache_hit category=%s difficulty=%s elapsed_ms=%d",
-            category,
-            difficulty,
-            total_ms,
-        )
-        return cached
     model_started = time.perf_counter()
 
     message = await anthropic_client.messages.create(
@@ -340,13 +336,15 @@ async def generate_mcq(
 
     raw_text = message.content[0].text
     mcq_data = parse_scenario_json(raw_text)
+    signature = _content_signature(mcq_data)
+    await _mark_user_seen(user_id, signature)
     result = {
         "category": category,
         "difficulty": difficulty,
         "content": mcq_data,
         "context_chunks": trimmed_chunks,
+        "signature": signature,
     }
-    await _cache_set(cache_key, result)
     model_ms = int((time.perf_counter() - model_started) * 1000)
     total_ms = int((time.perf_counter() - started) * 1000)
     record_perf_metric("mcq", cache_hit=False, total_ms=total_ms, model_ms=model_ms)

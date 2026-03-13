@@ -10,6 +10,13 @@ You create multiple-choice questions that test options trading knowledge. Each q
 
 You output JSON only. No markdown, no commentary outside the JSON."""
 
+MCQ_LEARNING_OBJECTIVE_SECTION = """
+Learning objective for this question:
+{learning_objective}
+
+Treat this objective as the primary concept to teach and assess.
+"""
+
 MCQ_TEMPLATE = """Generate a {difficulty} difficulty multiple-choice question in the category: {category_display}.
 
 Use the following context to ground the question:
@@ -26,11 +33,20 @@ Use the live market data above to anchor your question in current real-world con
 
 Genre guidance:
 {genre_guidance}
+{learning_objective_section}
+
+Pedagogy requirements for lesson mode:
+- First teach one core concept in plain language.
+- Then ask exactly one simple check question about that same concept.
+- Keep the question answerable in one reasoning step (no multi-hop logic).
+- Avoid compound prompts ("best + why + hedge"); ask one thing only.
+- Distractors should be realistic but clearly wrong for the taught concept.
 
 Output a JSON object with exactly these fields:
 {{
+  "concept_explainer": "A 3-5 sentence mini-lesson that teaches one core concept before the question. Define the term, explain why it matters, and include one practical example or mental model.",
   "context": "Brief market setup (2-3 sentences with specific data points)",
-  "question": "The specific question to answer (1 sentence)",
+  "question": "A single, simple concept-check question (1 sentence) tied directly to the concept_explainer",
   "choices": [
     {{"key": "A", "text": "First option"}},
     {{"key": "B", "text": "Second option"}},
@@ -42,9 +58,9 @@ Output a JSON object with exactly these fields:
 }}
 
 Difficulty guidelines:
-- beginner: Direct concept application, one variable to consider
-- intermediate: Two concepts interact, requires some inference
-- advanced: Multi-factor reasoning, subtle distinctions between options
+- beginner: Direct concept check, one variable to consider
+- intermediate: Still one core concept, but with a realistic market detail
+- advanced: One nuanced concept check with tighter distractors (still single-question focus)
 
 IMPORTANT: Randomize which key (A/B/C/D) is correct. Do not always make B correct."""
 

@@ -80,7 +80,8 @@ async def get_path_detail(
             status = "current"
         else:
             status = "locked"
-        steps_with_status.append({**step, "status": status})
+        # Learning paths now run in concept-first MCQ mode for every step.
+        steps_with_status.append({**step, "status": status, "step_type": "mcq"})
 
     return {
         "id": str(path.id),
@@ -158,7 +159,8 @@ async def start_step(
         "step_number": step["step_number"],
         "step_title": step["title"],
         "step_description": step.get("description", ""),
-        "step_type": step.get("step_type", "scenario"),
+        # Always launch MCQ mode for path steps.
+        "step_type": "mcq",
         "required_score": step["required_score"],
         "path_id": str(path.id),
         "path_name": path.name,

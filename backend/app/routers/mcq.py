@@ -29,12 +29,14 @@ router = APIRouter(prefix="/api/mcq", tags=["mcq"])
 class GenerateMCQRequest(BaseModel):
     category: str = "iv_analysis"
     difficulty: str = "beginner"
+    learning_objective: str | None = None
 
 
 class SubmitMCQRequest(BaseModel):
     scenario_id: UUID
     chosen_key: str = Field(pattern=r"^[A-D]$")
-    justification: str = Field(max_length=MCQ_JUSTIFY_MAX_CHARS)
+    justification: str = Field(default="", max_length=MCQ_JUSTIFY_MAX_CHARS)
+    path_mode: bool = False
     streak_count: int = Field(default=0, ge=0)
 
 
@@ -44,14 +46,24 @@ async def generate(
     user: User = Depends(get_current_user),
     db: AsyncSession = Depends(get_db),
 ):
-    # Try pool first for instant response
-    mcq_data = await get_from_pool(req.category, req.difficulty)
+    use_pool = req.learning_objective is None
+    mcq_data = None
+    if use_pool:
+        # Try pool first for instant response
+        mcq_data = await get_from_pool(req.category, req.difficulty)
 
     if mcq_data is None:
-        mcq_data = await generate_mcq(db, req.category, req.difficulty)
+        mcq_data = await generate_mcq(
+            db,
+            req.category,
+            req.difficulty,
+            user_id=str(user.id),
+            learning_objective=req.learning_objective,
+        )
 
-    # Spawn refill so next request is instant
-    spawn_refill(req.category, req.difficulty)
+    # Spawn refill so next request is instant (only for generic pool-backed generation)
+    if use_pool:
+        spawn_refill(req.category, req.difficulty)
 
     scenario = Scenario(
         category=mcq_data["category"],
@@ -65,6 +77,7 @@ async def generate(
 
     # Return question WITHOUT correct_key or explanation (don't leak answers)
     safe_content = {
+        "concept_explainer": mcq_data["content"].get("concept_explainer"),
         "context": mcq_data["content"]["context"],
         "question": mcq_data["content"]["question"],
         "choices": mcq_data["content"]["choices"],
@@ -97,15 +110,22 @@ async def submit(
     chosen_text = choices_by_key.get(req.chosen_key, "")
     correct_text = choices_by_key.get(correct_key, "")
 
-    # Grade justification via LLM
-    grade_result = await grade_mcq_justification(
-        question=content["question"],
-        chosen_key=req.chosen_key,
-        chosen_text=chosen_text,
-        correct_key=correct_key,
-        correct_text=correct_text,
-        justification=req.justification,
-    )
+    if req.path_mode:
+        # Learning-path lessons are concept-first checks; no typed explanation required.
+        grade_result = {
+            "quality": "good" if is_correct else "weak",
+            "note": "Concept-check step graded on answer correctness.",
+        }
+    else:
+        # Grade justification via LLM
+        grade_result = await grade_mcq_justification(
+            question=content["question"],
+            chosen_key=req.chosen_key,
+            chosen_text=chosen_text,
+            correct_key=correct_key,
+            correct_text=correct_text,
+            justification=req.justification,
+        )
 
     justification_quality = grade_result.get("quality", "weak")
 
@@ -114,7 +134,7 @@ async def submit(
         user_id=user.id,
         scenario_id=scenario.id,
         conversation=[
-            {"role": "user", "content": req.justification},
+            {"role": "user", "content": req.justification or "[no explanation submitted]"},
             {"role": "system", "content": f"Chose: {req.chosen_key}, Correct: {correct_key}"},
         ],
         is_complete=True,

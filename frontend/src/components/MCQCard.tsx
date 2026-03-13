@@ -13,6 +13,7 @@ interface MCQCardProps {
   category: string;
   difficulty: string;
   content: {
+    concept_explainer?: string;
     context: string;
     question: string;
     choices: Choice[];
@@ -60,6 +61,13 @@ export default function MCQCard({
       </div>
 
       <p className="cm-body mb-4">{content.context}</p>
+
+      {content.concept_explainer && (
+        <div className="mb-4 rounded-lg border border-cm-border bg-cm-card-raised p-3">
+          <p className="text-xs font-semibold text-cm-primary mb-1">Concept Lesson</p>
+          <p className="text-sm text-cm-text">{content.concept_explainer}</p>
+        </div>
+      )}
 
       <MarketChart scenarioId={id} category={category} height={140} className="mb-4" />
 

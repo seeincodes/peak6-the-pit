@@ -1,5 +1,6 @@
 """Seed data for learning paths."""
 import uuid
+from copy import deepcopy
 
 from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
@@ -7,7 +8,116 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from app.models.learning_path import LearningPath
 
 
+LESSON_STYLE_SUFFIX = (
+    " Teach the concept first, then ask one simple question to check understanding."
+)
+
+
+def _normalize_steps_for_lesson_mode(steps: list[dict]) -> list[dict]:
+    """Ensure all path steps follow concept-first, simple-question lesson style."""
+    normalized = []
+    for step in deepcopy(steps):
+        # Paths run in MCQ lesson mode across the app.
+        step["step_type"] = "mcq"
+
+        desc = (step.get("description") or "").strip()
+        if desc:
+            if "teach the concept first" not in desc.lower():
+                step["description"] = f"{desc}{LESSON_STYLE_SUFFIX}"
+        else:
+            step["description"] = (
+                "Teach the concept first, then ask one simple question to check understanding."
+            )
+
+        normalized.append(step)
+    return normalized
+
+
 LEARNING_PATHS = [
+    {
+        "id": uuid.UUID("10000000-0000-0000-0000-000000000007"),
+        "slug": "options-basics-foundation",
+        "name": "Options Basics Foundation",
+        "description": "Build rock-solid options fundamentals through concept-first lessons and simple checks before moving to advanced scenarios.",
+        "icon": "BookOpen",
+        "difficulty_level": "beginner",
+        "estimated_minutes": 120,
+        "display_order": 1,
+        "steps": [
+            {
+                "step_number": 1,
+                "title": "Call vs Put Basics",
+                "description": "Teach what calls and puts are, then ask one simple question that distinguishes when each benefits.",
+                "category": "fundamentals",
+                "difficulty": "beginner",
+                "step_type": "mcq",
+                "required_score": 3.5,
+            },
+            {
+                "step_number": 2,
+                "title": "Moneyness (ITM/ATM/OTM)",
+                "description": "Teach moneyness definitions and intuition, then ask a single direct moneyness identification question.",
+                "category": "fundamentals",
+                "difficulty": "beginner",
+                "step_type": "mcq",
+                "required_score": 3.5,
+            },
+            {
+                "step_number": 3,
+                "title": "Intrinsic vs Extrinsic Value",
+                "description": "Explain intrinsic and time value, then ask one simple split-value question.",
+                "category": "fundamentals",
+                "difficulty": "beginner",
+                "step_type": "mcq",
+                "required_score": 3.5,
+            },
+            {
+                "step_number": 4,
+                "title": "Time Decay Essentials",
+                "description": "Teach why options decay with time and when decay accelerates, then ask one direct check question.",
+                "category": "greeks",
+                "difficulty": "beginner",
+                "step_type": "mcq",
+                "required_score": 3.5,
+            },
+            {
+                "step_number": 5,
+                "title": "Delta as Direction Exposure",
+                "description": "Teach delta as directional sensitivity, then ask one simple interpretation question.",
+                "category": "greeks",
+                "difficulty": "beginner",
+                "step_type": "mcq",
+                "required_score": 3.5,
+            },
+            {
+                "step_number": 6,
+                "title": "Implied Volatility Basics",
+                "description": "Teach what implied volatility means and how it impacts option premiums, then ask one simple concept check.",
+                "category": "iv_analysis",
+                "difficulty": "beginner",
+                "step_type": "mcq",
+                "required_score": 3.5,
+            },
+            {
+                "step_number": 7,
+                "title": "Position Sizing Basics",
+                "description": "Teach basic risk-per-trade sizing, then ask one simple sizing decision question.",
+                "category": "position_sizing",
+                "difficulty": "beginner",
+                "step_type": "mcq",
+                "required_score": 3.5,
+            },
+            {
+                "step_number": 8,
+                "title": "Beginner Synthesis Check",
+                "description": "Review core basics and ask one final simple question that combines two beginner concepts without adding complexity.",
+                "category": "fundamentals",
+                "difficulty": "beginner",
+                "step_type": "mcq",
+                "required_score": 3.5,
+            },
+        ],
+    },
     {
         "id": uuid.UUID("10000000-0000-0000-0000-000000000001"),
         "slug": "greeks-fundamentals",
@@ -16,7 +126,7 @@ LEARNING_PATHS = [
         "icon": "TrendingUp",
         "difficulty_level": "beginner",
         "estimated_minutes": 90,
-        "display_order": 1,
+        "display_order": 2,
         "steps": [
             {
                 "step_number": 1,
@@ -91,7 +201,7 @@ LEARNING_PATHS = [
         "icon": "BarChart3",
         "difficulty_level": "mixed",
         "estimated_minutes": 150,
-        "display_order": 2,
+        "display_order": 3,
         "steps": [
             {
                 "step_number": 1,
@@ -166,7 +276,7 @@ LEARNING_PATHS = [
         "icon": "Shield",
         "difficulty_level": "mixed",
         "estimated_minutes": 120,
-        "display_order": 3,
+        "display_order": 4,
         "steps": [
             {
                 "step_number": 1,
@@ -232,7 +342,7 @@ LEARNING_PATHS = [
         "icon": "Globe",
         "difficulty_level": "mixed",
         "estimated_minutes": 120,
-        "display_order": 4,
+        "display_order": 5,
         "steps": [
             {
                 "step_number": 1,
@@ -298,7 +408,7 @@ LEARNING_PATHS = [
         "icon": "Layers",
         "difficulty_level": "intermediate",
         "estimated_minutes": 100,
-        "display_order": 5,
+        "display_order": 6,
         "steps": [
             {
                 "step_number": 1,
@@ -364,7 +474,7 @@ LEARNING_PATHS = [
         "icon": "Activity",
         "difficulty_level": "beginner",
         "estimated_minutes": 80,
-        "display_order": 6,
+        "display_order": 7,
         "steps": [
             {
                 "step_number": 1,
@@ -420,15 +530,18 @@ async def seed_learning_paths(db: AsyncSession) -> int:
     """Seed learning paths — insert new or update existing steps. Returns count of changes."""
     count = 0
     for path_data in LEARNING_PATHS:
+        normalized_steps = _normalize_steps_for_lesson_mode(path_data["steps"])
         existing = await db.get(LearningPath, path_data["id"])
         if existing:
             # Update steps if they changed (e.g. new MCQ steps added)
-            if existing.steps != path_data["steps"]:
-                existing.steps = path_data["steps"]
+            if existing.steps != normalized_steps:
+                existing.steps = normalized_steps
                 existing.estimated_minutes = path_data["estimated_minutes"]
                 count += 1
         else:
-            path = LearningPath(**path_data)
+            payload = dict(path_data)
+            payload["steps"] = normalized_steps
+            path = LearningPath(**payload)
             db.add(path)
             count += 1
     if count:
