@@ -8,8 +8,8 @@ RUN npm install
 
 COPY . .
 
-# Write production env inline to bust Docker cache and ensure Vite picks it up
-RUN echo "VITE_API_URL=https://backend-production-2485.up.railway.app/api" > .env.production
+ARG VITE_API_URL=https://backend-production-2485.up.railway.app/api
+RUN echo "VITE_API_URL=${VITE_API_URL}" > .env.production
 
 RUN npm run build
 
