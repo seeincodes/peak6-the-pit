@@ -53,7 +53,7 @@ export default function ScenarioCard({ id, category, difficulty, content, onHint
             <Star
               key={i}
               size={14}
-              className={i <= difficultyLevel ? "text-cm-amber fill-cm-amber" : "text-cm-muted"}
+              className={i <= difficultyLevel ? "text-cm-amber fill-cm-amber" : "text-cm-amber/30"}
               aria-hidden="true"
             />
           ))}
@@ -63,7 +63,7 @@ export default function ScenarioCard({ id, category, difficulty, content, onHint
       <h2 className="cm-subtitle mb-3">{content.title}</h2>
 
       {content.concept_explainer && (
-        <div className="mb-4 px-4 py-3 rounded-lg border border-cm-border bg-cm-card-raised">
+        <div className="mb-4 px-4 py-3 rounded-lg border border-cm-primary/20 bg-cm-primary/5">
           <div className="flex items-center gap-2 mb-2">
             <BookOpen size={14} className="text-cm-primary" />
             <span className="text-xs font-semibold text-cm-primary uppercase tracking-wide">Key Concept</span>
@@ -89,7 +89,7 @@ export default function ScenarioCard({ id, category, difficulty, content, onHint
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
                 exit={{ opacity: 0, height: 0 }}
-                className="flex items-start gap-2 mb-2 px-3 py-2 rounded-lg border border-cm-border bg-cm-card-raised"
+                className="flex items-start gap-2 mb-2 px-3 py-2 rounded-md border border-cm-amber/20 bg-cm-amber/5"
               >
                 <Lightbulb size={14} className="text-cm-amber mt-0.5 flex-shrink-0" />
                 <p className="text-sm text-cm-text">{hints[i]}</p>
@@ -100,11 +100,11 @@ export default function ScenarioCard({ id, category, difficulty, content, onHint
           {!allRevealed && (
             <button
               onClick={revealNext}
-              className="cm-btn-ghost flex items-center gap-1.5 text-xs mt-1 px-0"
+              className="flex items-center gap-1.5 text-xs text-cm-amber hover:text-cm-amber/80 transition-colors mt-1"
             >
               <Lightbulb size={12} />
               Show hint ({revealedHints + 1}/{hints.length})
-              <span className="text-cm-muted">- costs 20% XP per hint</span>
+              <span className="text-cm-muted">— costs 20% XP per hint</span>
             </button>
           )}
         </div>

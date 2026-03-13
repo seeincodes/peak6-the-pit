@@ -52,8 +52,8 @@ export default function ResponseInput({ onSubmit, placeholder, loading }: Respon
       </div>
 
       {loading && (
-        <div className="flex items-center gap-3 mt-3 px-4 py-3 rounded-lg bg-cm-card-raised border border-cm-border animate-pulse">
-          <div className="w-5 h-5 border-2 border-cm-border border-t-cm-primary rounded-full animate-spin" />
+        <div className="flex items-center gap-3 mt-3 px-4 py-3 rounded-lg bg-cm-primary/5 border border-cm-primary/20 animate-pulse">
+          <div className="w-5 h-5 border-2 border-cm-primary/30 border-t-cm-primary rounded-full animate-spin" />
           <span className="text-sm text-cm-primary">AI is analyzing your response...</span>
         </div>
       )}

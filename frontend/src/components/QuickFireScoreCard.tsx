@@ -32,17 +32,17 @@ export default function QuickFireScoreCard({
       </div>
 
       <div className="grid grid-cols-3 gap-4">
-        <div className="p-3 rounded-lg bg-cm-card-raised border border-cm-border">
+        <div className="p-3 rounded-md bg-cm-bg/50 border border-cm-border/30">
           <Target size={18} className="mx-auto text-cm-primary mb-1" />
           <p className="text-2xl font-bold text-cm-text">{accuracy}%</p>
           <p className="text-xs text-cm-muted">Accuracy</p>
         </div>
-        <div className="p-3 rounded-lg bg-cm-card-raised border border-cm-border">
+        <div className="p-3 rounded-md bg-cm-bg/50 border border-cm-border/30">
           <Zap size={18} className="mx-auto text-cm-lime mb-1" />
           <p className="text-2xl font-bold text-cm-lime">+{totalXP}</p>
           <p className="text-xs text-cm-muted">XP Earned</p>
         </div>
-        <div className="p-3 rounded-lg bg-cm-card-raised border border-cm-border">
+        <div className="p-3 rounded-md bg-cm-bg/50 border border-cm-border/30">
           <span className="block text-lg mb-1">🧠</span>
           <p className="text-2xl font-bold text-cm-text">{goodJustifications}/{total}</p>
           <p className="text-xs text-cm-muted">Good Reasoning</p>
@@ -59,7 +59,7 @@ export default function QuickFireScoreCard({
         </button>
         <button
           onClick={onExit}
-          className="cm-btn-secondary"
+          className="px-6 py-2 rounded-md border border-cm-border text-cm-muted hover:text-cm-text text-sm font-medium transition-colors"
         >
           Exit
         </button>

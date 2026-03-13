@@ -77,7 +77,7 @@ export default function BookmarksPage() {
                   <Star
                     key={j}
                     size={10}
-                    className={j <= diffLevel ? "text-cm-amber fill-cm-amber" : "text-cm-muted"}
+                    className={j <= diffLevel ? "text-cm-amber fill-cm-amber" : "text-cm-amber/30"}
                   />
                 ))}
               </span>

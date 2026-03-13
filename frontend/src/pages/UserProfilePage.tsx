@@ -148,7 +148,7 @@ export default function UserProfilePage() {
                 <p className="text-xs text-cm-muted mt-1">{profile.bio}</p>
               )}
               {profile.cohort && (
-                <span className="text-xs text-cm-primary mt-1 block">
+                <span className="text-xs text-cm-primary/80 mt-1 block">
                   Cohort: {profile.cohort}
                 </span>
               )}
@@ -191,7 +191,7 @@ export default function UserProfilePage() {
               {profile.badges.map((badge) => (
                 <div
                   key={badge.slug}
-                  className="flex flex-col items-center gap-1 p-2 rounded-lg bg-cm-card-raised border border-cm-border"
+                  className="flex flex-col items-center gap-1 p-2 rounded-lg bg-cm-card-raised/50 border border-cm-border"
                   title={badge.description}
                 >
                   <span className="text-xl">{badge.icon}</span>
@@ -233,7 +233,7 @@ export default function UserProfilePage() {
                   <span className="text-cm-text flex-1">
                     {activityLabel(a.event_type, a.payload)}
                   </span>
-                  <span className="text-xs text-cm-muted shrink-0">
+                  <span className="text-xs text-cm-muted/60 shrink-0">
                     {relativeTime(a.created_at)}
                   </span>
                 </motion.div>

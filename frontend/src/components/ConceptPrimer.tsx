@@ -12,11 +12,9 @@ interface PrimerData {
 export default function ConceptPrimer({
   category,
   onClose,
-  onStart,
 }: {
   category: string;
   onClose: () => void;
-  onStart?: () => void;
 }) {
   const { data, isLoading } = useQuery<PrimerData>({
     queryKey: ["primer", category],
@@ -40,7 +38,7 @@ export default function ConceptPrimer({
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 30 }}
-          className="bg-cm-card border border-cm-border rounded-xl p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto relative z-10"
+          className="bg-cm-card border border-cm-border rounded-md p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto relative z-10"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center justify-between mb-4">
@@ -64,7 +62,7 @@ export default function ConceptPrimer({
           {isLoading ? (
             <div className="flex items-center justify-center py-8">
               <motion.div
-                className="w-8 h-8 rounded-full border-2 border-cm-border border-t-cm-primary"
+                className="w-8 h-8 rounded-full border-2 border-cm-primary/30 border-t-cm-primary"
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
               />
@@ -74,7 +72,7 @@ export default function ConceptPrimer({
               {data.chunks.map((chunk, i) => (
                 <div
                   key={i}
-                  className="p-3 rounded-lg bg-cm-bg border border-cm-border"
+                  className="p-3 rounded-md bg-cm-bg border border-cm-border/50"
                 >
                   <p className="text-sm text-cm-text leading-relaxed whitespace-pre-line">
                     {chunk.content}
@@ -91,22 +89,8 @@ export default function ConceptPrimer({
             </p>
           )}
 
-          <div className="mt-4 text-center flex items-center justify-center gap-2">
-            {onStart && (
-              <button onClick={onClose} className="cm-btn-secondary px-5 py-2">
-                Not now
-              </button>
-            )}
-            <button
-              onClick={() => {
-                if (onStart) {
-                  onStart();
-                  return;
-                }
-                onClose();
-              }}
-              className="cm-btn-primary-lg px-6 py-2"
-            >
+          <div className="mt-4 text-center">
+            <button onClick={onClose} className="cm-btn-primary-lg px-6 py-2">
               Start Practicing
             </button>
           </div>

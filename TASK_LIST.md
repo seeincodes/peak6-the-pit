@@ -316,23 +316,3 @@
 - [ ] Track usage event (e.g., `used_easier_rescue`) for analytics/performance insights
 
 **Files:** `TrainingPage.tsx`, `routers/scenarios.py`, `services/difficulty_engine.py`, optional `services/analytics.py`
-
----
-
-## Phase 5: UI Refresh Roadmap (Current)
-
-**Execution rule: complete one item at a time in order.**
-
-- [x] 5.1 Phase 1A: CSS custom properties + warm light palette
-- [x] 5.2 Phase 1B: Softer border radius + shadows
-- [x] 5.3 Phase 1C: Typography (DM Sans + size bumps)
-- [x] 5.4 Phase 1D: Dark mode toggle (`ThemeProvider` + `ThemeToggle`)
-- [x] 5.5 Phase 2A: Category groups + descriptions + friendlier names
-- [x] 5.6 Phase 2B: Redesigned category selection grid
-- [x] 5.7 Phase 2C+2D: Loading messages + glossary system
-- [x] 5.8 Phase 3: Learning before testing (proactive primers)
-- [x] 5.9 Phase 4: Interactive onboarding
-- [x] 5.10 Phase 5: Scenario & feedback UX polish
-- [x] 5.11 Phase 6: Navigation simplification
-- [x] 5.12 Phase 7: Landing & auth pages
-- [x] 5.13 TypeScript check + visual verify (TS build complete; local dev visual start attempted, blocked by Vite network interface error in this environment)

@@ -259,45 +259,43 @@ export default function GradeReveal({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 1.7 }}
-          className="mt-4"
+          className="mt-4 flex items-center gap-4"
         >
-          <div className="flex items-center gap-4">
-            {scenarioId && (
-              <button
-                onClick={toggleBookmark}
-                className={`flex items-center gap-1.5 text-sm transition-colors ${
-                  bookmarked ? "text-cm-amber" : "text-cm-muted hover:text-cm-amber"
-                }`}
-              >
-                {bookmarked ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
-                {bookmarked ? "Bookmarked" : "Bookmark"}
-              </button>
-            )}
-            {!modelAnswer && (
-              <button
-                onClick={fetchModelAnswer}
-                disabled={loadingModel}
-                className="flex items-center gap-2 text-sm text-cm-primary hover:text-cm-primary/80 transition-colors disabled:opacity-50"
-              >
-                {loadingModel ? (
-                  <Loader2 size={14} className="animate-spin" />
-                ) : (
-                  <BookOpen size={14} />
-                )}
-                {loadingModel ? "Generating model answer..." : "Show Model Answer"}
-              </button>
-            )}
-          </div>
+          {scenarioId && (
+            <button
+              onClick={toggleBookmark}
+              className={`flex items-center gap-1.5 text-sm transition-colors ${
+                bookmarked ? "text-cm-amber" : "text-cm-muted hover:text-cm-amber"
+              }`}
+            >
+              {bookmarked ? <BookmarkCheck size={14} /> : <Bookmark size={14} />}
+              {bookmarked ? "Bookmarked" : "Bookmark"}
+            </button>
+          )}
+          {!modelAnswer && (
+            <button
+              onClick={fetchModelAnswer}
+              disabled={loadingModel}
+              className="flex items-center gap-2 text-sm text-cm-primary hover:text-cm-primary/80 transition-colors disabled:opacity-50"
+            >
+              {loadingModel ? (
+                <Loader2 size={14} className="animate-spin" />
+              ) : (
+                <BookOpen size={14} />
+              )}
+              {loadingModel ? "Generating model answer..." : "Show Model Answer"}
+            </button>
+          )}
           <AnimatePresence>
             {modelAnswer && (
               <motion.div
                 initial={{ opacity: 0, height: 0 }}
                 animate={{ opacity: 1, height: "auto" }}
-                className="mt-3 p-4 rounded-lg border border-cm-border bg-cm-card-raised"
+                className="mt-3 p-4 rounded-md border border-cm-primary/20 bg-cm-primary/5"
               >
                 <h4 className="text-sm font-semibold text-cm-primary mb-2 flex items-center gap-1.5">
                   <BookOpen size={14} />
-                  Model Answer (Example of a top-tier response)
+                  Model Answer (5/5)
                 </h4>
                 <p className="text-sm text-cm-text leading-relaxed">{modelAnswer}</p>
               </motion.div>

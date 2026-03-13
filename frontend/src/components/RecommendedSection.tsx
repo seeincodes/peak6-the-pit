@@ -59,7 +59,7 @@ export default function RecommendedSection({
                     <Star
                       key={i}
                       size={10}
-                      className={i <= diffLevel ? "text-cm-amber fill-cm-amber" : "text-cm-muted"}
+                      className={i <= diffLevel ? "text-cm-amber fill-cm-amber" : "text-cm-amber/30"}
                     />
                   ))}
                 </span>

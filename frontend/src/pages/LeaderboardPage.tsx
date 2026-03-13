@@ -37,17 +37,17 @@ function IndividualEntry({ entry, index }: { entry: LeaderboardEntry; index: num
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: index * 0.05 }}
-      className={`flex items-center justify-between p-4 rounded-lg border transition-all ${
+      className={`flex items-center justify-between p-4 rounded-md border transition-all ${
         entry.is_current_user
-          ? "border-cm-primary bg-cm-card-raised"
-          : "border-cm-border bg-cm-card"
+          ? "border-cm-primary/50 bg-cm-primary/5"
+          : "border-cm-border bg-cm-card/50"
       }`}
     >
       <div className="flex items-center gap-4">
         <span className={`w-8 text-center font-bold flex items-center justify-center ${
           entry.rank === 1 ? "text-cm-amber text-lg" :
           entry.rank === 2 ? "text-cm-muted text-lg" :
-          entry.rank === 3 ? "text-cm-amber text-lg opacity-60" :
+          entry.rank === 3 ? "text-cm-amber/60 text-lg" :
           "text-cm-muted text-sm"
         }`}>
           {entry.rank <= 3 ? (
@@ -56,7 +56,7 @@ function IndividualEntry({ entry, index }: { entry: LeaderboardEntry; index: num
               className={
                 entry.rank === 1 ? "text-cm-amber" :
                 entry.rank === 2 ? "text-cm-muted" :
-                "text-cm-amber opacity-60"
+                "text-cm-amber/60"
               }
               aria-label={`Rank ${entry.rank}`}
             />
@@ -103,21 +103,21 @@ function TeamCard({ team, index }: { team: TeamEntry; index: number }) {
       initial={{ opacity: 0, x: -20 }}
       animate={{ opacity: 1, x: 0 }}
       transition={{ delay: index * 0.08 }}
-      className={`rounded-lg border overflow-hidden transition-all ${
+      className={`rounded-md border overflow-hidden transition-all ${
         team.is_current_user_team
-          ? "border-cm-primary bg-cm-card-raised"
-          : "border-cm-border bg-cm-card"
+          ? "border-cm-primary/50 bg-cm-primary/5"
+          : "border-cm-border bg-cm-card/50"
       }`}
     >
       <button
         onClick={() => setExpanded(!expanded)}
-        className="w-full flex items-center justify-between p-4 hover:bg-cm-card-raised transition-colors"
+        className="w-full flex items-center justify-between p-4 hover:bg-cm-card-raised/30 transition-colors"
       >
         <div className="flex items-center gap-4">
           <span className={`w-8 text-center font-bold flex items-center justify-center ${
             team.rank === 1 ? "text-cm-amber text-lg" :
             team.rank === 2 ? "text-cm-muted text-lg" :
-            team.rank === 3 ? "text-cm-amber text-lg opacity-60" :
+            team.rank === 3 ? "text-cm-amber/60 text-lg" :
             "text-cm-muted text-sm"
           }`}>
             {team.rank <= 3 ? (
@@ -126,7 +126,7 @@ function TeamCard({ team, index }: { team: TeamEntry; index: number }) {
                 className={
                   team.rank === 1 ? "text-cm-amber" :
                   team.rank === 2 ? "text-cm-muted" :
-                  "text-cm-amber opacity-60"
+                  "text-cm-amber/60"
                 }
               />
             ) : (
@@ -168,8 +168,8 @@ function TeamCard({ team, index }: { team: TeamEntry; index: number }) {
               {team.members.map((m) => (
                 <div
                   key={m.user_id}
-                  className={`flex items-center justify-between py-1.5 px-2 rounded-lg text-sm ${
-                    m.is_current_user ? "bg-cm-card-raised" : ""
+                  className={`flex items-center justify-between py-1.5 px-2 rounded text-sm ${
+                    m.is_current_user ? "bg-cm-primary/5" : ""
                   }`}
                 >
                   <div className="flex items-center gap-2">

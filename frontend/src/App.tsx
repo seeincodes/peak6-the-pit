@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Routes, Route, Navigate, useLocation, Link } from "react-router-dom";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { Menu } from "lucide-react";
 import { useAuth } from "./context/AuthContext";
@@ -19,7 +19,6 @@ import FeedPage from "./pages/FeedPage";
 import UserProfilePage from "./pages/UserProfilePage";
 import { XPToastProvider } from "./context/XPToastContext";
 import api from "./api/client";
-import { AVATAR_PRESETS } from "./constants/avatars";
 
 function App() {
   const { user: authUser, isLoading: authLoading, logout } = useAuth();
@@ -36,14 +35,12 @@ function App() {
   // Not authenticated — show public routes only
   if (!authUser) {
     return (
-      <div className="min-h-screen bg-cm-bg">
-        <Routes>
-          <Route path="/" element={<LandingPage />} />
-          <Route path="/login" element={<LoginPage />} />
-          <Route path="/signup" element={<SignupPage />} />
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </div>
+      <Routes>
+        <Route path="/" element={<LandingPage />} />
+        <Route path="/login" element={<LoginPage />} />
+        <Route path="/signup" element={<SignupPage />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
+      </Routes>
     );
   }
 
@@ -87,27 +84,6 @@ function AuthenticatedApp({
     <XPToastProvider>
       <div className="h-screen bg-cm-bg flex overflow-hidden">
         <a href="#main-content" className="skip-link">Skip to main content</a>
-
-        {/* Top-right profile + theme controls */}
-        <div className="fixed top-3 right-4 z-40">
-          <div className="cm-surface-raised p-2 space-y-2">
-            <Link
-              to="/profile"
-              className="cm-surface px-2.5 py-1.5 inline-flex items-center gap-2 hover:border-cm-primary transition-colors"
-              aria-label="Open profile page"
-            >
-              <div className="w-7 h-7 rounded-full bg-cm-card-raised border border-cm-border flex items-center justify-center text-sm">
-                {AVATAR_PRESETS[user?.avatar_id || "default"] || "👤"}
-              </div>
-              <span className="hidden sm:inline text-sm font-semibold text-cm-text max-w-[140px] truncate">
-                {user?.display_name || "Profile"}
-              </span>
-              <span className="hidden sm:inline text-xs text-cm-muted truncate ml-1">
-                {user?.level_title}
-              </span>
-            </Link>
-          </div>
-        </div>
 
         {/* Mobile top bar */}
         <div className="fixed top-0 left-0 right-0 h-14 bg-cm-card border-b border-cm-border flex items-center px-4 z-30 lg:hidden">

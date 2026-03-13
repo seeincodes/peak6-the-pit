@@ -54,7 +54,7 @@ export default function MCQFeedback({
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="rounded-lg border border-cm-border bg-cm-card p-6"
+      className="rounded-md border border-cm-border bg-cm-card p-6"
     >
       <div className="text-center mb-4" role="status">
         <motion.div
@@ -171,7 +171,7 @@ export default function MCQFeedback({
         <button
           ref={nextRef}
           onClick={onNext}
-          className="cm-btn-primary-lg"
+          className="px-6 py-2 rounded bg-cm-primary text-white font-bold hover:bg-cm-primary/90 transition-all focus-ring"
         >
           Next Question
         </button>

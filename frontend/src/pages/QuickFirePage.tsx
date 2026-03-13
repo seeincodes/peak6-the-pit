@@ -258,9 +258,9 @@ export default function QuickFirePage({
               <button
                 key={opt}
                 onClick={() => setTimerOption(opt)}
-                className={`text-xs px-1.5 py-0.5 rounded-lg transition-colors ${
+                className={`text-xs px-1.5 py-0.5 rounded transition-colors ${
                   timerOption === opt
-                    ? "bg-cm-card-raised text-cm-primary font-semibold border border-cm-primary"
+                    ? "bg-cm-primary/20 text-cm-primary font-semibold"
                     : "text-cm-muted hover:text-cm-text"
                 }`}
               >
@@ -272,9 +272,9 @@ export default function QuickFirePage({
           {/* Lightning round toggle */}
           <button
             onClick={toggleLightning}
-            className={`flex items-center gap-1 text-xs px-2 py-1 rounded-lg transition-colors ${
+            className={`flex items-center gap-1 text-xs px-2 py-1 rounded transition-colors ${
               lightningMode
-                ? "bg-cm-card-raised text-cm-amber font-semibold border border-cm-amber"
+                ? "bg-cm-amber/20 text-cm-amber font-semibold"
                 : "text-cm-muted hover:text-cm-text"
             }`}
           >
@@ -290,7 +290,7 @@ export default function QuickFirePage({
 
       {/* Timer bar */}
       {timerOption > 0 && phase === "question" && (
-        <div className="h-1 rounded-full bg-cm-border overflow-hidden">
+        <div className="h-1 rounded-full bg-cm-border/40 overflow-hidden">
           <div
             className="h-full rounded-full transition-all duration-1000 ease-linear"
             style={{
@@ -353,7 +353,7 @@ export default function QuickFirePage({
                 placeholder="Brief justification (1-2 sentences)..."
                 maxLength={200}
                 rows={2}
-                className="cm-textarea"
+                className="w-full bg-cm-bg border border-cm-border rounded px-4 py-3 text-cm-text text-sm placeholder-cm-muted/50 focus:outline-none focus:border-cm-primary/50 resize-none"
               />
               {pasteBlocked && (
                 <div className="text-cm-red text-xs mt-1 animate-pulse">
@@ -365,15 +365,15 @@ export default function QuickFirePage({
                 <button
                   onClick={() => submitMutation.mutate()}
                   disabled={!justification.trim() || submitMutation.isPending}
-                  className="cm-btn-primary"
+                  className="px-4 py-2 rounded bg-cm-primary text-white text-sm font-bold hover:bg-cm-primary/90 transition-all disabled:opacity-40 focus-ring"
                 >
                   {submitMutation.isPending ? "Grading..." : "Submit"}
                 </button>
               </div>
 
               {submitMutation.isPending && (
-                <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-cm-card-raised border border-cm-border animate-pulse">
-                  <div className="w-5 h-5 border-2 border-cm-border border-t-cm-primary rounded-full animate-spin" />
+                <div className="flex items-center gap-3 px-4 py-3 rounded-lg bg-cm-primary/5 border border-cm-primary/20 animate-pulse">
+                  <div className="w-5 h-5 border-2 border-cm-primary/30 border-t-cm-primary rounded-full animate-spin" />
                   <span className="text-sm text-cm-primary">AI is reviewing your reasoning...</span>
                 </div>
               )}

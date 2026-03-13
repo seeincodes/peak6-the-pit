@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, Star, BookOpen, HelpCircle, Check, Sparkles, BookText } from "lucide-react";
+import { ArrowLeft, Star, BookOpen, HelpCircle, Check } from "lucide-react";
 import ScenarioCard from "../components/ScenarioCard";
 import ResponseInput from "../components/ResponseInput";
 import GradeReveal from "../components/GradeReveal";
@@ -13,11 +13,10 @@ import RecommendedSection from "../components/RecommendedSection";
 import DifficultySuggestion from "../components/DifficultySuggestion";
 import ConceptPrimer from "../components/ConceptPrimer";
 import OnboardingModal from "../components/OnboardingModal";
-import GlossaryPanel from "../components/GlossaryPanel";
 import QuickFirePage from "./QuickFirePage";
 import { useXPToast } from "../context/XPToastContext";
 import api from "../api/client";
-import { categoryDisplay, categoryColors, categoryDescriptions, categoryGroups } from "../theme/colors";
+import { categoryDisplay, categoryColors } from "../theme/colors";
 
 type Mode = "select" | "path-mcq" | "deep-streaming" | "deep-scenario" | "deep-probe" | "deep-grading" | "deep-result" | "deep-error";
 
@@ -109,8 +108,6 @@ export default function TrainingPage({
   const [earnedBadges, setEarnedBadges] = useState<BadgeData[]>([]);
   const [deepError, setDeepError] = useState<string | null>(null);
   const [primerCategory, setPrimerCategory] = useState<string | null>(null);
-  const [pendingPrimerStart, setPendingPrimerStart] = useState<{ category: string; difficulty: string } | null>(null);
-  const [showGlossary, setShowGlossary] = useState(false);
   const [hintsUsed, setHintsUsed] = useState(0);
   const queryClient = useQueryClient();
 
@@ -225,21 +222,6 @@ export default function TrainingPage({
     }
   };
 
-  const startCategoryRoute = (category: string, difficulty: string) => {
-    const cat = { category, difficulty };
-    setSelectedCat(cat);
-    const primerSeenKey = `primer_seen_${category}`;
-    const primerSeen = localStorage.getItem(primerSeenKey) === "1";
-
-    if (!primerSeen) {
-      setPendingPrimerStart(cat);
-      setPrimerCategory(category);
-      return;
-    }
-
-    generateStreaming(cat);
-  };
-
   const generateStreaming = async (params: { category: string; difficulty: string }, learningObjective?: string) => {
     setDeepError(null);
     setMode("deep-streaming");
@@ -315,14 +297,18 @@ export default function TrainingPage({
   };
 
   const loadingMessages = [
-    "Building your custom market scenario...",
-    "Mapping volatility regime context...",
-    "Checking strike-by-strike skew pressure...",
-    "Scanning chain structure for tradeable edges...",
-    "Stress-testing risk under alternate paths...",
-    "Drafting a follow-up that tests your thesis...",
-    "Translating desk context into clear prompts...",
-    "Finalizing feedback rubric for this scenario...",
+    "Pulling market data...",
+    "Calculating implied volatility...",
+    "Analyzing the options chain...",
+    "Scanning for mispricings...",
+    "Modeling risk scenarios...",
+    "Checking Greeks exposure...",
+    "Evaluating skew surface...",
+    "Running Monte Carlo sims...",
+    "Stress-testing the book...",
+    "Reviewing term structure...",
+    "Pricing exotic payoffs...",
+    "Assessing tail risk...",
   ];
 
   const [loadingMsgIdx, setLoadingMsgIdx] = useState(0);
@@ -347,128 +333,140 @@ export default function TrainingPage({
       {/* Category selection — grouped by skill with difficulty routes */}
       {mode === "select" && (
         <div>
-          <div className="flex items-center justify-between mb-4 gap-3">
-            <div>
-              <h2 className="cm-title">Choose Your Practice Track</h2>
-              <p className="cm-label mt-1">Start with a primer, then test yourself with scenario grading.</p>
-            </div>
-            <div className="flex items-center gap-2">
-              <button
-                onClick={() => setShowGlossary(true)}
-                className="cm-btn-secondary px-3 py-2 inline-flex items-center gap-2"
-                aria-label="Open glossary"
-                title="Glossary"
-              >
-                <BookText size={14} />
-                <span className="hidden sm:inline">Glossary</span>
-              </button>
-              <button
-                onClick={() => setShowOnboarding(true)}
-                className="cm-btn-ghost p-2"
-                aria-label="Show guided tour"
-                title="How it works"
-              >
-                <HelpCircle size={18} />
-              </button>
-            </div>
+          <div className="flex items-center justify-between mb-4">
+            <h2 className="cm-title">Select Scenario</h2>
+            <button
+              onClick={() => setShowOnboarding(true)}
+              className="text-cm-muted hover:text-cm-primary transition-colors p-1"
+              aria-label="Show guided tour"
+              title="How it works"
+            >
+              <HelpCircle size={18} />
+            </button>
           </div>
           <div className="space-y-3">
             <RecommendedSection
               onSelect={(category, difficulty) => {
-                startCategoryRoute(category, difficulty);
+                const cat = { category, difficulty };
+                setSelectedCat(cat);
+                generateStreaming(cat);
               }}
             />
             <DifficultySuggestion
               onAccept={(category, difficulty) => {
-                startCategoryRoute(category, difficulty);
+                const cat = { category, difficulty };
+                setSelectedCat(cat);
+                generateStreaming(cat);
               }}
             />
             <CategoryProgress />
             {(() => {
-              const categoryToDiffs = new Map<string, string[]>();
+              const grouped = new Map<string, string[]>();
               for (const cat of unlockedCategories) {
-                const existing = categoryToDiffs.get(cat.category) || [];
+                const existing = grouped.get(cat.category) || [];
                 existing.push(cat.difficulty);
-                categoryToDiffs.set(cat.category, existing);
+                grouped.set(cat.category, existing);
               }
-
               const diffOrder = ["beginner", "intermediate", "advanced"];
+              return Array.from(grouped.entries()).map(([category, difficulties]) => {
+                const color = categoryColors[category] || "#4D34EF";
+                const sorted = difficulties.sort((a, b) => diffOrder.indexOf(a) - diffOrder.indexOf(b));
+                const startRoute = (difficulty: string) => {
+                  const cat = { category, difficulty };
+                  setSelectedCat(cat);
+                  generateStreaming(cat);
+                };
 
-              return categoryGroups
-                .map((group) => {
-                  const entries = group.categories
-                    .map((category) => ({
-                      category,
-                      difficulties: (categoryToDiffs.get(category) || []).sort(
-                        (a, b) => diffOrder.indexOf(a) - diffOrder.indexOf(b),
-                      ),
-                    }))
-                    .filter((entry) => entry.difficulties.length > 0);
-
-                  if (entries.length === 0) return null;
-
+                if (sorted.length === 1) {
+                  const diffLevel = sorted[0] === "beginner" ? 1 : sorted[0] === "intermediate" ? 2 : 3;
                   return (
-                    <section key={group.id} className="cm-surface p-4 sm:p-5">
-                      <div className="mb-4">
-                        <h3 className="text-cm-text font-bold text-base">{group.title}</h3>
-                        <p className="text-cm-muted text-sm mt-1">{group.description}</p>
+                    <button
+                      key={category}
+                      onClick={() => startRoute(sorted[0])}
+                      className="cm-surface-interactive p-4 w-full text-left flex items-center justify-between"
+                      style={{ borderColor: `${color}40` }}
+                    >
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="w-2 h-2 rounded-full flex-shrink-0"
+                          style={{ backgroundColor: color }}
+                        />
+                        <span className="text-cm-text font-semibold text-sm">
+                          {categoryDisplay[category] || category.replace(/_/g, " ")}
+                        </span>
                       </div>
-                      <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        {entries.map(({ category, difficulties }) => {
-                          const color = categoryColors[category] || "#4D34EF";
-                          return (
-                            <article key={category} className="cm-surface-section p-3.5">
-                              <div className="flex items-start justify-between gap-2">
-                                <div>
-                                  <p className="text-cm-text font-semibold text-sm flex items-center gap-2">
-                                    <span className="w-2 h-2 rounded-full" style={{ backgroundColor: color }} />
-                                    {categoryDisplay[category] || category.replace(/_/g, " ")}
-                                  </p>
-                                  <p className="text-cm-muted text-xs mt-1">
-                                    {categoryDescriptions[category] || "Practice this category with adaptive difficulty."}
-                                  </p>
-                                </div>
-                                <button
-                                  onClick={() => setPrimerCategory(category)}
-                                  className="cm-btn-ghost p-1.5"
-                                  aria-label={`Learn ${categoryDisplay[category] || category} concepts`}
-                                  title="Learn First"
-                                >
-                                  <BookOpen size={14} />
-                                </button>
-                              </div>
-                              <div className="mt-3 flex items-center gap-2 flex-wrap">
-                                {difficulties.map((difficulty) => {
-                                  const diffLevel = difficulty === "beginner" ? 1 : difficulty === "intermediate" ? 2 : 3;
-                                  return (
-                                    <button
-                                      key={difficulty}
-                                      onClick={() => startCategoryRoute(category, difficulty)}
-                                      className="cm-surface-interactive px-3 py-2 text-xs inline-flex items-center gap-2"
-                                      style={{ borderColor: `${color}66` }}
-                                    >
-                                      <span className="capitalize text-cm-text font-semibold">{difficulty}</span>
-                                      <span className="flex items-center gap-0.5">
-                                        {[1, 2, 3].map((i) => (
-                                          <Star
-                                            key={i}
-                                            size={10}
-                                            className={i <= diffLevel ? "text-cm-amber fill-cm-amber" : "text-cm-muted"}
-                                          />
-                                        ))}
-                                      </span>
-                                    </button>
-                                  );
-                                })}
-                              </div>
-                            </article>
-                          );
-                        })}
+                      <div className="flex items-center gap-2">
+                        <button
+                          onClick={(e) => { e.stopPropagation(); setPrimerCategory(category); }}
+                          className="text-cm-muted hover:text-cm-primary transition-colors p-1"
+                          aria-label={`Learn ${categoryDisplay[category] || category} concepts`}
+                          title="Learn First"
+                        >
+                          <BookOpen size={14} />
+                        </button>
+                        <span className="capitalize text-cm-muted text-xs">{sorted[0]}</span>
+                        <span className="flex items-center gap-0.5">
+                          {[1, 2, 3].map((i) => (
+                            <Star
+                              key={i}
+                              size={10}
+                              className={i <= diffLevel ? "text-cm-amber fill-cm-amber" : "text-cm-amber/30"}
+                            />
+                          ))}
+                        </span>
                       </div>
-                    </section>
+                    </button>
                   );
-                })
-                .filter(Boolean);
+                }
+
+                return (
+                  <div key={category} className="cm-surface p-4">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center gap-2">
+                        <span
+                          className="w-2 h-2 rounded-full flex-shrink-0"
+                          style={{ backgroundColor: color }}
+                        />
+                        <span className="text-cm-text font-semibold text-sm">
+                          {categoryDisplay[category] || category.replace(/_/g, " ")}
+                        </span>
+                      </div>
+                      <button
+                        onClick={() => setPrimerCategory(category)}
+                        className="text-cm-muted hover:text-cm-primary transition-colors p-1"
+                        aria-label={`Learn ${categoryDisplay[category] || category} concepts`}
+                        title="Learn First"
+                      >
+                        <BookOpen size={14} />
+                      </button>
+                    </div>
+                    <div className="flex gap-2">
+                      {sorted.map((difficulty) => {
+                        const diffLevel = difficulty === "beginner" ? 1 : difficulty === "intermediate" ? 2 : 3;
+                        return (
+                          <button
+                            key={difficulty}
+                            onClick={() => startRoute(difficulty)}
+                            className="cm-surface-interactive px-3 py-2 flex-1 flex items-center justify-center gap-2 text-xs"
+                            style={{ borderColor: `${color}40` }}
+                          >
+                            <span className="capitalize text-cm-text">{difficulty}</span>
+                            <span className="flex items-center gap-0.5">
+                              {[1, 2, 3].map((i) => (
+                                <Star
+                                  key={i}
+                                  size={10}
+                                  className={i <= diffLevel ? "text-cm-amber fill-cm-amber" : "text-cm-amber/30"}
+                                />
+                              ))}
+                            </span>
+                          </button>
+                        );
+                      })}
+                    </div>
+                  </div>
+                );
+              });
             })()}
           </div>
         </div>
@@ -483,7 +481,7 @@ export default function TrainingPage({
           <div role="status" aria-live="polite" className="cm-surface p-6">
             <div className="flex flex-col items-center justify-center py-8 space-y-4">
               <motion.div
-                className="w-10 h-10 rounded-full border-2 border-cm-border border-t-cm-primary"
+                className="w-10 h-10 rounded-full border-2 border-cm-primary/30 border-t-cm-primary"
                 animate={{ rotate: 360 }}
                 transition={{ duration: 1, repeat: Infinity, ease: "linear" }}
               />
@@ -507,13 +505,6 @@ export default function TrainingPage({
                   {selectedCat.difficulty}
                 </div>
               )}
-              <div className="inline-flex items-center gap-2 text-cm-muted text-xs">
-                <Sparkles size={12} className="text-cm-primary" />
-                Reviewing context before assessment
-              </div>
-              <button onClick={() => setShowGlossary(true)} className="cm-btn-ghost text-xs px-2 py-1">
-                Open glossary while loading
-              </button>
             </div>
           </div>
         </div>
@@ -587,8 +578,8 @@ export default function TrainingPage({
             content={scenario.content}
             onHintsUsedChange={setHintsUsed}
           />
-          <div className="cm-surface-section p-4">
-            <h3 className="text-cm-primary font-semibold text-sm mb-2">Follow-up Question</h3>
+          <div className="rounded-md border border-cm-amber/30 bg-cm-amber/5 p-4">
+            <h3 className="text-cm-amber font-semibold text-sm mb-2">Follow-up Question</h3>
             <p className="text-cm-text text-sm">{probeQuestion}</p>
           </div>
           <ResponseInput
@@ -694,26 +685,10 @@ export default function TrainingPage({
         onComplete={() => setShowOnboarding(false)}
       />
 
-      <GlossaryPanel open={showGlossary} onClose={() => setShowGlossary(false)} />
-
       {primerCategory && (
         <ConceptPrimer
           category={primerCategory}
-          onClose={() => {
-            setPrimerCategory(null);
-            setPendingPrimerStart(null);
-          }}
-          onStart={
-            pendingPrimerStart
-              ? () => {
-                  localStorage.setItem(`primer_seen_${pendingPrimerStart.category}`, "1");
-                  const cat = pendingPrimerStart;
-                  setPrimerCategory(null);
-                  setPendingPrimerStart(null);
-                  generateStreaming(cat);
-                }
-              : undefined
-          }
+          onClose={() => setPrimerCategory(null)}
         />
       )}
     </div>

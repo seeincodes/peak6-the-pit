@@ -37,13 +37,13 @@ const LEVEL_XP = [0, 0, 60, 180, 380, 720, 1250, 2050, 3250, 5050, 8000];
 
 const NAV_ITEMS = [
   { to: "/", icon: Crosshair, label: "Training", matchExact: true },
-  { to: "/paths", icon: Map, label: "Learn Paths", matchExact: false },
+  { to: "/paths", icon: Map, label: "Paths", matchExact: false },
+  { to: "/feed", icon: Activity, label: "Feed", matchExact: false },
   { to: "/review", icon: BookOpen, label: "Review", matchExact: false },
+  { to: "/bookmarks", icon: Bookmark, label: "Bookmarks", matchExact: false },
+  { to: "/peer-review", icon: Users, label: "Peer Review", matchExact: false },
   { to: "/progress", icon: Target, label: "Progress", matchExact: false },
   { to: "/leaderboard", icon: Trophy, label: "Leaderboard", matchExact: false },
-  { to: "/bookmarks", icon: Bookmark, label: "Saved", matchExact: false },
-  { to: "/feed", icon: Activity, label: "Community", matchExact: false },
-  { to: "/peer-review", icon: Users, label: "Peer Review", matchExact: false },
 ];
 
 export default function Sidebar({ user, logout, collapsed, onToggleCollapse, mobileOpen, onMobileClose }: SidebarProps) {
@@ -129,7 +129,7 @@ export default function Sidebar({ user, logout, collapsed, onToggleCollapse, mob
                 transition-all duration-200 group focus-ring
                 ${isCollapsed ? "justify-center px-0" : "px-3"}
                 ${active
-                  ? "bg-cm-primary/10 text-cm-primary"
+                  ? "bg-cm-primary/12 text-cm-primary"
                   : "text-cm-muted hover:bg-cm-card-raised hover:text-cm-text"
                 }
               `}
@@ -164,7 +164,7 @@ export default function Sidebar({ user, logout, collapsed, onToggleCollapse, mob
             <div className="flex flex-col items-center gap-3">
               <button
                 onClick={logout}
-                className="flex items-center justify-center w-8 h-8 rounded-md text-cm-muted hover:text-cm-red hover:bg-cm-red/10 transition-all focus-ring"
+                className="flex items-center justify-center w-8 h-8 rounded-md text-cm-muted hover:text-cm-red hover:bg-cm-red/8 transition-all focus-ring"
                 title="Logout"
               >
                 <LogOut size={18} />
@@ -208,7 +208,7 @@ export default function Sidebar({ user, logout, collapsed, onToggleCollapse, mob
               {/* Logout */}
               <button
                 onClick={logout}
-                className="flex items-center gap-3 w-full rounded-lg px-3 h-9 text-cm-muted hover:text-cm-red hover:bg-cm-red/10 transition-all duration-200 focus-ring"
+                className="flex items-center gap-3 w-full rounded-lg px-3 h-9 text-cm-muted hover:text-cm-red hover:bg-cm-red/8 transition-all duration-200 focus-ring"
               >
                 <LogOut size={18} className="shrink-0" />
                 <span className="text-sm font-medium">Logout</span>

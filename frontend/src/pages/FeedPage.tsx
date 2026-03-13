@@ -83,11 +83,11 @@ function FeedItem({ event, index }: { event: FeedEvent; index: number }) {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.03 }}
-      className="flex items-start gap-3 p-4 rounded-lg border border-cm-border bg-cm-card hover:bg-cm-card-raised transition-colors"
+      className="flex items-start gap-3 p-4 rounded-lg border border-cm-border bg-cm-card/50 hover:bg-cm-card-raised/30 transition-colors"
     >
       <Link
         to={`/profile/${event.user_id}`}
-        className="w-9 h-9 rounded-full bg-cm-card-raised border border-cm-border flex items-center justify-center text-base shrink-0 hover:border-cm-primary transition-colors"
+        className="w-9 h-9 rounded-full bg-cm-card-raised border border-cm-border flex items-center justify-center text-base shrink-0 hover:border-cm-primary/40 transition-colors"
       >
         {AVATAR_PRESETS[event.avatar_id] || "👤"}
       </Link>
@@ -103,7 +103,7 @@ function FeedItem({ event, index }: { event: FeedEvent; index: number }) {
           <EventIcon type={event.event_type} />
           <span className="text-sm text-cm-muted">{eventText(event)}</span>
         </div>
-        <span className="text-xs text-cm-muted mt-0.5 block">
+        <span className="text-xs text-cm-muted/60 mt-0.5 block">
           {relativeTime(event.created_at)}
         </span>
       </div>
