@@ -13,6 +13,7 @@ import {
   Zap,
   BookText,
   MessageSquare,
+  UserCircle,
 } from "lucide-react";
 import DailyChallengeCard from "./DailyChallengeCard";
 import StreakFlame from "./StreakFlame";
@@ -62,6 +63,7 @@ const NAV_GROUPS = [
     items: [
       { to: "/progress", icon: Target, label: "Progress", matchExact: false },
       { to: "/leaderboard", icon: Trophy, label: "Leaderboard", matchExact: false },
+      { to: "/profile", icon: UserCircle, label: "Profile", matchExact: true },
     ],
   },
 ];

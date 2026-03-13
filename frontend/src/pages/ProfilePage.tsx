@@ -24,39 +24,48 @@ export default function ProfilePage() {
   return (
     <div className="cm-page max-w-4xl space-y-6 sm:space-y-8">
       {/* Profile Header */}
-      {editing ? (
-        <ProfileEditor
-          displayName={user.display_name}
-          avatarId={user.avatar_id || "default"}
-          bio={user.bio || ""}
-          onClose={() => setEditing(false)}
-        />
-      ) : (
-        <div className="flex items-start gap-5">
-          <div className="w-16 h-16 rounded-xl bg-cm-card-raised border border-cm-border flex items-center justify-center text-3xl shrink-0">
-            {avatarEmoji}
-          </div>
-          <div className="flex-1 min-w-0">
-            <div className="flex items-center gap-3">
-              <h2 className="cm-subtitle truncate">{user.display_name}</h2>
-              <button
-                onClick={() => setEditing(true)}
-                className="text-cm-muted hover:text-cm-primary transition-colors focus-ring rounded p-1"
-                aria-label="Edit profile"
-              >
-                <Pencil size={14} />
-              </button>
+      <div className="flex items-start justify-between">
+        {editing ? (
+          <ProfileEditor
+            displayName={user.display_name}
+            avatarId={user.avatar_id || "default"}
+            bio={user.bio || ""}
+            onClose={() => setEditing(false)}
+          />
+        ) : (
+          <div className="flex items-start gap-5 flex-1 min-w-0">
+            <div className="w-16 h-16 rounded-xl bg-cm-card-raised border border-cm-border flex items-center justify-center text-3xl shrink-0">
+              {avatarEmoji}
             </div>
-            <div className="text-sm text-cm-primary">{user.level_title}</div>
-            {user.bio && <div className="text-sm text-cm-muted mt-1">{user.bio}</div>}
-            <div className="flex items-center gap-4 mt-2 text-xs text-cm-muted">
-              <span>{user.xp_total} XP</span>
-              <span>Level {user.level}</span>
-              {user.streak_days > 0 && <span>{user.streak_days}d streak</span>}
+            <div className="flex-1 min-w-0">
+              <div className="flex items-center gap-3">
+                <h2 className="cm-subtitle truncate">{user.display_name}</h2>
+                <button
+                  onClick={() => setEditing(true)}
+                  className="text-cm-muted hover:text-cm-primary transition-colors focus-ring rounded p-1"
+                  aria-label="Edit profile"
+                >
+                  <Pencil size={14} />
+                </button>
+              </div>
+              <div className="text-sm text-cm-primary">{user.level_title}</div>
+              {user.bio && <div className="text-sm text-cm-muted mt-1">{user.bio}</div>}
+              <div className="flex items-center gap-4 mt-2 text-xs text-cm-muted">
+                <span>{user.xp_total} XP</span>
+                <span>Level {user.level}</span>
+                {user.streak_days > 0 && <span>{user.streak_days}d streak</span>}
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+        <button
+          onClick={logout}
+          className="flex items-center gap-2 text-cm-muted hover:text-cm-red transition-colors text-sm focus-ring rounded px-2 py-1 shrink-0 ml-4"
+        >
+          <LogOut size={16} />
+          Log out
+        </button>
+      </div>
 
       {/* Badges & Skill Tree — combined card */}
       <div className="cm-surface-section p-4 sm:p-6">
@@ -84,14 +93,6 @@ export default function ProfilePage() {
         </div>
       </div>
 
-      {/* Logout */}
-      <button
-        onClick={logout}
-        className="flex items-center gap-2 text-cm-muted hover:text-cm-red transition-colors text-sm focus-ring rounded px-1 py-1"
-      >
-        <LogOut size={16} />
-        Log out
-      </button>
     </div>
   );
 }

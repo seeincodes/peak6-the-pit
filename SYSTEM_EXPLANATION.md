@@ -12,12 +12,12 @@ CapMan AI is a **gamified, AI-driven scenario training platform** for options tr
 
 ### Python Backend (FastAPI)
 
-Python was required by the proposal for **Atlas integration** — CapMan’s internal proprietary trading platform. FastAPI was chosen over Django or Flask because:
+Python was required by the proposal for **Atlas integration** — CapMan's internal proprietary trading platform. FastAPI was chosen over Django or Flask because:
 
 - **API-first:** No server-rendered templates; the app is a React SPA talking to a REST + WebSocket API.
 - **Async-native:** WebSockets for real-time leaderboards and head-to-head matches need async support without extra extensions.
 - **Auto-documentation:** OpenAPI/Swagger is built in, which helps with a large API surface.
-- **Lightweight:** Django’s ORM and admin are unnecessary; SQLAlchemy 2.0 covers async queries, and the educator dashboard is a React app, not Django admin.
+- **Lightweight:** Django's ORM and admin are unnecessary; SQLAlchemy 2.0 covers async queries, and the educator dashboard is a React app, not Django admin.
 
 Flask was rejected because it lacks built-in async and WebSocket support without stacking extensions.
 
@@ -47,8 +47,33 @@ The RAG corpus is small — one primary document (Volatility Trading Data Framew
 
 ### Claude API (Primary LLM) + OpenAI Embeddings
 
-- **Claude for grading:** Grading trader reasoning needs strong analytical capability. Claude’s long context window fits full RAG context plus multi-turn conversation history without truncation. Structured output and system prompts map well to rubric-based grading.
-- **OpenAI text-embedding-3-small for RAG:** Embeddings are computed once at ingestion and queried by similarity; they need to be cheap and fast. Using Claude for embeddings would be wasteful; using a cheap embedding model for grading would be inadequate. OpenAI’s embedding model gives a good quality-to-cost ratio for retrieval.
+Two Claude model tiers are used, selected per-task based on the quality/cost/latency tradeoff:
+
+**Claude Haiku 4.5** (`claude-haiku-4-5-20251001`) — high-volume, structured-output tasks where speed matters:
+
+| Task | File | Max Tokens | Temp | Rationale |
+|------|------|-----------|------|-----------|
+| Scenario generation (Deep Analysis) | `scenario_graph.py` | 600 | 0.7 | Structured JSON output with tight format constraints; prompt template drives quality more than model size |
+| MCQ question generation | `scenario_engine.py` | 512 | 0.8 | Same as above; high variety needed (higher temp) |
+| MCQ justification grading (good/weak) | `grading_agent.py` | 256 | 0.0 | Binary quality classification — simple enough for Haiku |
+| Chat responses (with tool calling) | `chat_graph.py` | 2000 | 0.7 | Conversational flow with tool use; latency-sensitive for streaming UX |
+
+**Claude Sonnet 4** (`claude-sonnet-4-6`) — tasks requiring deeper analytical reasoning:
+
+| Task | File | Max Tokens | Temp | Rationale |
+|------|------|-----------|------|-----------|
+| Socratic probe generation | `grading_agent.py` | 512 | 0.3 | Must identify conceptual gaps in trader reasoning to ask targeted follow-ups |
+| Full response grading (4-dimension rubric) | `grading_agent.py` | 1024 | 0.0 | Nuanced evaluation across reasoning, terminology, trade logic, risk awareness; accuracy is critical |
+| Model answer generation | `grading_agent.py` | 1024 | 0.3 | Must demonstrate expert-level options reasoning as a reference answer |
+| Lesson plan generation | `chat_graph.py` | 4000 | 0.0 | Structured multi-step lesson plans require coherent long-form output |
+
+**OpenAI** — embeddings only:
+
+| Task | File | Model | Rationale |
+|------|------|-------|-----------|
+| RAG document + query embeddings | `rag.py` | `text-embedding-3-small` | Cheap, fast, good quality-to-cost ratio for retrieval over a small corpus |
+
+Embeddings are computed once at ingestion and cached in pgvector. The split keeps costs proportional to task complexity — cheap models for high-volume generation, capable models for evaluation accuracy.
 
 ### JWT Authentication
 
@@ -61,7 +86,7 @@ The app is a React SPA with a stateless API. JWT tokens with role claims (`ta`, 
 
 ---
 
-## Why It’s Built This Way
+## Why It's Built This Way
 
 ### Three-Layer Architecture
 
@@ -69,13 +94,13 @@ The system is organized into three logical layers:
 
 1. **Scenario Engine (Layer 1):** RAG over the Volatility Framework, CapMan lexicon, and optional Atlas hooks. Generates contextually accurate scenarios across 15+ volatility categories.
 2. **Grading & Probing Agent (Layer 2):** LLM-based evaluation of reasoning quality, Socratic follow-ups, and rubric-based scoring.
-3. **Gamification & MTSS (Layer 3):** XP, leaderboards, head-to-head matches, peer review, and the educator “God View” dashboard.
+3. **Gamification & MTSS (Layer 3):** XP, leaderboards, head-to-head matches, peer review, and the educator "God View" dashboard.
 
 This separation keeps scenario generation, grading logic, and gamification/MTSS independent, so each layer can evolve without tightly coupling to the others.
 
 ### Atlas as Progressive Enrichment, Not a Hard Dependency
 
-Pre-research flagged “Atlas docs too sparse to integrate” as a high-severity, high-likelihood risk. The design uses an abstract Python interface (`AtlasProvider`) that the scenario engine calls. The default implementation returns no-op enrichment — scenarios work without Atlas. When Atlas documentation and access are available, a concrete implementation plugs in without changing the scenario engine, grading agent, or frontend. This avoids blocking on Atlas and building the wrong interface.
+Pre-research flagged "Atlas docs too sparse to integrate" as a high-severity, high-likelihood risk. The design uses an abstract Python interface (`AtlasProvider`) that the scenario engine calls. The default implementation returns no-op enrichment — scenarios work without Atlas. When Atlas documentation and access are available, a concrete implementation plugs in without changing the scenario engine, grading agent, or frontend. This avoids blocking on Atlas and building the wrong interface.
 
 ### Append-Only XP Ledger
 
@@ -83,7 +108,7 @@ XP drives leaderboards, levels, and MTSS analysis. A mutable `xp_total` field is
 
 - Full audit trails
 - Retroactive recalculation if award formulas change
-- Time-windowed leaderboards (e.g., “this week’s top performers”) via date-range queries
+- Time-windowed leaderboards (e.g., "this week's top performers") via date-range queries
 
 `users.xp_total` is a denormalized cache, periodically reconciled from the ledger.
 
@@ -96,14 +121,14 @@ Scenarios are not static. The RAG pipeline ingests the Volatility Framework and 
 3. Passes chunks + rubric constraints to Claude
 4. Generates a scenario with correct terminology and options logic
 
-This keeps scenarios grounded in CapMan’s proprietary framework and lexicon.
+This keeps scenarios grounded in CapMan's proprietary framework and lexicon.
 
 ### Socratic Probing Before Final Grade
 
 Grading evaluates **reasoning quality**, not just final answers. The flow is:
 
 1. User submits initial response
-2. Grading agent generates a Socratic probe (“Why that strike?”, “What does the IV skew tell you?”)
+2. Grading agent generates a Socratic probe ("Why that strike?", "What does the IV skew tell you?")
 3. User elaborates
 4. Final grade with dimension scores (reasoning, terminology, trade logic, risk awareness) and actionable feedback
 
@@ -127,7 +152,7 @@ The educator dashboard shows learners grouped by tier and skill dimension, so in
 
 The system is designed to degrade gracefully when dependencies fail:
 
-- **LLM outage:** Retry with backoff; show “AI is busy” with estimated wait.
+- **LLM outage:** Retry with backoff; show "AI is busy" with estimated wait.
 - **RAG retrieval weak:** Validate relevance score; fall back to category-specific static prompts.
 - **Atlas unavailable:** Scenarios work without enrichment; log failures and alert, but do not block.
 - **WebSocket disconnect during head-to-head:** Persist match state in Redis; reconnect with state recovery; timeout before forfeit.
