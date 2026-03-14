@@ -66,8 +66,21 @@ async def get_or_create_daily_challenges(
 async def increment_challenge_progress(
     user_id: UUID, challenge_type: str, db: AsyncSession, amount: int = 1
 ) -> list[dict]:
-    """Increment progress on matching challenges. Returns newly completed challenges."""
+    """Increment progress on matching challenges. Returns newly completed challenges.
+
+    Auto-creates today's challenges if they haven't been generated yet,
+    so progress isn't lost when a user acts before viewing the challenges page.
+    """
     today = date.today()
+
+    # Ensure today's challenges exist
+    exists_stmt = select(DailyChallenge.id).where(
+        DailyChallenge.user_id == user_id,
+        DailyChallenge.challenge_date == today,
+    ).limit(1)
+    if (await db.execute(exists_stmt)).first() is None:
+        await get_or_create_daily_challenges(user_id, db)
+
     stmt = select(DailyChallenge).where(
         DailyChallenge.user_id == user_id,
         DailyChallenge.challenge_date == today,

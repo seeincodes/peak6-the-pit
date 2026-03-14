@@ -21,6 +21,7 @@ from app.services.path_progress import check_and_advance_paths
 from app.services.streak import update_streak
 from app.services.activity import emit_activity
 from app.services.progression import get_level_title, compute_level_from_xp
+from app.services.challenges import increment_challenge_progress
 from app.middleware.auth import get_current_user
 
 router = APIRouter(prefix="/api/mcq", tags=["mcq"])
@@ -210,6 +211,10 @@ async def submit(
             "new_level": user.level,
             "level_title": get_level_title(user.level),
         })
+
+    # Update daily challenge progress
+    await increment_challenge_progress(user.id, "complete_mcq", db)
+    await increment_challenge_progress(user.id, "streak_keep", db)
 
     await db.commit()
 

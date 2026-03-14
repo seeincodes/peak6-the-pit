@@ -20,6 +20,7 @@ from app.services.path_progress import check_and_advance_paths
 from app.services.streak import update_streak
 from app.services.activity import emit_activity
 from app.services.progression import get_level_title, compute_level_from_xp
+from app.services.challenges import increment_challenge_progress
 from app.middleware.auth import get_current_user
 
 router = APIRouter(prefix="/api/responses", tags=["responses"])
@@ -186,6 +187,30 @@ async def continue_response(
                 "new_level": user.level,
                 "level_title": get_level_title(user.level),
             })
+
+        # Update daily challenge progress
+        await increment_challenge_progress(user.id, "complete_scenarios", db)
+
+        if grade_data["overall_score"] >= 4.0:
+            await increment_challenge_progress(user.id, "score_high", db)
+
+        # try_category: check if this is the user's first scenario in this category today
+        prior_in_category = await db.execute(
+            select(func.count())
+            .select_from(Response)
+            .join(Scenario, Response.scenario_id == Scenario.id)
+            .where(
+                Response.user_id == user.id,
+                Response.is_complete == True,  # noqa: E712
+                Response.submitted_at >= today_start,
+                Scenario.category == scenario.category,
+                Response.id != response.id,
+            )
+        )
+        if prior_in_category.scalar() == 0:
+            await increment_challenge_progress(user.id, "try_category", db)
+
+        await increment_challenge_progress(user.id, "streak_keep", db)
 
     await db.commit()
 
