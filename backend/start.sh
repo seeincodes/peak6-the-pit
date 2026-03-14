@@ -1,8 +1,13 @@
 #!/bin/bash
-set -e
+set -eo pipefail
+
+echo "=== Backend startup $(date) ==="
+echo "PYTHONPATH=$PYTHONPATH"
+echo "APP_ENV=${APP_ENV:-not set}"
+echo "DATABASE_URL is $([ -n "$DATABASE_URL" ] && echo 'set' || echo 'NOT SET')"
 
 echo "Running migrations..."
-alembic upgrade heads
+alembic upgrade heads 2>&1 || { echo "ERROR: migrations failed with exit code $?"; exit 1; }
 
 if [ "${SEED_ON_STARTUP:-true}" = "true" ]; then
   echo "Running seed (idempotent)..."
