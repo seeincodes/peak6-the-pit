@@ -9,7 +9,6 @@ import GradeReveal from "../components/GradeReveal";
 import LevelUpModal from "../components/LevelUpModal";
 import BadgeUnlockModal from "../components/BadgeUnlockModal";
 import RecommendedSection from "../components/RecommendedSection";
-import DifficultySuggestion from "../components/DifficultySuggestion";
 import ConceptPrimer from "../components/ConceptPrimer";
 import OnboardingModal from "../components/OnboardingModal";
 import QuickFirePage from "./QuickFirePage";
