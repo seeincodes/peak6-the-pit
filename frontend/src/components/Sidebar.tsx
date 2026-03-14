@@ -4,7 +4,6 @@ import {
   Crosshair,
   Trophy,
   BookOpen,
-  Bookmark,
   Target,
   Users,
   Map,
@@ -47,7 +46,6 @@ const NAV_GROUPS = [
     label: "Review",
     items: [
       { to: "/review", icon: BookOpen, label: "Review", matchExact: false },
-      { to: "/bookmarks", icon: Bookmark, label: "Bookmarks", matchExact: false },
       { to: "/dictionary", icon: BookText, label: "Dictionary", matchExact: false },
     ],
   },

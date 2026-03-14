@@ -12,7 +12,6 @@ import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import LeaderboardPage from "./pages/LeaderboardPage";
 import ReviewPage from "./pages/ReviewPage";
-import BookmarksPage from "./pages/BookmarksPage";
 import ProgressPage from "./pages/ProgressPage";
 import PeerReviewPage from "./pages/PeerReviewPage";
 import LearningPathPage from "./pages/LearningPathPage";
@@ -157,7 +156,6 @@ function AuthenticatedApp() {
             <Route path="/quick-fire" element={<QuickFireStandalone />} />
             <Route path="/profile" element={<ProfilePage />} />
             <Route path="/review" element={<ReviewPage />} />
-            <Route path="/bookmarks" element={<BookmarksPage />} />
             <Route path="/dictionary" element={<DictionaryPage />} />
             <Route path="/progress" element={<ProgressPage />} />
             <Route path="/leaderboard" element={<LeaderboardPage />} />
