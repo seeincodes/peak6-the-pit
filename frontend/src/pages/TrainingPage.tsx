@@ -371,13 +371,6 @@ export default function TrainingPage({
                 generateStreaming(cat);
               }}
             />
-            <DifficultySuggestion
-              onAccept={(category, difficulty) => {
-                const cat = { category, difficulty };
-                setSelectedCat(cat);
-                generateStreaming(cat);
-              }}
-            />
             {(() => {
               const grouped = new Map<string, string[]>();
               for (const cat of unlockedCategories) {

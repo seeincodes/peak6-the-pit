@@ -79,6 +79,14 @@ async def get_review_queue(
 
     rows = (await db.execute(stmt)).all()
 
+    def _normalize_conversation(conv) -> list[dict]:
+        """Ensure conversation is always a flat list of {role, content} dicts."""
+        if isinstance(conv, list):
+            return conv
+        if isinstance(conv, dict) and "turns" in conv:
+            return conv["turns"]
+        return []
+
     return {
         "queue": [
             {
@@ -87,7 +95,7 @@ async def get_review_queue(
                 "scenario_question": s.content.get("question", ""),
                 "scenario_category": s.category,
                 "scenario_difficulty": s.difficulty,
-                "conversation": r.conversation,
+                "conversation": _normalize_conversation(r.conversation),
                 "submitted_at": r.submitted_at.isoformat(),
                 "author_display_name": u.display_name,
             }
@@ -287,4 +295,39 @@ async def get_my_reviews(
             "created_at": pr.created_at.isoformat(),
         }
         for pr, s in rows
+    ]
+
+
+@router.get("/received")
+async def get_received_reviews(
+    limit: int = Query(20, ge=1, le=50),
+    current_user: User = Depends(get_current_user),
+    db: AsyncSession = Depends(get_db),
+):
+    """Get peer reviews that others have left on the current user's responses."""
+    stmt = (
+        select(PeerReview, Scenario, User)
+        .join(Response, PeerReview.response_id == Response.id)
+        .join(Scenario, Response.scenario_id == Scenario.id)
+        .join(User, PeerReview.reviewer_id == User.id)
+        .where(Response.user_id == current_user.id)
+        .order_by(PeerReview.created_at.desc())
+        .limit(limit)
+    )
+    rows = (await db.execute(stmt)).all()
+
+    return [
+        {
+            "review_id": str(pr.id),
+            "reviewer_name": u.display_name,
+            "scenario_title": s.content.get("title", ""),
+            "scenario_question": s.content.get("question", ""),
+            "scenario_category": s.category,
+            "scenario_difficulty": s.difficulty,
+            "dimension_scores": pr.dimension_scores,
+            "feedback": pr.feedback,
+            "quality_score": round(float(pr.quality_score), 2) if pr.quality_score else None,
+            "created_at": pr.created_at.isoformat(),
+        }
+        for pr, s, u in rows
     ]

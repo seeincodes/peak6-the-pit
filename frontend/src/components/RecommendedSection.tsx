@@ -17,7 +17,7 @@ export default function RecommendedSection({
 }) {
   const { data: recs } = useQuery<Recommendation[]>({
     queryKey: ["recommendations"],
-    queryFn: async () => (await api.get("/scenarios/recommended?limit=3")).data,
+    queryFn: async () => (await api.get("/scenarios/recommended?limit=1")).data,
     staleTime: 60_000,
   });
 

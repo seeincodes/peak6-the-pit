@@ -27,9 +27,9 @@ export default function DifficultySuggestion({
 
   if (!suggestions || suggestions.length === 0) return null;
 
-  const visible = suggestions.filter(
-    (s) => !dismissed.has(`${s.category}-${s.current_difficulty}`)
-  );
+  const visible = suggestions
+    .filter((s) => !dismissed.has(`${s.category}-${s.current_difficulty}`))
+    .slice(0, 2);
   if (visible.length === 0) return null;
 
   return (

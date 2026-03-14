@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { motion, AnimatePresence } from "framer-motion";
-import { Users, Star, ArrowLeft, Send, Zap, Award, MessageSquare } from "lucide-react";
+import { Users, Star, ArrowLeft, Send, Zap, Award, MessageSquare, Inbox } from "lucide-react";
 import api from "../api/client";
 
 interface QueueItem {
@@ -26,6 +26,19 @@ interface ReviewResult {
   xp_earned: number;
   quality_bonus: boolean;
   xp_total: number;
+}
+
+interface ReceivedReview {
+  review_id: string;
+  reviewer_name: string;
+  scenario_title: string;
+  scenario_question: string;
+  scenario_category: string;
+  scenario_difficulty: string;
+  dimension_scores: Record<string, number>;
+  feedback: string;
+  quality_score: number | null;
+  created_at: string;
 }
 
 const DIMENSIONS = ["reasoning", "terminology", "overall"] as const;
@@ -172,6 +185,11 @@ function QueueView({
                       by {item.author_display_name}
                     </span>
                   </div>
+                  {item.scenario_question && (
+                    <p className="text-xs text-cm-muted mt-2 line-clamp-2">
+                      {item.scenario_question}
+                    </p>
+                  )}
                 </div>
                 <button className="text-cm-primary text-xs font-medium flex items-center gap-1 ml-3 shrink-0">
                   Review <MessageSquare size={14} />
@@ -353,7 +371,89 @@ function SuccessView({
   );
 }
 
+function ReceivedReviewsView({ reviews }: { reviews: ReceivedReview[] }) {
+  if (reviews.length === 0) {
+    return (
+      <div className="cm-surface p-8 text-center">
+        <Inbox size={32} className="text-cm-muted mx-auto mb-3" />
+        <div className="text-cm-muted text-sm">
+          No reviews received yet. Complete more scenarios so peers can review your work!
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="space-y-3">
+      {reviews.map((review, i) => (
+        <motion.div
+          key={review.review_id}
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: i * 0.05 }}
+          className="cm-surface p-4 space-y-3"
+        >
+          <div className="flex items-start justify-between">
+            <div className="flex-1 min-w-0">
+              <div className="text-sm font-semibold text-cm-text">
+                {review.scenario_title || `${review.scenario_category.replace(/_/g, " ")}`}
+              </div>
+              <div className="flex items-center gap-2 mt-1">
+                <span className="text-xs px-2 py-0.5 rounded-full bg-cm-primary/10 text-cm-primary capitalize">
+                  {review.scenario_category.replace(/_/g, " ")}
+                </span>
+                <span className="text-xs text-cm-muted capitalize">
+                  {review.scenario_difficulty}
+                </span>
+              </div>
+              {review.scenario_question && (
+                <p className="text-xs text-cm-muted mt-2 line-clamp-2">
+                  {review.scenario_question}
+                </p>
+              )}
+            </div>
+            <div className="text-right shrink-0 ml-3">
+              <div className="text-xs text-cm-muted">
+                by {review.reviewer_name}
+              </div>
+              <div className="text-[10px] text-cm-muted/60 mt-0.5">
+                {new Date(review.created_at).toLocaleDateString()}
+              </div>
+            </div>
+          </div>
+
+          {/* Scores */}
+          <div className="flex gap-4">
+            {Object.entries(review.dimension_scores).map(([dim, score]) => (
+              <div key={dim} className="flex items-center gap-1.5">
+                <span className="text-xs text-cm-muted capitalize">{dim}:</span>
+                <div className="flex">
+                  {[1, 2, 3, 4, 5].map((n) => (
+                    <Star
+                      key={n}
+                      size={12}
+                      className={n <= (score as number) ? "text-cm-amber fill-cm-amber" : "text-cm-muted/20"}
+                    />
+                  ))}
+                </div>
+              </div>
+            ))}
+          </div>
+
+          {/* Feedback */}
+          <div className="bg-cm-card-raised rounded-lg px-3 py-2">
+            <p className="text-sm text-cm-text whitespace-pre-wrap">{review.feedback}</p>
+          </div>
+        </motion.div>
+      ))}
+    </div>
+  );
+}
+
+type Tab = "review" | "received";
+
 export default function PeerReviewPage() {
+  const [tab, setTab] = useState<Tab>("review");
   const [selectedItem, setSelectedItem] = useState<QueueItem | null>(null);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [result, setResult] = useState<ReviewResult | null>(null);
@@ -374,6 +474,16 @@ export default function PeerReviewPage() {
       const res = await api.get(`/peer-review/queue${params}`);
       return res.data as { queue: QueueItem[] };
     },
+    enabled: tab === "review",
+  });
+
+  const { data: receivedReviews, isLoading: receivedLoading } = useQuery({
+    queryKey: ["peer-review-received"],
+    queryFn: async () => {
+      const res = await api.get("/peer-review/received");
+      return res.data as ReceivedReview[];
+    },
+    enabled: tab === "received",
   });
 
   const handleSuccess = (r: ReviewResult) => {
@@ -381,6 +491,7 @@ export default function PeerReviewPage() {
     setSelectedItem(null);
     queryClient.invalidateQueries({ queryKey: ["peer-review-queue"] });
     queryClient.invalidateQueries({ queryKey: ["peer-review-categories"] });
+    queryClient.invalidateQueries({ queryKey: ["peer-review-received"] });
     queryClient.invalidateQueries({ queryKey: ["user"] });
   };
 
@@ -389,40 +500,83 @@ export default function PeerReviewPage() {
     setSelectedItem(null);
   };
 
+  const showTabs = !selectedItem && !result;
+
   return (
     <div className="cm-page max-w-2xl">
       <h2 className="cm-title mb-4">Peer Review</h2>
 
-      {isLoading && (
+      {/* Tabs */}
+      {showTabs && (
+        <div className="flex gap-1 mb-4 bg-cm-card-raised rounded-lg p-1">
+          <button
+            onClick={() => setTab("review")}
+            className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+              tab === "review"
+                ? "bg-cm-primary/15 text-cm-primary"
+                : "text-cm-muted hover:text-cm-text"
+            }`}
+          >
+            <MessageSquare size={14} />
+            Review Others
+          </button>
+          <button
+            onClick={() => setTab("received")}
+            className={`flex-1 px-3 py-2 rounded-md text-sm font-medium transition-all flex items-center justify-center gap-2 ${
+              tab === "received"
+                ? "bg-cm-primary/15 text-cm-primary"
+                : "text-cm-muted hover:text-cm-text"
+            }`}
+          >
+            <Inbox size={14} />
+            Reviews on My Work
+            {receivedReviews && receivedReviews.length > 0 && (
+              <span className="bg-cm-primary/20 text-cm-primary text-[10px] px-1.5 py-0.5 rounded-full font-bold">
+                {receivedReviews.length}
+              </span>
+            )}
+          </button>
+        </div>
+      )}
+
+      {(isLoading || receivedLoading) && (
         <div className="text-cm-primary animate-pulse text-center py-12 text-sm">
-          Loading review queue...
+          Loading...
         </div>
       )}
 
       <AnimatePresence mode="wait">
-        {result ? (
-          <SuccessView
-            key="success"
-            result={result}
-            onReviewAnother={handleReviewAnother}
-          />
-        ) : selectedItem ? (
-          <ReviewForm
-            key="form"
-            item={selectedItem}
-            onBack={() => setSelectedItem(null)}
-            onSuccess={handleSuccess}
-          />
-        ) : data ? (
-          <QueueView
-            key="queue"
-            queue={data.queue}
-            onSelect={setSelectedItem}
-            categories={categoriesData || []}
-            selectedCategory={selectedCategory}
-            onCategorySelect={setSelectedCategory}
-          />
-        ) : null}
+        {tab === "review" && (
+          <>
+            {result ? (
+              <SuccessView
+                key="success"
+                result={result}
+                onReviewAnother={handleReviewAnother}
+              />
+            ) : selectedItem ? (
+              <ReviewForm
+                key="form"
+                item={selectedItem}
+                onBack={() => setSelectedItem(null)}
+                onSuccess={handleSuccess}
+              />
+            ) : data ? (
+              <QueueView
+                key="queue"
+                queue={data.queue}
+                onSelect={setSelectedItem}
+                categories={categoriesData || []}
+                selectedCategory={selectedCategory}
+                onCategorySelect={setSelectedCategory}
+              />
+            ) : null}
+          </>
+        )}
+
+        {tab === "received" && receivedReviews && (
+          <ReceivedReviewsView key="received" reviews={receivedReviews} />
+        )}
       </AnimatePresence>
     </div>
   );
