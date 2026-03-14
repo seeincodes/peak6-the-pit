@@ -67,7 +67,7 @@ LEVEL_UNLOCKS: dict[int, list[CategoryTier]] = {
     7: [
         CategoryTier("exotic_structures", "beginner"),
         CategoryTier("portfolio_mgmt", "beginner"),
-        CategoryTier("capman_tooling", "beginner"),
+        CategoryTier("pit_tooling", "beginner"),
     ],
     # Intermediate tiers
     8: [CategoryTier(c, "intermediate") for c in [
@@ -89,7 +89,7 @@ LEVEL_UNLOCKS: dict[int, list[CategoryTier]] = {
         "correlation", "microstructure", "fixed_income", "seasonality",
         "commodities", "geopolitical", "vol_surface", "position_sizing",
         "trade_structuring", "risk_management", "alt_data", "crypto",
-        "exotic_structures", "portfolio_mgmt", "capman_tooling",
+        "exotic_structures", "portfolio_mgmt", "pit_tooling",
     ]],
 }
 
@@ -123,7 +123,7 @@ CATEGORY_PREREQUISITES: dict[str, str] = {
     # Expert ← Advanced
     "exotic_structures": "vol_surface",
     "portfolio_mgmt": "position_sizing",
-    "capman_tooling": "risk_management",
+    "pit_tooling": "risk_management",
 }
 
 MASTERY_THRESHOLD = 3.5
@@ -164,7 +164,7 @@ SCENARIO_CATEGORIES = [
     "iv_analysis", "realized_vol", "greeks", "order_flow", "macro",
     "term_structure", "skew", "correlation", "event_vol", "tail_risk",
     "position_sizing", "trade_structuring", "vol_surface", "microstructure",
-    "risk_management", "capman_tooling",
+    "risk_management", "pit_tooling",
     "sentiment", "technical_analysis", "fixed_income", "seasonality",
     "exotic_structures", "fundamentals", "commodities", "crypto",
     "geopolitical", "alt_data", "portfolio_mgmt",

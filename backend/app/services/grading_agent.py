@@ -33,7 +33,14 @@ anthropic_client = AsyncAnthropic(api_key=settings.anthropic_api_key)
 def _parse_json(raw: str) -> dict:
     cleaned = re.sub(r"```json\s*", "", raw)
     cleaned = re.sub(r"```\s*$", "", cleaned)
-    return json.loads(cleaned.strip())
+    cleaned = cleaned.strip()
+    try:
+        return json.loads(cleaned)
+    except json.JSONDecodeError:
+        match = re.search(r"\{[\s\S]*\}", cleaned)
+        if match:
+            return json.loads(match.group())
+        raise
 
 
 def parse_grade_json(raw: str) -> dict:

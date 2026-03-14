@@ -11,7 +11,7 @@ interface OnboardingModalProps {
 const STEPS = [
   {
     icon: Crosshair,
-    title: "Welcome to CapMan AI",
+    title: "Welcome to The Pit",
     body: "Your AI-powered options trading training platform. Practice with realistic scenarios, get graded by AI, and level up your skills.",
     color: "#4D34EF",
   },

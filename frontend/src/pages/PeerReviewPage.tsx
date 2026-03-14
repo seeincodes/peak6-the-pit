@@ -293,10 +293,11 @@ function ReviewForm({
           <textarea
             value={feedback}
             onChange={(e) => setFeedback(e.target.value)}
+            disabled={mutation.isPending}
             maxLength={500}
             rows={3}
             placeholder="What did they do well? What could be improved?"
-            className="cm-input w-full resize-none"
+            className={`cm-input w-full resize-none transition-opacity ${mutation.isPending ? "opacity-50 cursor-not-allowed" : ""}`}
           />
           <div className="text-xs text-cm-muted text-right mt-1">
             {feedback.length}/500

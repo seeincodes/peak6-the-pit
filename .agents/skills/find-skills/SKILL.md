@@ -1,8 +1,8 @@
-# CapMan AI — Project Context Skill
+# The Pit — Project Context Skill
 
 ## Context
 
-CapMan AI is a gamified AI-driven scenario training platform for options trading training, automating scenario generation, Socratic grading, and MTSS-tier educator dashboards.
+The Pit is a gamified AI-driven scenario training platform for options trading training, automating scenario generation, Socratic grading, and MTSS-tier educator dashboards.
 
 ## Codebase
 
@@ -41,7 +41,7 @@ CapMan AI is a gamified AI-driven scenario training platform for options trading
 
 ## Processing Strategy
 
-1. **Ingest** proprietary docs (Volatility Framework, CapMan Lexicon) → chunk → embed → pgvector
+1. **Ingest** proprietary docs (Volatility Framework, Pit Lexicon) → chunk → embed → pgvector
 2. **Generate** scenarios via RAG-augmented Claude prompts, categorized by volatility data type
 3. **Grade** responses with Socratic probing agent, scoring across rubric dimensions (reasoning, terminology, trade logic, risk awareness)
 4. **Track** XP, levels, streaks, and leaderboards for gamification engagement

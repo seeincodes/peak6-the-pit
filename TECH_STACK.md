@@ -1,4 +1,4 @@
-# CapMan AI — Technology Stack
+# The Pit — Technology Stack
 
 ## Architecture Overview
 

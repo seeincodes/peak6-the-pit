@@ -9,7 +9,7 @@ class Settings(BaseSettings):
     openai_api_key: str = ""
     langsmith_enabled: bool = False
     langsmith_api_key: str = ""
-    langsmith_project: str = "capman-ai"
+    langsmith_project: str = "the-pit"
     langsmith_endpoint: str = "https://api.smith.langchain.com"
     generation_cache_enabled: bool = True
     generation_cache_ttl_seconds: int = 600

@@ -55,7 +55,7 @@ def test_difficulty_multiplier():
 
 def test_scenario_categories():
     assert "iv_analysis" in SCENARIO_CATEGORIES
-    assert "capman_tooling" in SCENARIO_CATEGORIES
+    assert "pit_tooling" in SCENARIO_CATEGORIES
     assert len(SCENARIO_CATEGORIES) == 27
 
 

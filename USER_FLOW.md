@@ -1,4 +1,4 @@
-# CapMan AI — User Flow
+# The Pit — User Flow
 
 ## Primary Flow: Trading Associate Scenario Training
 
@@ -17,7 +17,7 @@
 │                                                              │
 │  Category: IV Skew Analysis                                  │
 │  Difficulty: Intermediate                                    │
-│  Context: [RAG-retrieved market data + CapMan lexicon]       │
+│  Context: [RAG-retrieved market data + Pit lexicon]       │
 │                                                              │
 │  "Given the following IV surface for SPX options...          │
 │   What trade would you put on and why?"                      │

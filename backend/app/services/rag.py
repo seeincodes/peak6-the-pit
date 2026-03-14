@@ -32,7 +32,7 @@ CATEGORY_QUERIES = {
     "vol_surface": "volatility surface strike delta sticky",
     "microstructure": "market microstructure bid ask spread liquidity",
     "risk_management": "risk management VaR stress testing stop loss",
-    "capman_tooling": "Atlas trading tools platform analysis",
+    "pit_tooling": "Atlas trading tools platform analysis",
     "sentiment": "sentiment behavioral data fear greed put call ratio fund flows",
     "technical_analysis": "technical analysis price action RSI MACD bollinger bands",
     "fixed_income": "interest rate fixed income bonds MOVE index yield curve credit spreads",

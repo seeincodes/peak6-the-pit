@@ -22,7 +22,7 @@ const NODE_LAYERS: string[][] = [
   // Advanced (Level 6) — combining specializations
   ["vol_surface", "position_sizing", "trade_structuring", "risk_management", "alt_data", "crypto"],
   // Expert (Level 7) — mastery-level synthesis
-  ["exotic_structures", "portfolio_mgmt", "capman_tooling"],
+  ["exotic_structures", "portfolio_mgmt", "pit_tooling"],
 ];
 
 // Parent links encode prerequisite relationships.
@@ -57,7 +57,7 @@ const PARENT_LINKS: { layer: number; parentCol: number }[][] = [
     { layer: 2, parentCol: 7 }, { layer: 2, parentCol: 5 },
   ],
   // Layer 4 (Expert) → Layer 3 (Advanced)
-  // exotic_structures←vol_surface, portfolio_mgmt←position_sizing, capman_tooling←risk_management
+  // exotic_structures←vol_surface, portfolio_mgmt←position_sizing, pit_tooling←risk_management
   [
     { layer: 3, parentCol: 0 }, { layer: 3, parentCol: 1 },
     { layer: 3, parentCol: 3 },
@@ -85,7 +85,7 @@ const DISPLAY_LABELS: Record<string, string> = {
   vol_surface: "VOL\nSURFACE",
   microstructure: "MICRO\nSTRUCT",
   risk_management: "RISK\nMGMT",
-  capman_tooling: "CM\nTOOLING",
+  pit_tooling: "PIT\nTOOLING",
   sentiment: "SENTI\nMENT",
   technical_analysis: "TECH\nANALYSIS",
   fixed_income: "FIXED\nINCOME",
@@ -107,7 +107,7 @@ const UNLOCK_LEVELS: Record<string, number> = {
   skew: 4, term_structure: 4, event_vol: 4, tail_risk: 4,
   correlation: 5, microstructure: 5, fixed_income: 5, seasonality: 5, commodities: 5, geopolitical: 5,
   vol_surface: 6, position_sizing: 6, trade_structuring: 6, risk_management: 6, alt_data: 6, crypto: 6,
-  exotic_structures: 7, portfolio_mgmt: 7, capman_tooling: 7,
+  exotic_structures: 7, portfolio_mgmt: 7, pit_tooling: 7,
 };
 
 const LAYER_LABELS = ["Foundation", "Core", "Specialization", "Advanced", "Expert"];

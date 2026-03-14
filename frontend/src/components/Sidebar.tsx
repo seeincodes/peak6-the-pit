@@ -88,10 +88,10 @@ export default function Sidebar({ user, mobileOpen, onMobileClose }: SidebarProp
       <div className="flex items-center h-16 border-b border-cm-border shrink-0 px-4">
         <div className="flex items-center gap-3 min-w-0 flex-1">
           <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cm-primary to-cm-emerald flex items-center justify-center shrink-0">
-            <span className="text-white font-bold text-sm tracking-tight">CM</span>
+            <span className="text-white font-bold text-sm tracking-tight">TP</span>
           </div>
           <span className="text-cm-text font-bold text-sm whitespace-nowrap">
-            CapMan AI
+            The Pit
           </span>
         </div>
         {isMobile && (

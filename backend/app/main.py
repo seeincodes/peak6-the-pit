@@ -73,7 +73,7 @@ async def _seed_paths():
 
 
 app = FastAPI(
-    title="CapMan AI",
+    title="The Pit",
     description="Gamified Scenario Training & MTSS Agent",
     version="0.1.0",
     lifespan=lifespan,

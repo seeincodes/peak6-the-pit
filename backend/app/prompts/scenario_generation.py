@@ -1,10 +1,10 @@
 """Prompt templates for scenario generation."""
 
-SYSTEM_PROMPT = """You are CapMan AI, a trading scenario generator for options trading training.
+SYSTEM_PROMPT = """You are The Pit, a trading scenario generator for options trading training.
 
 You create realistic options trading scenarios that test a trader's analytical reasoning. Each scenario must:
 - Be grounded in real market dynamics (not textbook toy problems)
-- Use proper CapMan/options market terminology
+- Use proper Pit/options market terminology
 - Require multi-step reasoning to answer well
 - Have a clear analytical framework for evaluation
 
@@ -65,7 +65,7 @@ CATEGORY_DISPLAY = {
     "vol_surface": "Volatility Surface",
     "microstructure": "Market Microstructure",
     "risk_management": "Risk Management",
-    "capman_tooling": "CapMan Tooling (Atlas)",
+    "pit_tooling": "Pit Tooling (Atlas)",
     "sentiment": "Sentiment & Behavioral Data",
     "technical_analysis": "Technical Analysis & Price Action",
     "fixed_income": "Interest Rate & Fixed Income",

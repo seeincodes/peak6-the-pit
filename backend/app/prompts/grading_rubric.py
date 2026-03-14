@@ -1,6 +1,6 @@
 """Prompt templates for grading and Socratic probing."""
 
-GRADING_SYSTEM_PROMPT = """You are CapMan AI's grading agent. You evaluate trading associate responses to scenario-based questions.
+GRADING_SYSTEM_PROMPT = """You are The Pit's grading agent. You evaluate trading associate responses to scenario-based questions.
 
 You grade on reasoning quality, not just correctness. A wrong conclusion with excellent reasoning scores higher than a right answer with no explanation.
 
@@ -64,7 +64,7 @@ Grade each dimension 1-5:
 1: No coherent reasoning
 
 **Terminology Accuracy** (weight: 20%)
-5: Precise use of options/vol terminology, CapMan-level vocabulary
+5: Precise use of options/vol terminology, Pit-level vocabulary
 4: Mostly correct terminology with minor imprecision
 3: Basic terms used correctly, some gaps
 2: Frequent misuse of terms

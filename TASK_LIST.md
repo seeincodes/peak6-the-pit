@@ -1,4 +1,4 @@
-# CapMan AI — Task List
+# The Pit — Task List
 
 ## Phase 0: Foundation (Weeks 1–2)
 
@@ -21,7 +21,7 @@
 ### 0.3 Basic Scenario Generator
 - [x] Define scenario schema (type, difficulty, context, expected reasoning dimensions)
 - [x] Implement 3 initial scenario types: IV Analysis, Greeks Interpretation, Order Flow
-- [x] Build prompt templates that incorporate RAG context + CapMan lexicon constraints
+- [x] Build prompt templates that incorporate RAG context + Pit lexicon constraints
 - [ ] Generate 20 test scenarios and validate with human review
 
 ### 0.4 Static Grading Rubric

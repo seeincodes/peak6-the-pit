@@ -1,8 +1,8 @@
-# CapMan AI — Architecture Memo
+# The Pit — Architecture Memo
 
 ## Project Summary
 
-CapMan AI is a gamified AI training platform that generates options trading scenarios, grades trader reasoning via Socratic probing, and provides educators with MTSS-tier intervention dashboards. It replaces bandwidth-constrained manual training with an automated, engagement-driven system that scales across Trading Associates, bootcamp interns, and experienced traders.
+The Pit is a gamified AI training platform that generates options trading scenarios, grades trader reasoning via Socratic probing, and provides educators with MTSS-tier intervention dashboards. It replaces bandwidth-constrained manual training with an automated, engagement-driven system that scales across Trading Associates, bootcamp interns, and experienced traders.
 
 ## Key Architecture Decisions
 
@@ -37,7 +37,7 @@ The application is a React SPA communicating with a stateless API. JWT tokens wi
 ## Processing Strategy
 
 1. **Document Ingestion:** PDF → section-aware chunking (~500 tokens, overlapping) → OpenAI embeddings → pgvector storage with metadata tags (category, subcategory)
-2. **Scenario Generation:** User requests scenario → engine selects category (random or targeted for weak dimensions) → RAG retrieves relevant chunks → Claude generates scenario with CapMan lexicon constraints → scenario stored with embedding for deduplication
+2. **Scenario Generation:** User requests scenario → engine selects category (random or targeted for weak dimensions) → RAG retrieves relevant chunks → Claude generates scenario with Pit lexicon constraints → scenario stored with embedding for deduplication
 3. **Response Grading:** User submits response → grading agent receives (scenario + RAG context + response + rubric) → generates Socratic probe → user responds → final grade with dimension scores + feedback → XP awarded
 4. **MTSS Classification:** Nightly batch job aggregates per-user dimension scores over rolling 14-day window → applies tier thresholds (Tier 1: avg ≥ 3.5, Tier 2: 2.5–3.4, Tier 3: < 2.5) → updates dashboard classifications → flags tier changes for educator notification
 

@@ -36,8 +36,9 @@ export default function ResponseInput({ onSubmit, placeholder, loading }: Respon
         id="response-input"
         value={text}
         onChange={(e) => { setText(e.target.value); autoGrow(); }}
+        disabled={loading}
         placeholder={placeholder || "Type your analysis..."}
-        className="w-full min-h-[8rem] bg-transparent text-cm-text placeholder-cm-muted resize-none outline-none text-sm leading-relaxed focus-ring"
+        className={`w-full min-h-[8rem] bg-transparent text-cm-text placeholder-cm-muted resize-none outline-none text-sm leading-relaxed focus-ring transition-opacity ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
         onPaste={(e) => {
           e.preventDefault();
           setPasteBlocked(true);

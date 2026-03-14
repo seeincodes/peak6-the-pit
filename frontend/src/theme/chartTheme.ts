@@ -55,7 +55,7 @@ export const CATEGORY_CHART_TYPE: Record<string, "line" | "candle" | "area" | "h
   geopolitical: "line",
   alt_data: "area",
   portfolio_mgmt: "line",
-  capman_tooling: "line",
+  pit_tooling: "line",
 };
 
 /** Seeded PRNG for deterministic chart data from scenario IDs */

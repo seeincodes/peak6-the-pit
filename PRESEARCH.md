@@ -1,6 +1,6 @@
-# CapMan AI Gauntlet — Pre-Research Plan
+# The Pit Gauntlet — Pre-Research Plan
 
-> Project: CapMan AI — Gamified Scenario Training & MTSS Agent
+> Project: The Pit — Gamified Scenario Training & MTSS Agent
 > Last Updated: March 2026
 
 ---
@@ -45,13 +45,13 @@
 │   LLM · Rubric Engine · Socratic Follow-ups         │
 ├─────────────────────────────────────────────────────┤
 │           LAYER 1: Scenario Engine                  │
-│   Python · RAG · CapMan Lexicon · Atlas (hooks)     │
+│   Python · RAG · Pit Lexicon · Atlas (hooks)     │
 └─────────────────────────────────────────────────────┘
 ```
 
 ### Layer 1 — Scenario Engine (Python / LLM + RAG)
 
-- RAG pipeline ingests the **Volatility Trading Data Framework** and future CapMan lexicon documents to enforce proprietary terminology and options logic
+- RAG pipeline ingests the **Volatility Trading Data Framework** and future Pit lexicon documents to enforce proprietary terminology and options logic
 - Generates contextually accurate, non-static scenarios across 15+ volatility data categories (IV metrics, Order Flow, Greeks, Macro, Tail Risk, etc.)
 - Scenario "types" are modular plug-in categories — new types added without rebuilding the engine
 - **Atlas integration lives here** as optional Python hooks; design as progressive enrichment, not a hard dependency, so MVP does not block on Atlas documentation gaps
@@ -59,7 +59,7 @@
 ### Layer 2 — Grading & Probing Agent (LLM)
 
 - Evaluates **reasoning quality**, not just final answers
-- Rubric system anchored to CapMan's actual trading philosophy and proprietary concepts
+- Rubric system anchored to the actual trading philosophy and proprietary concepts
 - Asks Socratic follow-up probes: _"Why that strike?" / "What does the IV skew tell you here?" / "How does the term structure change your thesis?"_
 - **Educator correlation benchmarking is required before launch** — minimum 50–100 human-graded examples needed as ground truth dataset; this work must begin in Week 1
 
@@ -120,7 +120,7 @@ These gaps must be resolved before architecture is finalized. Leaving them open 
 ### On Grading Calibration
 
 - [ ] Who are the 2–3 senior traders who will serve as the **human grading benchmark panel**?
-- [ ] Does CapMan have an existing rubric for evaluating TA responses, or does it need to be built from scratch alongside this project?
+- [ ] Does the firm have an existing rubric for evaluating TA responses, or does it need to be built from scratch alongside this project?
 - [ ] What is the acceptable grading latency — under 5 seconds per response, or is 15–30s acceptable for complex probing chains?
 
 ### On MTSS Framework
@@ -137,7 +137,7 @@ These gaps must be resolved before architecture is finalized. Leaving them open 
 
 ### On Data & Compliance
 
-- [ ] What is CapMan's data classification policy for sending proprietary trading logic to **external LLM APIs**?
+- [ ] What is the firm's data classification policy for sending proprietary trading logic to **external LLM APIs**?
 - [ ] Is on-premise or private cloud deployment required, or is a managed API (Anthropic / OpenAI) acceptable?
 - [ ] Do scenario responses constitute trading-related communications subject to FINRA recordkeeping rules?
 
@@ -164,7 +164,7 @@ Focus on the **Atlas integration interface contract**, grading rubric data schem
 
 ### Executive Pitch Deck
 
-Lead with scalability and retention metrics — the business case, not the tech. Frame CapMan AI as the **internal, proprietary-grade version of Zogo** applied to trader development. The God View MTSS dashboard is the executive hook: it turns a subjective _"how's your TA doing?"_ into a data-driven, real-time intervention system. Tie the ROI narrative to reduced educator bandwidth cost and increased TA throughput.
+Lead with scalability and retention metrics — the business case, not the tech. Frame The Pit as the **internal, proprietary-grade version of Zogo** applied to trader development. The God View MTSS dashboard is the executive hook: it turns a subjective _"how's your TA doing?"_ into a data-driven, real-time intervention system. Tie the ROI narrative to reduced educator bandwidth cost and increased TA throughput.
 
 ### Full Technical Build Plan
 
@@ -178,7 +178,7 @@ Modular architecture diagram, sprint-by-sprint breakdown, and a clear **Atlas de
 | ----------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------ |
 | `Volatility_Trading_Data_Framework.pdf`               | Primary RAG knowledge base — 20 categories, 200+ data points covering IV, Greeks, Order Flow, Macro, Tail Risk, and more |
 | `Gamified_Scenario_Trading_Training___MTSS_Agent.pdf` | Product requirements — success criteria, functional requirements, and technical constraints                              |
-| CapMan Lexicon Docs _(to be provided)_                | Enforce proprietary terminology and trading nuances in scenario generation                                               |
+| Pit Lexicon Docs _(to be provided)_                | Enforce proprietary terminology and trading nuances in scenario generation                                               |
 | Atlas API Docs _(to be provided)_                     | Python integration hooks for tooling-relevant scenario enrichment                                                        |
 
 ---

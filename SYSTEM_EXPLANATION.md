@@ -1,8 +1,8 @@
-# CapMan AI — System Explanation
+# The Pit — System Explanation
 
 ## What the System Is
 
-CapMan AI is a **gamified, AI-driven scenario training platform** for options trading education. It automates what used to be manual and bandwidth-limited: generating practice scenarios, grading trader reasoning, and tracking learner performance. The system serves three audiences — Trading Associates (18-month TA program), bootcamp interns (1-week intensive), and experienced traders (upskilling) — with the TA program as the primary design persona.
+The Pit is a **gamified, AI-driven scenario training platform** for options trading education. It automates what used to be manual and bandwidth-limited: generating practice scenarios, grading trader reasoning, and tracking learner performance. The system serves three audiences — Trading Associates (18-month TA program), bootcamp interns (1-week intensive), and experienced traders (upskilling) — with the TA program as the primary design persona.
 
 **Core value proposition:** Replace educator bandwidth constraints with a scalable, engagement-driven training loop that provides Socratic feedback, XP-based progression, and an MTSS (Multi-Tier System of Supports) dashboard for educators to identify and intervene with learners who need support.
 
@@ -12,7 +12,7 @@ CapMan AI is a **gamified, AI-driven scenario training platform** for options tr
 
 ### Python Backend (FastAPI)
 
-Python was required by the proposal for **Atlas integration** — CapMan's internal proprietary trading platform. FastAPI was chosen over Django or Flask because:
+Python was required by the proposal for **Atlas integration** — Peak6's internal proprietary trading platform. FastAPI was chosen over Django or Flask because:
 
 - **API-first:** No server-rendered templates; the app is a React SPA talking to a REST + WebSocket API.
 - **Async-native:** WebSockets for real-time leaderboards and head-to-head matches need async support without extra extensions.
@@ -92,7 +92,7 @@ The app is a React SPA with a stateless API. JWT tokens with role claims (`ta`, 
 
 The system is organized into three logical layers:
 
-1. **Scenario Engine (Layer 1):** RAG over the Volatility Framework, CapMan lexicon, and optional Atlas hooks. Generates contextually accurate scenarios across 15+ volatility categories.
+1. **Scenario Engine (Layer 1):** RAG over the Volatility Framework, Pit lexicon, and optional Atlas hooks. Generates contextually accurate scenarios across 15+ volatility categories.
 2. **Grading & Probing Agent (Layer 2):** LLM-based evaluation of reasoning quality, Socratic follow-ups, and rubric-based scoring.
 3. **Gamification & MTSS (Layer 3):** XP, leaderboards, head-to-head matches, peer review, and the educator "God View" dashboard.
 
@@ -114,14 +114,14 @@ XP drives leaderboards, levels, and MTSS analysis. A mutable `xp_total` field is
 
 ### RAG-First Scenario Generation
 
-Scenarios are not static. The RAG pipeline ingests the Volatility Framework and CapMan lexicon, chunks by category/section (~500 tokens with overlap), embeds with OpenAI, and stores in pgvector. When a user requests a scenario, the engine:
+Scenarios are not static. The RAG pipeline ingests the Volatility Framework and Pit lexicon, chunks by category/section (~500 tokens with overlap), embeds with OpenAI, and stores in pgvector. When a user requests a scenario, the engine:
 
 1. Selects category (random or targeted for weak dimensions)
 2. Retrieves relevant chunks via similarity search
 3. Passes chunks + rubric constraints to Claude
 4. Generates a scenario with correct terminology and options logic
 
-This keeps scenarios grounded in CapMan's proprietary framework and lexicon.
+This keeps scenarios grounded in the proprietary framework and lexicon.
 
 ### Adaptive Difficulty Progression
 
@@ -172,7 +172,7 @@ The system is designed to degrade gracefully when dependencies fail:
 
 ## Summary
 
-CapMan AI is built as an API-first, Python-backed, React-fronted platform that uses RAG for scenario generation, Claude for grading, and pgvector + Redis for data and real-time features. The stack and architecture were chosen to:
+The Pit is built as an API-first, Python-backed, React-fronted platform that uses RAG for scenario generation, Claude for grading, and pgvector + Redis for data and real-time features. The stack and architecture were chosen to:
 
 1. **Align with partner constraints** (Python for Atlas, existing React/Docker/Postgres stack)
 2. **Minimize operational complexity** (pgvector instead of a separate vector DB, JWT instead of sessions)

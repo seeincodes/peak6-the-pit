@@ -70,7 +70,7 @@ TEST_USER_ID = U1
 TEST_USERS = [
     {
         "id": U1,
-        "email": "trader@capman.dev",
+        "email": "trader@thepit.dev",
         "password": "trader123",
         "display_name": "Test Trader",
         "role": "ta",
@@ -85,7 +85,7 @@ TEST_USERS = [
     },
     {
         "id": U2,
-        "email": "alex@capman.dev",
+        "email": "alex@thepit.dev",
         "password": "alex123",
         "display_name": "Alex Chen",
         "role": "ta",
@@ -100,7 +100,7 @@ TEST_USERS = [
     },
     {
         "id": U3,
-        "email": "maria@capman.dev",
+        "email": "maria@thepit.dev",
         "password": "maria123",
         "display_name": "Maria Santos",
         "role": "ta",
@@ -115,7 +115,7 @@ TEST_USERS = [
     },
     {
         "id": U4,
-        "email": "james@capman.dev",
+        "email": "james@thepit.dev",
         "password": "james123",
         "display_name": "James Kim",
         "role": "intern",
@@ -130,7 +130,7 @@ TEST_USERS = [
     },
     {
         "id": U5,
-        "email": "priya@capman.dev",
+        "email": "priya@thepit.dev",
         "password": "priya123",
         "display_name": "Priya Patel",
         "role": "ta",
@@ -148,12 +148,12 @@ TEST_USERS = [
 PROD_USERS = [
     {
         "id": P1,
-        "email": "demo@capman.dev",
+        "email": "demo@thepit.dev",
         "password": "demo2026",
         "display_name": "Demo Trader",
         "role": "ta",
         "avatar_id": "chart",
-        "bio": "Demo account for exploring CapMan AI.",
+        "bio": "Demo account for exploring The Pit.",
         "ta_phase": 2,
         "xp_total": 200,         # Level 3 (180–379)
         "level": 3,
@@ -163,7 +163,7 @@ PROD_USERS = [
     },
     {
         "id": P2,
-        "email": "admin@capman.dev",
+        "email": "admin@thepit.dev",
         "password": "admin2026",
         "display_name": "Admin User",
         "role": "admin",
@@ -178,7 +178,7 @@ PROD_USERS = [
     },
     {
         "id": P3,
-        "email": "advanced@capman.dev",
+        "email": "advanced@thepit.dev",
         "password": "advanced2026",
         "display_name": "Advanced Demo",
         "role": "ta",
@@ -306,8 +306,8 @@ DEMO_SCENARIOS = [
      "content": {"title": "Multi-Strategy Portfolio Allocation",
                  "question": "You manage a $50M options portfolio with vol arb, dispersion, and tail hedge strategies. How do you allocate risk budget across them?",
                  "context": "VIX at 16. Correlation at 0.35. Realized < implied by 3 vol points across the board."}},
-    {"id": S[26], "category": "capman_tooling", "difficulty": "beginner",
-     "content": {"title": "CapMan Risk Dashboard Design",
+    {"id": S[26], "category": "pit_tooling", "difficulty": "beginner",
+     "content": {"title": "The Pit Risk Dashboard Design",
                  "question": "Design the key metrics and alerts for a real-time options portfolio risk dashboard. What should a PM see at a glance?",
                  "context": "Building internal tooling for a multi-PM options desk."}},
 ]
@@ -342,7 +342,7 @@ _USER_MASTERY: dict[uuid.UUID, list[str]] = {
          "microstructure", "fixed_income", "seasonality", "commodities", "geopolitical",
          "vol_surface", "position_sizing", "trade_structuring", "risk_management",
          "alt_data", "crypto",
-         "exotic_structures", "portfolio_mgmt", "capman_tooling"],
+         "exotic_structures", "portfolio_mgmt", "pit_tooling"],
 }
 
 FEEDBACKS = [
@@ -515,7 +515,7 @@ _TRAINEE_ANSWERS: dict[str, list[dict]] = {
          "probe": "What triggers would cause you to reallocate between strategies?",
          "followup": "Key triggers: (1) if VIX rises above 25, reduce vol arb allocation since short vol strategies have negative skewness in high-vol regimes; (2) if correlation rises above 0.6, reduce dispersion since the single-stock vs index vol spread compresses; (3) if both happen simultaneously, increase tail hedge to 40% since it's a crisis regime. I'd also monitor the P&L Sharpe of each strategy on a rolling 30-day basis — if any strategy's Sharpe drops below 0.5, I'd reduce its allocation until conditions improve."},
     ],
-    "capman_tooling": [
+    "pit_tooling": [
         {"answer": "A PM risk dashboard should show at a glance: (1) Portfolio Greeks — net delta, gamma, vega, theta with P&L attribution, (2) Var/CVaR at 95th and 99th percentile, (3) Largest position concentrations by sector and single name, (4) Margin utilization and buying power, (5) Correlation heat map across positions, (6) Real-time P&L vs daily targets/limits.",
          "probe": "What alerts should trigger automatic notifications to the PM?",
          "followup": "Critical alerts: breach of daily loss limit (hard stop), delta exposure exceeding ±X% of NAV, correlation spike above threshold, any single position exceeding concentration limit, margin utilization above 80%, and unusual volume/price action in top 10 positions. I'd also add a 'regime change' alert that monitors VIX term structure inversions, credit spread widening, and correlation regime shifts — these are leading indicators of systemic risk that require portfolio-level action."},

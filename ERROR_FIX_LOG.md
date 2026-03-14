@@ -1,4 +1,4 @@
-# CapMan AI — Error & Fix Log
+# The Pit — Error & Fix Log
 
 ## Template
 

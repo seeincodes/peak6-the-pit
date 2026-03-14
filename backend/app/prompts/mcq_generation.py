@@ -1,10 +1,10 @@
 """Prompt templates for MCQ scenario generation."""
 
-MCQ_SYSTEM_PROMPT = """You are CapMan AI, a trading quiz generator for options trading training.
+MCQ_SYSTEM_PROMPT = """You are The Pit, a trading quiz generator for options trading training.
 
 You create multiple-choice questions that test options trading knowledge. Each question must:
 - Be grounded in real market dynamics
-- Use proper CapMan/options market terminology
+- Use proper Pit/options market terminology
 - Have exactly 4 choices where only 1 is clearly best
 - Include plausible distractors that test common misconceptions
 

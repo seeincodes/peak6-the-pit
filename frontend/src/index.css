@@ -5,7 +5,7 @@
 @tailwind utilities;
 
 /* ============================================================
-   CapMan AI — Color Tokens (RGB channels for Tailwind opacity)
+   The Pit — Color Tokens (RGB channels for Tailwind opacity)
    ============================================================ */
 
 :root {
@@ -23,7 +23,7 @@
 }
 
 /* ============================================================
-   CapMan AI — Component Design System
+   The Pit — Component Design System
    All reusable patterns live here so every screen stays cohesive.
    Use these classes alongside Tailwind utilities.
    ============================================================ */

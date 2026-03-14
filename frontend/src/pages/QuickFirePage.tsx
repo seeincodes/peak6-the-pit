@@ -376,10 +376,11 @@ export default function QuickFirePage({
                     });
                   }
                 }}
+                disabled={submitMutation.isPending}
                 placeholder="Brief justification (1-2 sentences)..."
                 maxLength={200}
                 rows={2}
-                className="w-full bg-cm-bg border border-cm-border rounded px-4 py-3 text-cm-text text-sm placeholder-cm-muted/50 focus:outline-none focus:border-cm-primary/50 resize-none"
+                className={`w-full bg-cm-bg border border-cm-border rounded px-4 py-3 text-cm-text text-sm placeholder-cm-muted/50 focus:outline-none focus:border-cm-primary/50 resize-none transition-opacity ${submitMutation.isPending ? "opacity-50 cursor-not-allowed" : ""}`}
               />
               {pasteBlocked && (
                 <div className="text-cm-red text-xs mt-1 animate-pulse">

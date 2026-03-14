@@ -1,4 +1,4 @@
-# CapMan AI
+# The Pit
 
 Gamified scenario training & MTSS agent for options trading.
 
@@ -65,19 +65,19 @@ Seed the database with `python -m app.seed` from the backend directory. By defau
 
 | Email | Password | Role | Display Name |
 |-------|----------|------|--------------|
-| trader@capman.dev | trader123 | TA | Test Trader |
-| alex@capman.dev | alex123 | TA | Alex Chen |
-| maria@capman.dev | maria123 | TA | Maria Santos |
-| james@capman.dev | james123 | Intern | James Kim |
-| priya@capman.dev | priya123 | TA | Priya Patel (most advanced) |
+| trader@thepit.dev | trader123 | TA | Test Trader |
+| alex@thepit.dev | alex123 | TA | Alex Chen |
+| maria@thepit.dev | maria123 | TA | Maria Santos |
+| james@thepit.dev | james123 | Intern | James Kim |
+| priya@thepit.dev | priya123 | TA | Priya Patel (most advanced) |
 
 ### Production (`SEED_PROD=true`)
 
 | Email | Password | Role | Display Name |
 |-------|----------|------|--------------|
-| demo@capman.dev | demo2026 | TA | Demo Trader |
-| admin@capman.dev | admin2026 | Admin | Admin User |
-| advanced@capman.dev | advanced2026 | TA | Advanced Demo |
+| demo@thepit.dev | demo2026 | TA | Demo Trader |
+| admin@thepit.dev | admin2026 | Admin | Admin User |
+| advanced@thepit.dev | advanced2026 | TA | Advanced Demo |
 
 ## Testing
 

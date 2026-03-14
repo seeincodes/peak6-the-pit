@@ -98,9 +98,9 @@ function AuthenticatedApp() {
             </button>
             <div className="flex items-center gap-2 ml-3">
               <div className="w-7 h-7 rounded-md bg-gradient-to-br from-cm-primary to-cm-emerald flex items-center justify-center shrink-0">
-                <span className="text-white font-bold text-[10px] tracking-tight">CM</span>
+                <span className="text-white font-bold text-[10px] tracking-tight">TP</span>
               </div>
-              <span className="text-cm-text font-bold text-sm">CapMan AI</span>
+              <span className="text-cm-text font-bold text-sm">The Pit</span>
             </div>
           </div>
           {user && (

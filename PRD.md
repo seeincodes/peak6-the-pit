@@ -1,8 +1,8 @@
-# CapMan AI — Product Requirements Document
+# The Pit — Product Requirements Document
 
 ## Overview
 
-CapMan AI is a gamified, AI-driven scenario training platform for options trading training. It automates scenario generation, response grading, and learner performance tracking — replacing the current manual, bandwidth-constrained training model with a scalable, engagement-driven system backed by an MTSS (Multi-Tier System of Supports) framework.
+The Pit is a gamified, AI-driven scenario training platform for options trading training. It automates scenario generation, response grading, and learner performance tracking — replacing the current manual, bandwidth-constrained training model with a scalable, engagement-driven system backed by an MTSS (Multi-Tier System of Supports) framework.
 
 ## Problem Statement
 
@@ -24,7 +24,7 @@ The TA training program relies on deep-repetition scenario practice, but educato
 - [ ] Dynamic scenario generator (minimum 8–10 volatility data categories)
 - [ ] AI probing & grading agent that evaluates reasoning quality, not just final answers
 - [ ] Socratic follow-up question logic ("Why that strike?", "What does the IV skew tell you?")
-- [ ] Static + dynamic grading rubric anchored to CapMan trading philosophy
+- [ ] Static + dynamic grading rubric anchored to Pit trading philosophy
 - [ ] XP system with points awarded per scenario completion and quality
 - [ ] Basic leaderboard (ranked by mastery score and repetition volume)
 - [ ] Individual learner skill-dimension dashboard (per-category performance)
@@ -65,7 +65,7 @@ The TA training program relies on deep-repetition scenario practice, but educato
 ## Scope Boundaries
 
 ### In Scope
-- AI scenario generation using RAG over proprietary CapMan documents
+- AI scenario generation using RAG over proprietary Pit documents
 - LLM-based grading with Socratic follow-up probing
 - Gamification (XP, leaderboards, head-to-head, peer review)
 - MTSS God View educator dashboard with tier classification
