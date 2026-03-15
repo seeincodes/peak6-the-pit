@@ -71,23 +71,29 @@ docker-compose up --build
 
 Seed the database with `python -m app.seed` from the backend directory. By default, development test users are created; set `SEED_PROD=true` for demo/admin accounts.
 
+For multi-tenant logins, account resolution follows org context. On hosted UI:
+- `thepit.up.railway.app` resolves to org slug `thepit`
+- `acme.yourapp.com` resolves to org slug `acme` (or pass `org_slug` to `/api/auth/login`)
+
 ### Development (default)
 
-| Email             | Password  | Role   | Display Name                |
-| ----------------- | --------- | ------ | --------------------------- |
-| trader@thepit.dev | trader123 | TA     | Test Trader                 |
-| alex@thepit.dev   | alex123   | TA     | Alex Chen                   |
-| maria@thepit.dev  | maria123  | TA     | Maria Santos                |
-| james@thepit.dev  | james123  | Intern | James Kim                   |
-| priya@thepit.dev  | priya123  | TA     | Priya Patel (most advanced) |
+| Org    | Email             | Password  | Role    | Display Name                |
+| ------ | ----------------- | --------- | ------- | --------------------------- |
+| thepit | trader@thepit.dev | trader123 | analyst | Test Trader                 |
+| thepit | alex@thepit.dev   | alex123   | analyst | Alex Chen                   |
+| thepit | maria@thepit.dev  | maria123  | analyst | Maria Santos                |
+| thepit | james@thepit.dev  | james123  | intern  | James Kim                   |
+| thepit | priya@thepit.dev  | priya123  | analyst | Priya Patel (most advanced) |
+| acme   | admin@acme.dev    | acme2026  | org_admin | Acme Admin               |
 
 ### Production (`SEED_PROD=true`)
 
-| Email               | Password     | Role  | Display Name  |
-| ------------------- | ------------ | ----- | ------------- |
-| demo@thepit.dev     | demo2026     | TA    | Demo Trader   |
-| admin@thepit.dev    | admin2026    | Admin | Admin User    |
-| advanced@thepit.dev | advanced2026 | TA    | Advanced Demo |
+| Org    | Email               | Password     | Role      | Display Name  |
+| ------ | ------------------- | ------------ | --------- | ------------- |
+| thepit | demo@thepit.dev     | demo2026     | analyst   | Demo Trader   |
+| thepit | admin@thepit.dev    | admin2026    | org_admin | Admin User    |
+| thepit | advanced@thepit.dev | advanced2026 | analyst   | Advanced Demo |
+| acme   | admin@acme.dev      | acme2026     | org_admin | Acme Admin    |
 
 ## Testing
 

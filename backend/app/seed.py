@@ -865,10 +865,20 @@ async def seed():
         for user_data in users_to_seed:
             existing = await session.get(User, user_data["id"])
             if existing:
-                # Update fields that may have changed
-                for field in ("avatar_id", "bio", "cohort", "has_onboarded", "xp_total", "level", "streak_days"):
-                    if field in user_data:
-                        setattr(existing, field, user_data[field])
+                # Keep seeded demo accounts fully deterministic so README credentials always work.
+                existing.email = user_data["email"].lower()
+                existing.password_hash = hash_password(user_data["password"])
+                existing.display_name = user_data["display_name"]
+                existing.role = user_data["role"]
+                existing.avatar_id = user_data.get("avatar_id", "default")
+                existing.bio = user_data.get("bio")
+                existing.ta_phase = user_data["ta_phase"]
+                existing.xp_total = user_data["xp_total"]
+                existing.level = user_data["level"]
+                existing.streak_days = user_data["streak_days"]
+                existing.cohort = user_data.get("cohort")
+                existing.has_onboarded = user_data.get("has_onboarded", True)
+                existing.org_id = user_data["org_id"]
                 print(f"  Updated: {user_data['display_name']}")
             else:
                 user = User(
