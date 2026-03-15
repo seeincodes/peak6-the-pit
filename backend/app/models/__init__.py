@@ -16,11 +16,12 @@ from app.models.chat import ChatSession, ChatMessage
 from app.models.scenario_bank import ScenarioBank
 from app.models.mcq_bank import MCQBank
 from app.models.model_answer_bank import ModelAnswerBank
+from app.models.organization import Organization
 
 __all__ = [
     "User", "Scenario", "Response", "Grade", "Document", "XPTransaction",
     "Badge", "UserBadge", "EmbeddingCache", "Bookmark", "DailyChallenge",
     "PeerReview", "LearningPath", "UserPathProgress", "ActivityEvent",
     "StudyGroup", "StudyGroupMember", "ChatSession", "ChatMessage",
-    "ScenarioBank", "MCQBank", "ModelAnswerBank",
+    "ScenarioBank", "MCQBank", "ModelAnswerBank", "Organization",
 ]
