@@ -2,6 +2,10 @@
 
 Gamified scenario training & MTSS agent for options trading.
 
+## Production
+
+- **URL**: https://thepit.up.railway.app/
+
 ## Quick Start (Local)
 
 ```bash
@@ -15,12 +19,14 @@ docker-compose up --build
 ## Deploy to Railway
 
 1. Install the [Railway CLI](https://docs.railway.com/guides/cli) and log in:
+
    ```bash
    npm install -g @railway/cli
    railway login
    ```
 
 2. Create a new project and add services:
+
    ```bash
    railway init
    ```
@@ -32,6 +38,7 @@ docker-compose up --build
    - **Frontend** — root directory: `frontend/`
 
 5. Set environment variables on the **Backend** service:
+
    ```
    ANTHROPIC_API_KEY=sk-...
    OPENAI_API_KEY=sk-...
@@ -40,21 +47,24 @@ docker-compose up --build
    CORS_ORIGINS=https://<frontend-service>.up.railway.app
    APP_ENV=production
    ```
+
    > `DATABASE_URL`, `REDIS_URL`, and `PORT` are auto-injected by Railway add-ons.
 
 6. Set environment variables on the **Frontend** service:
+
    ```
    VITE_API_URL=https://<backend-service>.up.railway.app
    ```
 
 7. Deploy:
+
    ```bash
    railway up
    ```
 
 8. Seed the database (first deploy only):
    ```bash
-   railway run -s backend python -m app.seed
+   railway run -s backend bash -c "SEED_PROD=true python -m app.seed"
    ```
 
 ## Test Accounts
@@ -63,21 +73,21 @@ Seed the database with `python -m app.seed` from the backend directory. By defau
 
 ### Development (default)
 
-| Email | Password | Role | Display Name |
-|-------|----------|------|--------------|
-| trader@thepit.dev | trader123 | TA | Test Trader |
-| alex@thepit.dev | alex123 | TA | Alex Chen |
-| maria@thepit.dev | maria123 | TA | Maria Santos |
-| james@thepit.dev | james123 | Intern | James Kim |
-| priya@thepit.dev | priya123 | TA | Priya Patel (most advanced) |
+| Email             | Password  | Role   | Display Name                |
+| ----------------- | --------- | ------ | --------------------------- |
+| trader@thepit.dev | trader123 | TA     | Test Trader                 |
+| alex@thepit.dev   | alex123   | TA     | Alex Chen                   |
+| maria@thepit.dev  | maria123  | TA     | Maria Santos                |
+| james@thepit.dev  | james123  | Intern | James Kim                   |
+| priya@thepit.dev  | priya123  | TA     | Priya Patel (most advanced) |
 
 ### Production (`SEED_PROD=true`)
 
-| Email | Password | Role | Display Name |
-|-------|----------|------|--------------|
-| demo@thepit.dev | demo2026 | TA | Demo Trader |
-| admin@thepit.dev | admin2026 | Admin | Admin User |
-| advanced@thepit.dev | advanced2026 | TA | Advanced Demo |
+| Email               | Password     | Role  | Display Name  |
+| ------------------- | ------------ | ----- | ------------- |
+| demo@thepit.dev     | demo2026     | TA    | Demo Trader   |
+| admin@thepit.dev    | admin2026    | Admin | Admin User    |
+| advanced@thepit.dev | advanced2026 | TA    | Advanced Demo |
 
 ## Testing
 
