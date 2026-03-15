@@ -10,11 +10,13 @@ from app.schemas.admin import (
     LearningProgressResponse,
     ActivityResponse,
     ContentPerformanceResponse,
+    OrgUsersPerformanceResponse,
 )
 from app.services.analytics import (
     get_learning_progress,
     get_activity_metrics,
     get_content_performance,
+    get_org_users_performance,
 )
 
 router = APIRouter(prefix="/api/admin", tags=["admin"])
@@ -83,3 +85,21 @@ async def get_org_content_performance(
     return await get_content_performance(
         db, org_id, start, end, difficulty=difficulty, category=category
     )
+
+
+@router.get("/org/{org_id}/users", response_model=OrgUsersPerformanceResponse)
+async def get_org_users(
+    org_id: UUID,
+    admin_user: User = Depends(require_admin),
+    db: AsyncSession = Depends(get_db),
+    start_date: str | None = None,
+    end_date: str | None = None,
+):
+    """Get per-user analytics for admin's organization."""
+    if admin_user.org_id != org_id:
+        raise HTTPException(status_code=403, detail="Unauthorized")
+
+    end = datetime.fromisoformat(end_date) if end_date else datetime.utcnow()
+    start = datetime.fromisoformat(start_date) if start_date else (end - timedelta(days=30))
+
+    return await get_org_users_performance(db, org_id, start, end)

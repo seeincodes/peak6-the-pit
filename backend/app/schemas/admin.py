@@ -35,3 +35,22 @@ class ScenarioPerformance(BaseModel):
 
 class ContentPerformanceResponse(BaseModel):
     scenarios: list[ScenarioPerformance]
+
+
+class UserPerformance(BaseModel):
+    user_id: str
+    display_name: str
+    email: str
+    role: str
+    level: int
+    xp_total: int
+    streak_days: int
+    cohort: Optional[str]
+    total_attempts: int
+    completed_scenarios: int
+    avg_score: Optional[float]
+    last_active_at: Optional[str]
+
+
+class OrgUsersPerformanceResponse(BaseModel):
+    users: list[UserPerformance]

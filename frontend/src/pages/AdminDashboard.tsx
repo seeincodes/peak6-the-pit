@@ -2,7 +2,13 @@ import { useState } from 'react';
 import { AdminLearningProgress } from '../components/AdminLearningProgress';
 import { AdminActivity } from '../components/AdminActivity';
 import { AdminScenarios } from '../components/AdminScenarios';
-import { useAdminLearningProgress, useAdminActivity, useAdminContentPerformance } from '../hooks/useAdminAnalytics';
+import { AdminUsersTable } from '../components/AdminUsersTable';
+import {
+  useAdminLearningProgress,
+  useAdminActivity,
+  useAdminContentPerformance,
+  useOrgUsersPerformance,
+} from '../hooks/useAdminAnalytics';
 
 interface User {
   id: string;
@@ -15,7 +21,7 @@ interface AdminDashboardProps {
 }
 
 export function AdminDashboard({ currentUser }: AdminDashboardProps) {
-  const [activeTab, setActiveTab] = useState<'learning' | 'activity' | 'scenarios'>('learning');
+  const [activeTab, setActiveTab] = useState<'learning' | 'activity' | 'scenarios' | 'users'>('learning');
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
@@ -56,6 +62,7 @@ export function AdminDashboard({ currentUser }: AdminDashboardProps) {
   const learningProgress = useAdminLearningProgress(orgId, startDate, endDate);
   const activity = useAdminActivity(orgId, startDate, endDate);
   const contentPerformance = useAdminContentPerformance(orgId, startDate, endDate);
+  const usersPerformance = useOrgUsersPerformance(orgId, startDate, endDate);
 
   const handleSetPeriod = (days: number) => {
     const end = new Date();
@@ -119,6 +126,12 @@ export function AdminDashboard({ currentUser }: AdminDashboardProps) {
         >
           Content Performance
         </button>
+        <button
+          onClick={() => setActiveTab('users')}
+          className={activeTab === 'users' ? 'cm-tab-active' : 'cm-tab'}
+        >
+          Users
+        </button>
       </div>
 
       <div className="cm-surface p-5">
@@ -130,6 +143,9 @@ export function AdminDashboard({ currentUser }: AdminDashboardProps) {
         )}
         {activeTab === 'scenarios' && (
           <AdminScenarios data={contentPerformance.data} loading={contentPerformance.loading} />
+        )}
+        {activeTab === 'users' && (
+          <AdminUsersTable data={usersPerformance.data} loading={usersPerformance.loading} />
         )}
       </div>
     </div>

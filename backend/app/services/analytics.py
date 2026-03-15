@@ -14,6 +14,8 @@ from app.schemas.admin import (
     ActivityDataPoint,
     ContentPerformanceResponse,
     ScenarioPerformance,
+    OrgUsersPerformanceResponse,
+    UserPerformance,
 )
 
 
@@ -242,3 +244,83 @@ async def get_content_performance(
         ))
 
     return ContentPerformanceResponse(scenarios=scenarios)
+
+
+async def get_org_users_performance(
+    db: AsyncSession,
+    org_id: UUID,
+    start_date: datetime,
+    end_date: datetime,
+) -> OrgUsersPerformanceResponse:
+    """Get per-user analytics for all users in an organization."""
+
+    in_range = and_(Response.submitted_at >= start_date, Response.submitted_at <= end_date)
+
+    query = (
+        select(
+            User.id,
+            User.display_name,
+            User.email,
+            User.role,
+            User.level,
+            User.xp_total,
+            User.streak_days,
+            User.cohort,
+            func.count(case((in_range, Response.id), else_=None)).label("total_attempts"),
+            func.sum(case((and_(in_range, Response.is_complete == True), 1), else_=0)).label("completed_scenarios"),
+            func.avg(case((in_range, Grade.overall_score), else_=None)).label("avg_score"),
+            func.max(case((in_range, Response.submitted_at), else_=None)).label("last_active_at"),
+        )
+        .select_from(User)
+        .outerjoin(Response, Response.user_id == User.id)
+        .outerjoin(Grade, Grade.response_id == Response.id)
+        .where(User.org_id == org_id)
+        .group_by(
+            User.id,
+            User.display_name,
+            User.email,
+            User.role,
+            User.level,
+            User.xp_total,
+            User.streak_days,
+            User.cohort,
+        )
+        .order_by(User.role.asc(), User.display_name.asc())
+    )
+
+    results = await db.execute(query)
+    users = []
+    for row in results:
+        (
+            user_id,
+            display_name,
+            email,
+            role,
+            level,
+            xp_total,
+            streak_days,
+            cohort,
+            total_attempts,
+            completed_scenarios,
+            avg_score,
+            last_active_at,
+        ) = row
+
+        users.append(
+            UserPerformance(
+                user_id=str(user_id),
+                display_name=display_name,
+                email=email,
+                role=role,
+                level=level,
+                xp_total=xp_total,
+                streak_days=streak_days,
+                cohort=cohort,
+                total_attempts=total_attempts or 0,
+                completed_scenarios=completed_scenarios or 0,
+                avg_score=round(float(avg_score), 2) if avg_score is not None else None,
+                last_active_at=last_active_at.isoformat() if last_active_at else None,
+            )
+        )
+
+    return OrgUsersPerformanceResponse(users=users)
