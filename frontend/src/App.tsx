@@ -5,6 +5,7 @@ import { Menu } from "lucide-react";
 import { AVATAR_PRESETS } from "./constants/avatars";
 import { useAuth } from "./context/AuthContext";
 import Sidebar from "./components/Sidebar";
+import AdminSidebar from "./components/AdminSidebar";
 import TrainingPage from "./pages/TrainingPage";
 import ProfilePage from "./pages/ProfilePage";
 import LandingPage from "./pages/LandingPage";
@@ -114,11 +115,19 @@ function AuthenticatedApp() {
           )}
         </div>
 
-        <Sidebar
-          user={user}
-          mobileOpen={mobileSidebarOpen}
-          onMobileClose={() => setMobileSidebarOpen(false)}
-        />
+        {user?.role === "admin" ? (
+          <AdminSidebar
+            user={user}
+            mobileOpen={mobileSidebarOpen}
+            onMobileClose={() => setMobileSidebarOpen(false)}
+          />
+        ) : (
+          <Sidebar
+            user={user}
+            mobileOpen={mobileSidebarOpen}
+            onMobileClose={() => setMobileSidebarOpen(false)}
+          />
+        )}
 
         <main
           id="main-content"
