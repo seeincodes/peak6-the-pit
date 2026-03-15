@@ -9,6 +9,7 @@ from sqlalchemy import select
 
 from app.database import async_session
 from app.models.user import User
+from app.models.organization import Organization
 from app.models.scenario import Scenario
 from app.models.response import Response
 from app.models.grade import Grade
@@ -82,6 +83,7 @@ TEST_USERS = [
         "streak_days": 3,
         "cohort": "spring-2026",
         "has_onboarded": True,
+        "org_id": "00000000-0000-0000-0000-000000000099",
     },
     {
         "id": U2,
@@ -97,6 +99,7 @@ TEST_USERS = [
         "streak_days": 5,
         "cohort": "spring-2026",
         "has_onboarded": True,
+        "org_id": "00000000-0000-0000-0000-000000000099",
     },
     {
         "id": U3,
@@ -112,6 +115,7 @@ TEST_USERS = [
         "streak_days": 12,
         "cohort": "spring-2026",
         "has_onboarded": True,
+        "org_id": "00000000-0000-0000-0000-000000000099",
     },
     {
         "id": U4,
@@ -127,6 +131,7 @@ TEST_USERS = [
         "streak_days": 2,
         "cohort": "spring-2026",
         "has_onboarded": True,
+        "org_id": "00000000-0000-0000-0000-000000000099",
     },
     {
         "id": U5,
@@ -142,6 +147,7 @@ TEST_USERS = [
         "streak_days": 15,
         "cohort": "spring-2026",
         "has_onboarded": True,
+        "org_id": "00000000-0000-0000-0000-000000000099",
     },
 ]
 
@@ -160,6 +166,7 @@ PROD_USERS = [
         "streak_days": 3,
         "cohort": "demo",
         "has_onboarded": True,
+        "org_id": "00000000-0000-0000-0000-000000000099",
     },
     {
         "id": P2,
@@ -175,6 +182,7 @@ PROD_USERS = [
         "streak_days": 0,
         "cohort": "demo",
         "has_onboarded": True,
+        "org_id": "00000000-0000-0000-0000-000000000099",
     },
     {
         "id": P3,
@@ -190,6 +198,7 @@ PROD_USERS = [
         "streak_days": 21,
         "cohort": "demo",
         "has_onboarded": True,
+        "org_id": "00000000-0000-0000-0000-000000000099",
     },
 ]
 
@@ -783,6 +792,19 @@ async def seed():
     is_prod = os.environ.get("SEED_PROD", "").lower() in ("true", "1", "yes")
     users_to_seed = PROD_USERS if is_prod else TEST_USERS
     now = datetime.utcnow()
+
+    # Create default organization
+    default_org = Organization(
+        id=uuid.UUID("00000000-0000-0000-0000-000000000099"),
+        name="Peak6"
+    )
+
+    # Add org to session before users
+    async with async_session() as session:
+        existing_org = await session.get(Organization, default_org.id)
+        if not existing_org:
+            session.add(default_org)
+            await session.commit()
 
     async with async_session() as session:
         # ── 1. Users ──
