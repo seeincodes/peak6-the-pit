@@ -198,7 +198,7 @@ async def get_content_performance(
     query = (
         select(
             Scenario.id,
-            Scenario.title,
+            Scenario.content,
             Scenario.category,
             Scenario.difficulty,
             func.count(Response.id).label("total_attempts"),
@@ -226,7 +226,9 @@ async def get_content_performance(
     scenarios = []
 
     for row in results:
-        scenario_id, title, category, difficulty, total_attempts, completions, avg_score = row
+        scenario_id, content, category, difficulty, total_attempts, completions, avg_score = row
+        # Extract title from content JSON
+        title = content.get("title", "Untitled Scenario") if isinstance(content, dict) else "Untitled Scenario"
         completion_rate = completions / total_attempts if total_attempts > 0 else 0
 
         scenarios.append(ScenarioPerformance(
