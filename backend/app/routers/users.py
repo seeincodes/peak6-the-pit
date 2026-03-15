@@ -37,10 +37,12 @@ async def _user_response(user: User, db: AsyncSession):
     title = get_level_title(user.level)
     return {
         "id": str(user.id),
+        "email": user.email,
         "display_name": user.display_name,
         "avatar_id": user.avatar_id,
         "bio": user.bio,
         "role": user.role,
+        "org_id": str(user.org_id),
         "level": user.level,
         "level_title": title,
         "xp_total": user.xp_total,

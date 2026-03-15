@@ -9,8 +9,8 @@ interface Props {
 export function AdminScenarios({ data, loading }: Props) {
   const [sortBy, setSortBy] = useState<'completion_rate' | 'avg_score'>('completion_rate');
 
-  if (loading) return <div className="p-4">Loading...</div>;
-  if (!data || data.scenarios.length === 0) return <div className="p-4">No scenarios available</div>;
+  if (loading) return <div className="p-4 text-cm-muted">Loading...</div>;
+  if (!data || data.scenarios.length === 0) return <div className="p-4 text-cm-muted">No scenarios available</div>;
 
   const sorted = [...data.scenarios].sort((a, b) => {
     if (sortBy === 'completion_rate') {
@@ -24,43 +24,39 @@ export function AdminScenarios({ data, loading }: Props) {
       <div className="flex gap-2 mb-4">
         <button
           onClick={() => setSortBy('completion_rate')}
-          className={`px-4 py-2 rounded font-semibold text-sm ${
-            sortBy === 'completion_rate' ? 'bg-blue-600 text-white' : 'bg-gray-200'
-          }`}
+          className={sortBy === 'completion_rate' ? 'cm-tab-active text-sm' : 'cm-tab text-sm'}
         >
           Completion Rate
         </button>
         <button
           onClick={() => setSortBy('avg_score')}
-          className={`px-4 py-2 rounded font-semibold text-sm ${
-            sortBy === 'avg_score' ? 'bg-blue-600 text-white' : 'bg-gray-200'
-          }`}
+          className={sortBy === 'avg_score' ? 'cm-tab-active text-sm' : 'cm-tab text-sm'}
         >
           Avg Score
         </button>
       </div>
 
-      <div className="bg-white rounded-lg shadow overflow-x-auto">
+      <div className="bg-cm-card-raised border border-cm-border rounded-lg overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-gray-50 border-b">
+          <thead className="bg-cm-bg border-b border-cm-border">
             <tr>
-              <th className="px-4 py-2 text-left">Scenario</th>
-              <th className="px-4 py-2 text-left">Category</th>
-              <th className="px-4 py-2 text-left">Difficulty</th>
-              <th className="px-4 py-2 text-right">Completion %</th>
-              <th className="px-4 py-2 text-right">Avg Score</th>
-              <th className="px-4 py-2 text-right">Attempts</th>
+              <th className="px-4 py-2 text-left text-cm-muted font-semibold">Scenario</th>
+              <th className="px-4 py-2 text-left text-cm-muted font-semibold">Category</th>
+              <th className="px-4 py-2 text-left text-cm-muted font-semibold">Difficulty</th>
+              <th className="px-4 py-2 text-right text-cm-muted font-semibold">Completion %</th>
+              <th className="px-4 py-2 text-right text-cm-muted font-semibold">Avg Score</th>
+              <th className="px-4 py-2 text-right text-cm-muted font-semibold">Attempts</th>
             </tr>
           </thead>
           <tbody>
             {sorted.map((scenario) => (
-              <tr key={scenario.scenario_id} className="border-b hover:bg-gray-50">
-                <td className="px-4 py-2">{scenario.title}</td>
-                <td className="px-4 py-2">{scenario.category}</td>
-                <td className="px-4 py-2 capitalize">{scenario.difficulty}</td>
-                <td className="px-4 py-2 text-right">{(scenario.completion_rate * 100).toFixed(1)}%</td>
-                <td className="px-4 py-2 text-right">{scenario.avg_score?.toFixed(1) ?? 'N/A'}%</td>
-                <td className="px-4 py-2 text-right">{scenario.total_attempts}</td>
+              <tr key={scenario.scenario_id} className="border-b border-cm-border hover:bg-cm-bg/60">
+                <td className="px-4 py-2 text-cm-text">{scenario.title}</td>
+                <td className="px-4 py-2 text-cm-muted">{scenario.category}</td>
+                <td className="px-4 py-2 text-cm-muted capitalize">{scenario.difficulty}</td>
+                <td className="px-4 py-2 text-right text-cm-text">{(scenario.completion_rate * 100).toFixed(1)}%</td>
+                <td className="px-4 py-2 text-right text-cm-text">{scenario.avg_score?.toFixed(1) ?? 'N/A'}%</td>
+                <td className="px-4 py-2 text-right text-cm-text">{scenario.total_attempts}</td>
               </tr>
             ))}
           </tbody>

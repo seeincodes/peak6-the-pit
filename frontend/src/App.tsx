@@ -65,6 +65,7 @@ function AuthenticatedApp() {
   });
 
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
+  const isAdmin = user?.role === "admin";
 
   // Close mobile sidebar on route change
   const location = useLocation();
@@ -105,7 +106,7 @@ function AuthenticatedApp() {
               <span className="text-cm-text font-bold text-sm">The Pit</span>
             </div>
           </div>
-          {user && (
+          {user && !isAdmin && (
             <Link to="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
               <span className="text-sm font-medium text-cm-text hidden xs:inline">{user.display_name}</span>
               <div className="w-8 h-8 rounded-full bg-cm-card-raised border border-cm-border flex items-center justify-center text-base">
@@ -113,9 +114,14 @@ function AuthenticatedApp() {
               </div>
             </Link>
           )}
+          {user && isAdmin && (
+            <div className="flex items-center gap-2">
+              <span className="text-sm font-semibold text-cm-text">Admin Console</span>
+            </div>
+          )}
         </div>
 
-        {user?.role === "admin" ? (
+        {isAdmin ? (
           <AdminSidebar
             user={user}
             mobileOpen={mobileSidebarOpen}
@@ -139,7 +145,7 @@ function AuthenticatedApp() {
           `}
         >
           {/* Desktop top bar */}
-          {user && (
+          {user && !isAdmin && (
             <div className="hidden lg:flex items-center justify-end h-16 px-6 border-b border-cm-border bg-cm-card/50 sticky top-0 z-30 backdrop-blur-sm">
               <Link to="/profile" className="relative z-10 flex items-center gap-3 hover:opacity-80 transition-opacity">
                 <div className="text-right">
@@ -152,30 +158,45 @@ function AuthenticatedApp() {
               </Link>
             </div>
           )}
+          {user && isAdmin && (
+            <div className="hidden lg:flex items-center justify-end h-16 px-6 border-b border-cm-border bg-cm-card/50 sticky top-0 z-30 backdrop-blur-sm">
+              <div className="text-sm font-semibold text-cm-primary">Admin Dashboard</div>
+            </div>
+          )}
 
           <Routes>
-            <Route
-              path="/"
-              element={
-                <TrainingPage
-                  unlockedCategories={user?.unlocked_categories || []}
-                  hasOnboarded={user?.has_onboarded ?? true}
+            {isAdmin ? (
+              <>
+                <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
+                <Route path="/admin/dashboard" element={<AdminDashboard currentUser={user} />} />
+                <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
+              </>
+            ) : (
+              <>
+                <Route
+                  path="/"
+                  element={
+                    <TrainingPage
+                      unlockedCategories={user?.unlocked_categories || []}
+                      hasOnboarded={user?.has_onboarded ?? true}
+                    />
+                  }
                 />
-              }
-            />
-            <Route path="/quick-fire" element={<QuickFireStandalone />} />
-            <Route path="/profile" element={<ProfilePage />} />
-            <Route path="/review" element={<ReviewPage />} />
-            <Route path="/dictionary" element={<DictionaryPage />} />
-            <Route path="/progress" element={<ProgressPage />} />
-            <Route path="/leaderboard" element={<LeaderboardPage />} />
-            <Route path="/peer-review" element={<PeerReviewPage />} />
-            <Route path="/paths" element={<LearningPathPage />} />
-            <Route path="/feed" element={<FeedPage />} />
-            <Route path="/chat" element={<ChatPage />} />
-            <Route path="/profile/:userId" element={<UserProfilePage />} />
-            <Route path="/admin/dashboard" element={<AdminDashboard currentUser={user} />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
+                <Route path="/quick-fire" element={<QuickFireStandalone />} />
+                <Route path="/profile" element={<ProfilePage />} />
+                <Route path="/review" element={<ReviewPage />} />
+                <Route path="/dictionary" element={<DictionaryPage />} />
+                <Route path="/progress" element={<ProgressPage />} />
+                <Route path="/leaderboard" element={<LeaderboardPage />} />
+                <Route path="/peer-review" element={<PeerReviewPage />} />
+                <Route path="/paths" element={<LearningPathPage />} />
+                <Route path="/feed" element={<FeedPage />} />
+                <Route path="/chat" element={<ChatPage />} />
+                <Route path="/profile/:userId" element={<UserProfilePage />} />
+                <Route path="/admin/dashboard" element={<AdminDashboard currentUser={user} />} />
+                <Route path="*" element={<Navigate to="/" replace />} />
+              </>
+            )}
           </Routes>
         </main>
       </div>
