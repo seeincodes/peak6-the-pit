@@ -97,6 +97,7 @@ Seed the database with `python -m app.seed` from the backend directory. By defau
 For multi-tenant logins, account resolution follows org context. On hosted UI:
 - `thepit.up.railway.app` resolves to org slug `thepit`
 - `acme.yourapp.com` resolves to org slug `acme` (or pass `org_slug` to `/api/auth/login`)
+- If you use a single shared URL (no custom subdomains), choose the org in the login page selector (`thepit` or `acme`).
 
 ### Development (default)
 

@@ -7,18 +7,23 @@ import { extractOrgSlugFromHostname } from "../utils/authTenant";
 export default function LoginPage() {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const detectedOrgSlug = extractOrgSlugFromHostname(window.location.hostname);
+  const [orgSlug, setOrgSlug] = useState(
+    detectedOrgSlug === "acme" || detectedOrgSlug === "thepit"
+      ? detectedOrgSlug
+      : "thepit"
+  );
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
-  const orgSlug = extractOrgSlugFromHostname(window.location.hostname);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
     try {
-      await login(email, password);
+      await login(email, password, orgSlug);
       navigate("/");
     } catch (err: unknown) {
       if (err && typeof err === "object" && "response" in err) {
@@ -49,9 +54,9 @@ export default function LoginPage() {
             </span>
           </h1>
           <p className="text-cm-muted text-sm">Sign in to continue training</p>
-          {orgSlug && (
+          {detectedOrgSlug && (
             <p className="text-cm-primary text-xs mt-2 font-semibold uppercase tracking-wide">
-              Organization: {orgSlug}
+              Detected from URL: {detectedOrgSlug}
             </p>
           )}
         </div>
@@ -67,6 +72,21 @@ export default function LoginPage() {
           )}
 
           <form onSubmit={handleSubmit} className="space-y-4">
+            <div>
+              <label htmlFor="login-org" className="block text-cm-muted text-xs font-semibold mb-1.5 uppercase tracking-wide">
+                Organization
+              </label>
+              <select
+                id="login-org"
+                value={orgSlug}
+                onChange={(e) => setOrgSlug(e.target.value)}
+                className="w-full px-4 py-2.5 rounded bg-cm-bg border border-cm-border text-cm-text focus:outline-none focus:border-cm-primary/50 transition-all duration-300 focus-ring"
+              >
+                <option value="thepit">The Pit (thepit)</option>
+                <option value="acme">Acme (acme)</option>
+              </select>
+            </div>
+
             <div>
               <label htmlFor="login-email" className="block text-cm-muted text-xs font-semibold mb-1.5 uppercase tracking-wide">
                 Email
