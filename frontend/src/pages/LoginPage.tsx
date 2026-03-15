@@ -54,11 +54,6 @@ export default function LoginPage() {
             </span>
           </h1>
           <p className="text-cm-muted text-sm">Sign in to continue training</p>
-          {detectedOrgSlug && (
-            <p className="text-cm-primary text-xs mt-2 font-semibold uppercase tracking-wide">
-              Detected from URL: {detectedOrgSlug}
-            </p>
-          )}
         </div>
 
         {/* Card */}
