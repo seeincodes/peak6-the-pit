@@ -219,7 +219,7 @@ async def get_content_performance(
         query = query.where(Scenario.category == category)
 
     query = query.group_by(
-        Scenario.id, Scenario.content, Scenario.category, Scenario.difficulty
+        Scenario.id, Scenario.category, Scenario.difficulty
     ).order_by(Scenario.category, Scenario.difficulty)
 
     results = await db.execute(query)
