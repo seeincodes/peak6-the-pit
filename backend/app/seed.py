@@ -839,8 +839,8 @@ async def seed():
     organizations = [
         Organization(
             id=uuid.UUID("00000000-0000-0000-0000-000000000099"),
-            name="Peak6",
-            slug="peak6",
+            name="The Pit",
+            slug="thepit",
         ),
         Organization(
             id=uuid.UUID("00000000-0000-0000-0000-000000000100"),

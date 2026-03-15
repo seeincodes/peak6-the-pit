@@ -103,6 +103,7 @@ export default function SignupPage() {
             </div>
           )}
 
+          {inviteToken && !inviteLoading && (
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <label htmlFor="signup-name" className="block text-cm-muted text-xs font-semibold mb-1.5 uppercase tracking-wide">
@@ -156,7 +157,7 @@ export default function SignupPage() {
 
             <button
               type="submit"
-              disabled={loading || !inviteToken || inviteLoading || !!error}
+              disabled={loading || !!error}
               aria-busy={loading}
               className="w-full py-3 rounded bg-cm-primary text-white font-bold text-sm hover:bg-cm-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 focus-ring"
             >
@@ -167,6 +168,7 @@ export default function SignupPage() {
               )}
             </button>
           </form>
+          )}
 
           <p className="mt-6 text-center text-cm-muted text-sm">
             Already have an account?{" "}
