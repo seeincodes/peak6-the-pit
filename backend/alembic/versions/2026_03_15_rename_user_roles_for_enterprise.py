@@ -28,7 +28,10 @@ def _drop_role_checks(table_name: str) -> None:
                 JOIN pg_class t ON c.conrelid = t.oid
                 WHERE t.relname = '{table_name}'
                   AND c.contype = 'c'
-                  AND pg_get_constraintdef(c.oid) ILIKE '%role IN%'
+                  AND (
+                    c.conname ILIKE '%role%'
+                    OR pg_get_constraintdef(c.oid) ILIKE '%role%'
+                  )
               LOOP
                 EXECUTE format('ALTER TABLE {table_name} DROP CONSTRAINT %I', r.conname);
               END LOOP;
