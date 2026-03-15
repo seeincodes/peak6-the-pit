@@ -386,6 +386,14 @@ _USER_MASTERY: dict[uuid.UUID, list[str]] = {
          "vol_surface", "position_sizing", "trade_structuring", "risk_management",
          "alt_data", "crypto",
          "exotic_structures", "portfolio_mgmt", "pit_tooling"],
+    # Production advanced demo user should mirror full mastery at level 10
+    P3: ["iv_analysis", "realized_vol", "fundamentals",
+         "greeks", "order_flow", "technical_analysis", "sentiment", "macro",
+         "skew", "term_structure", "event_vol", "tail_risk", "correlation",
+         "microstructure", "fixed_income", "seasonality", "commodities", "geopolitical",
+         "vol_surface", "position_sizing", "trade_structuring", "risk_management",
+         "alt_data", "crypto",
+         "exotic_structures", "portfolio_mgmt", "pit_tooling"],
 }
 
 FEEDBACKS = [
