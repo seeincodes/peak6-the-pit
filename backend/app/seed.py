@@ -831,6 +831,7 @@ async def seed():
                     streak_days=user_data["streak_days"],
                     cohort=user_data.get("cohort"),
                     has_onboarded=user_data.get("has_onboarded", True),
+                    org_id=user_data["org_id"],
                 )
                 session.add(user)
                 print(f"  Seeded: {user.display_name} ({user.email})")
