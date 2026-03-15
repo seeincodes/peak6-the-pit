@@ -16,6 +16,7 @@ export function useAdminLearningProgress(orgId: string, startDate?: string, endD
     const fetchData = async () => {
       setLoading(true);
       setError(null);
+      setData(null);
       try {
         const params = new URLSearchParams();
         if (startDate) params.append('start_date', startDate);
@@ -24,6 +25,7 @@ export function useAdminLearningProgress(orgId: string, startDate?: string, endD
         const response = await api.get(`/admin/org/${orgId}/learning?${params.toString()}`);
         setData(response.data);
       } catch (err) {
+        setData(null);
         setError(err instanceof Error ? err.message : 'Unknown error');
       } finally {
         setLoading(false);
@@ -45,6 +47,7 @@ export function useAdminActivity(orgId: string, startDate?: string, endDate?: st
     const fetchData = async () => {
       setLoading(true);
       setError(null);
+      setData(null);
       try {
         const params = new URLSearchParams();
         if (startDate) params.append('start_date', startDate);
@@ -53,6 +56,7 @@ export function useAdminActivity(orgId: string, startDate?: string, endDate?: st
         const response = await api.get(`/admin/org/${orgId}/activity?${params.toString()}`);
         setData(response.data);
       } catch (err) {
+        setData(null);
         setError(err instanceof Error ? err.message : 'Unknown error');
       } finally {
         setLoading(false);
@@ -80,6 +84,7 @@ export function useAdminContentPerformance(
     const fetchData = async () => {
       setLoading(true);
       setError(null);
+      setData(null);
       try {
         const params = new URLSearchParams();
         if (startDate) params.append('start_date', startDate);
@@ -90,6 +95,7 @@ export function useAdminContentPerformance(
         const response = await api.get(`/admin/org/${orgId}/scenarios?${params.toString()}`);
         setData(response.data);
       } catch (err) {
+        setData(null);
         setError(err instanceof Error ? err.message : 'Unknown error');
       } finally {
         setLoading(false);
@@ -111,6 +117,7 @@ export function useOrgUsersPerformance(orgId: string, startDate?: string, endDat
     const fetchData = async () => {
       setLoading(true);
       setError(null);
+      setData(null);
       try {
         const params = new URLSearchParams();
         if (startDate) params.append('start_date', startDate);
@@ -119,6 +126,7 @@ export function useOrgUsersPerformance(orgId: string, startDate?: string, endDat
         const response = await api.get(`/admin/org/${orgId}/users?${params.toString()}`);
         setData(response.data);
       } catch (err) {
+        setData(null);
         setError(err instanceof Error ? err.message : 'Unknown error');
       } finally {
         setLoading(false);

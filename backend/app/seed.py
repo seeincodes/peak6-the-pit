@@ -5,7 +5,7 @@ import os
 import uuid
 from datetime import datetime, timedelta
 
-from sqlalchemy import select
+from sqlalchemy import select, update
 
 from app.database import async_session
 from app.models.user import User
@@ -35,12 +35,23 @@ U3 = uuid.UUID("00000000-0000-0000-0000-000000000003")
 U4 = uuid.UUID("00000000-0000-0000-0000-000000000004")
 U5 = uuid.UUID("00000000-0000-0000-0000-000000000005")
 U6 = uuid.UUID("00000000-0000-0000-0000-000000000006")
+U7 = uuid.UUID("00000000-0000-0000-0000-000000000007")
+U8 = uuid.UUID("00000000-0000-0000-0000-000000000008")
+U9 = uuid.UUID("00000000-0000-0000-0000-000000000009")
+U10 = uuid.UUID("00000000-0000-0000-0000-00000000000a")
+U11 = uuid.UUID("00000000-0000-0000-0000-00000000000b")
 
 # Prod users
 P1 = uuid.UUID("00000000-0000-0000-0000-000000000010")
 P2 = uuid.UUID("00000000-0000-0000-0000-000000000011")
 P3 = uuid.UUID("00000000-0000-0000-0000-000000000012")
 P4 = uuid.UUID("00000000-0000-0000-0000-000000000013")
+P5 = uuid.UUID("00000000-0000-0000-0000-000000000014")
+P6 = uuid.UUID("00000000-0000-0000-0000-000000000015")
+P7 = uuid.UUID("00000000-0000-0000-0000-000000000016")
+P8 = uuid.UUID("00000000-0000-0000-0000-000000000017")
+P9 = uuid.UUID("00000000-0000-0000-0000-000000000018")
+P10 = uuid.UUID("00000000-0000-0000-0000-000000000019")
 
 # Scenarios — sized for all 27 categories
 S = [uuid.UUID(f"20000000-0000-0000-0000-{str(i).zfill(12)}") for i in range(1, 30)]
@@ -153,6 +164,22 @@ TEST_USERS = [
     },
     {
         "id": U6,
+        "email": "admin@peak6.com",
+        "password": "peak62026",
+        "display_name": "Peak6 Super Admin",
+        "role": "org_admin",
+        "avatar_id": "shield",
+        "bio": "Cross-org demo super admin account.",
+        "ta_phase": None,
+        "xp_total": 0,
+        "level": 1,
+        "streak_days": 0,
+        "cohort": "peak6-admin",
+        "has_onboarded": True,
+        "org_id": "00000000-0000-0000-0000-000000000099",
+    },
+    {
+        "id": U7,
         "email": "admin@acme.dev",
         "password": "acme2026",
         "display_name": "Acme Admin",
@@ -163,6 +190,70 @@ TEST_USERS = [
         "xp_total": 0,
         "level": 1,
         "streak_days": 0,
+        "cohort": "acme-demo",
+        "has_onboarded": True,
+        "org_id": "00000000-0000-0000-0000-000000000100",
+    },
+    {
+        "id": U8,
+        "email": "analyst1@acme.dev",
+        "password": "acme2026",
+        "display_name": "Acme Analyst One",
+        "role": "analyst",
+        "avatar_id": "chart",
+        "bio": "Acme desk analyst for org-scoped demos.",
+        "ta_phase": 2,
+        "xp_total": 240,
+        "level": 3,
+        "streak_days": 4,
+        "cohort": "acme-demo",
+        "has_onboarded": True,
+        "org_id": "00000000-0000-0000-0000-000000000100",
+    },
+    {
+        "id": U9,
+        "email": "associate@acme.dev",
+        "password": "acme2026",
+        "display_name": "Acme Associate",
+        "role": "associate",
+        "avatar_id": "crown",
+        "bio": "Associate trader account for advanced demo paths.",
+        "ta_phase": 3,
+        "xp_total": 1200,
+        "level": 6,
+        "streak_days": 8,
+        "cohort": "acme-demo",
+        "has_onboarded": True,
+        "org_id": "00000000-0000-0000-0000-000000000100",
+    },
+    {
+        "id": U10,
+        "email": "trainer@acme.dev",
+        "password": "acme2026",
+        "display_name": "Acme Trainer",
+        "role": "trainer",
+        "avatar_id": "brain",
+        "bio": "Trainer account for learning oversight demos.",
+        "ta_phase": 4,
+        "xp_total": 2600,
+        "level": 7,
+        "streak_days": 11,
+        "cohort": "acme-demo",
+        "has_onboarded": True,
+        "org_id": "00000000-0000-0000-0000-000000000100",
+    },
+    {
+        "id": U11,
+        "email": "intern@acme.dev",
+        "password": "acme2026",
+        "display_name": "Acme Intern",
+        "role": "intern",
+        "avatar_id": "rocket",
+        "bio": "Intern account for first-week training demo.",
+        "ta_phase": 1,
+        "xp_total": 80,
+        "level": 2,
+        "streak_days": 1,
         "cohort": "acme-demo",
         "has_onboarded": True,
         "org_id": "00000000-0000-0000-0000-000000000100",
@@ -188,17 +279,17 @@ PROD_USERS = [
     },
     {
         "id": P2,
-        "email": "admin@thepit.dev",
-        "password": "admin2026",
-        "display_name": "Admin User",
+        "email": "admin@peak6.com",
+        "password": "peak62026",
+        "display_name": "Peak6 Super Admin",
         "role": "org_admin",
         "avatar_id": "shield",
-        "bio": None,
+        "bio": "Cross-org admin account for invite management demos.",
         "ta_phase": None,
         "xp_total": 0,           # Level 1
         "level": 1,
         "streak_days": 0,
-        "cohort": "demo",
+        "cohort": "peak6-admin",
         "has_onboarded": True,
         "org_id": "00000000-0000-0000-0000-000000000099",
     },
@@ -230,6 +321,102 @@ PROD_USERS = [
         "xp_total": 0,
         "level": 1,
         "streak_days": 0,
+        "cohort": "acme-demo",
+        "has_onboarded": True,
+        "org_id": "00000000-0000-0000-0000-000000000100",
+    },
+    {
+        "id": P5,
+        "email": "trader2@thepit.dev",
+        "password": "demo2026",
+        "display_name": "The Pit Trader Two",
+        "role": "analyst",
+        "avatar_id": "lightning",
+        "bio": "Additional pit desk user for org-only admin demos.",
+        "ta_phase": 2,
+        "xp_total": 450,
+        "level": 4,
+        "streak_days": 6,
+        "cohort": "demo",
+        "has_onboarded": True,
+        "org_id": "00000000-0000-0000-0000-000000000099",
+    },
+    {
+        "id": P6,
+        "email": "associate@thepit.dev",
+        "password": "demo2026",
+        "display_name": "The Pit Associate",
+        "role": "associate",
+        "avatar_id": "crown",
+        "bio": "Associate-level account for progression demos.",
+        "ta_phase": 3,
+        "xp_total": 1600,
+        "level": 6,
+        "streak_days": 10,
+        "cohort": "demo",
+        "has_onboarded": True,
+        "org_id": "00000000-0000-0000-0000-000000000099",
+    },
+    {
+        "id": P7,
+        "email": "intern@thepit.dev",
+        "password": "demo2026",
+        "display_name": "The Pit Intern",
+        "role": "intern",
+        "avatar_id": "rocket",
+        "bio": "Intern account for onboarding demos.",
+        "ta_phase": 1,
+        "xp_total": 90,
+        "level": 2,
+        "streak_days": 2,
+        "cohort": "demo",
+        "has_onboarded": True,
+        "org_id": "00000000-0000-0000-0000-000000000099",
+    },
+    {
+        "id": P8,
+        "email": "analyst1@acme.dev",
+        "password": "acme2026",
+        "display_name": "Acme Analyst One",
+        "role": "analyst",
+        "avatar_id": "chart",
+        "bio": "Acme desk analyst for org demo coverage.",
+        "ta_phase": 2,
+        "xp_total": 250,
+        "level": 3,
+        "streak_days": 5,
+        "cohort": "acme-demo",
+        "has_onboarded": True,
+        "org_id": "00000000-0000-0000-0000-000000000100",
+    },
+    {
+        "id": P9,
+        "email": "associate@acme.dev",
+        "password": "acme2026",
+        "display_name": "Acme Associate",
+        "role": "associate",
+        "avatar_id": "diamond",
+        "bio": "Associate account for strategy demos.",
+        "ta_phase": 3,
+        "xp_total": 1400,
+        "level": 6,
+        "streak_days": 9,
+        "cohort": "acme-demo",
+        "has_onboarded": True,
+        "org_id": "00000000-0000-0000-0000-000000000100",
+    },
+    {
+        "id": P10,
+        "email": "trainer@acme.dev",
+        "password": "acme2026",
+        "display_name": "Acme Trainer",
+        "role": "trainer",
+        "avatar_id": "brain",
+        "bio": "Trainer account for coaching demos.",
+        "ta_phase": 4,
+        "xp_total": 2600,
+        "level": 7,
+        "streak_days": 12,
         "cohort": "acme-demo",
         "has_onboarded": True,
         "org_id": "00000000-0000-0000-0000-000000000100",
@@ -832,6 +1019,7 @@ DEMO_PATH_PROGRESS = [
 
 async def seed():
     is_prod = os.environ.get("SEED_PROD", "").lower() in ("true", "1", "yes")
+    seed_clean = os.environ.get("SEED_CLEAN", "").lower() in ("true", "1", "yes")
     users_to_seed = PROD_USERS if is_prod else TEST_USERS
     now = datetime.utcnow()
 
@@ -848,6 +1036,15 @@ async def seed():
             slug="acme",
         ),
     ]
+    cleanup_org_id = uuid.UUID("00000000-0000-0000-0000-000000000199")
+    if seed_clean:
+        organizations.append(
+            Organization(
+                id=cleanup_org_id,
+                name="Sandbox Archive",
+                slug="sandbox-archive",
+            )
+        )
 
     async with async_session() as session:
         for org in organizations:
@@ -861,6 +1058,25 @@ async def seed():
         await session.commit()
 
     async with async_session() as session:
+        if seed_clean:
+            seed_user_ids = {user_data["id"] for user_data in users_to_seed}
+            result = await session.execute(
+                update(User)
+                .where(
+                    User.org_id.in_(
+                        [
+                            uuid.UUID("00000000-0000-0000-0000-000000000099"),
+                            uuid.UUID("00000000-0000-0000-0000-000000000100"),
+                        ]
+                    ),
+                    ~User.id.in_(seed_user_ids),
+                )
+                .values(org_id=cleanup_org_id)
+            )
+            moved_count = int(result.rowcount or 0)
+            if moved_count > 0:
+                print(f"  Cleanup moved non-seed users: {moved_count}")
+
         # ── 1. Users ──
         for user_data in users_to_seed:
             existing = await session.get(User, user_data["id"])

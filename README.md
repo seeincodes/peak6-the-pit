@@ -69,7 +69,7 @@ docker-compose up --build
 
 ## Test Accounts
 
-Seed the database with `python -m app.seed` from the backend directory. By default, development test users are created; set `SEED_PROD=true` for demo/admin accounts.
+Seed the database with `python -m app.seed` from the backend directory. By default, development test users are created; set `SEED_PROD=true` for demo/admin accounts. Add `SEED_CLEAN=true` to move non-seed users out of demo orgs for a clean demo slate.
 
 For multi-tenant logins, account resolution follows org context. On hosted UI:
 - `thepit.up.railway.app` resolves to org slug `thepit`
@@ -77,23 +77,34 @@ For multi-tenant logins, account resolution follows org context. On hosted UI:
 
 ### Development (default)
 
-| Org    | Email             | Password  | Role    | Display Name                |
-| ------ | ----------------- | --------- | ------- | --------------------------- |
-| thepit | trader@thepit.dev | trader123 | analyst | Test Trader                 |
-| thepit | alex@thepit.dev   | alex123   | analyst | Alex Chen                   |
-| thepit | maria@thepit.dev  | maria123  | analyst | Maria Santos                |
-| thepit | james@thepit.dev  | james123  | intern  | James Kim                   |
-| thepit | priya@thepit.dev  | priya123  | analyst | Priya Patel (most advanced) |
-| acme   | admin@acme.dev    | acme2026  | org_admin | Acme Admin               |
+| Org    | Email              | Password  | Role      | Display Name                |
+| ------ | ------------------ | --------- | --------- | --------------------------- |
+| thepit | trader@thepit.dev  | trader123 | analyst   | Test Trader                 |
+| thepit | alex@thepit.dev    | alex123   | analyst   | Alex Chen                   |
+| thepit | maria@thepit.dev   | maria123  | analyst   | Maria Santos                |
+| thepit | james@thepit.dev   | james123  | intern    | James Kim                   |
+| thepit | priya@thepit.dev   | priya123  | analyst   | Priya Patel (most advanced) |
+| thepit | admin@peak6.com    | peak62026 | org_admin | Peak6 Super Admin           |
+| acme   | admin@acme.dev     | acme2026  | org_admin | Acme Admin                  |
+| acme   | analyst1@acme.dev  | acme2026  | analyst   | Acme Analyst One            |
+| acme   | associate@acme.dev | acme2026  | associate | Acme Associate              |
+| acme   | trainer@acme.dev   | acme2026  | trainer   | Acme Trainer                |
+| acme   | intern@acme.dev    | acme2026  | intern    | Acme Intern                 |
 
 ### Production (`SEED_PROD=true`)
 
-| Org    | Email               | Password     | Role      | Display Name  |
-| ------ | ------------------- | ------------ | --------- | ------------- |
-| thepit | demo@thepit.dev     | demo2026     | analyst   | Demo Trader   |
-| thepit | admin@thepit.dev    | admin2026    | org_admin | Admin User    |
-| thepit | advanced@thepit.dev | advanced2026 | analyst   | Advanced Demo |
-| acme   | admin@acme.dev      | acme2026     | org_admin | Acme Admin    |
+| Org    | Email               | Password     | Role      | Display Name        |
+| ------ | ------------------- | ------------ | --------- | ------------------- |
+| thepit | demo@thepit.dev     | demo2026     | analyst   | Demo Trader         |
+| thepit | advanced@thepit.dev | advanced2026 | analyst   | Advanced Demo       |
+| thepit | trader2@thepit.dev  | demo2026     | analyst   | The Pit Trader Two  |
+| thepit | associate@thepit.dev| demo2026     | associate | The Pit Associate   |
+| thepit | intern@thepit.dev   | demo2026     | intern    | The Pit Intern      |
+| thepit | admin@peak6.com     | peak62026    | org_admin | Peak6 Super Admin   |
+| acme   | admin@acme.dev      | acme2026     | org_admin | Acme Admin          |
+| acme   | analyst1@acme.dev   | acme2026     | analyst   | Acme Analyst One    |
+| acme   | associate@acme.dev  | acme2026     | associate | Acme Associate      |
+| acme   | trainer@acme.dev    | acme2026     | trainer   | Acme Trainer        |
 
 ## Testing
 

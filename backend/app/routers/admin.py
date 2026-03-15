@@ -46,6 +46,14 @@ class CreateInviteResponse(BaseModel):
 ALLOWED_ROLES = {"intern", "analyst", "associate", "trainer", "org_admin"}
 
 
+def _is_super_admin(user: User) -> bool:
+    return user.role == "org_admin" and user.email.lower().endswith("@peak6.com")
+
+
+def _can_manage_invites_for_org(user: User, target_org_id: UUID) -> bool:
+    return user.org_id == target_org_id or _is_super_admin(user)
+
+
 def _org_signup_url(org_slug: str, invite_token: str) -> str:
     parsed = urlparse(settings.frontend_url)
     scheme = parsed.scheme or "https"
@@ -153,10 +161,15 @@ async def create_org_invite(
     db: AsyncSession = Depends(get_db),
 ):
     """Create invite token for org-scoped signup."""
-    if admin_user.org_id != org_id:
+    if not _can_manage_invites_for_org(admin_user, org_id):
         raise HTTPException(status_code=403, detail="Unauthorized")
     if req.role not in ALLOWED_ROLES:
         raise HTTPException(status_code=400, detail="Invalid role")
+    if req.role == "org_admin" and not _is_super_admin(admin_user):
+        raise HTTPException(
+            status_code=403,
+            detail="Only super admin can invite org_admin users",
+        )
 
     org = await db.get(Organization, org_id)
     if not org:
