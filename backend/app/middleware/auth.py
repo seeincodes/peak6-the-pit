@@ -26,3 +26,12 @@ async def get_current_user(
         raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED, detail="User not found")
 
     return user
+
+
+async def require_admin(
+    user: User = Depends(get_current_user),
+) -> User:
+    """Dependency to ensure user has admin role."""
+    if user.role != "admin":
+        raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin access required")
+    return user
