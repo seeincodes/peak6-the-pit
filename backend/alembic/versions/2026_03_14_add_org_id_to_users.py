@@ -19,14 +19,31 @@ def upgrade() -> None:
     # Create the organizations table first
     op.create_table(
         "organizations",
-        sa.Column("id", UUID(as_uuid=True), primary_key=True, server_default=sa.text("gen_random_uuid()")),
+        sa.Column("id", UUID(as_uuid=True), primary_key=True),
         sa.Column("name", sa.String(255), nullable=False, unique=True),
         sa.Column("created_at", sa.DateTime, server_default=sa.func.now()),
     )
-    
-    # Add org_id column to users table
-    op.add_column("users", sa.Column("org_id", UUID(as_uuid=True), nullable=False))
-    
+
+    # Insert default organization for existing users
+    op.execute(
+        sa.text(
+            "INSERT INTO organizations (id, name) VALUES ('00000000-0000-0000-0000-000000000099', 'Peak6')"
+        )
+    )
+
+    # Add org_id column to users table as nullable first
+    op.add_column("users", sa.Column("org_id", UUID(as_uuid=True), nullable=True))
+
+    # Update existing users to have the default org_id
+    op.execute(
+        sa.text(
+            "UPDATE users SET org_id = '00000000-0000-0000-0000-000000000099' WHERE org_id IS NULL"
+        )
+    )
+
+    # Make org_id NOT NULL
+    op.alter_column("users", "org_id", existing_type=UUID(as_uuid=True), nullable=False)
+
     # Add foreign key constraint
     op.create_foreign_key("fk_users_org_id", "users", "organizations", ["org_id"], ["id"])
 
