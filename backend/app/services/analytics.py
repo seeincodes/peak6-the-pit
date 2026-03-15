@@ -45,7 +45,7 @@ async def get_learning_progress(
         select(func.count()).where(
             Response.user_id.in_(org_user_ids),
             Response.is_complete == True,
-            Response.created_at.between(start_date, end_date),
+            Response.submitted_at.between(start_date, end_date),
         )
     )
     total_scenarios = total_completed.scalar() or 0
@@ -56,7 +56,7 @@ async def get_learning_progress(
         .join(Response, Grade.response_id == Response.id)
         .where(
             Response.user_id.in_(org_user_ids),
-            Response.created_at.between(start_date, end_date),
+            Response.submitted_at.between(start_date, end_date),
         )
     )
     avg_score = avg_score_result.scalar()
@@ -120,14 +120,14 @@ async def get_activity_metrics(
     # Completions over time (daily)
     completions_result = await db.execute(
         select(
-            func.date(Response.created_at).label("date"),
+            func.date(Response.submitted_at).label("date"),
             func.count().label("count")
         ).where(
             Response.user_id.in_(org_user_ids),
             Response.is_complete == True,
-            Response.created_at.between(start_date, end_date),
-        ).group_by(func.date(Response.created_at))
-        .order_by(func.date(Response.created_at))
+            Response.submitted_at.between(start_date, end_date),
+        ).group_by(func.date(Response.submitted_at))
+        .order_by(func.date(Response.submitted_at))
     )
     completions_over_time = [
         ActivityDataPoint(date=str(row[0]), count=row[1])
@@ -138,7 +138,7 @@ async def get_activity_metrics(
     active_users_result = await db.execute(
         select(func.count(func.distinct(Response.user_id))).where(
             Response.user_id.in_(org_user_ids),
-            Response.created_at.between(start_date, end_date),
+            Response.submitted_at.between(start_date, end_date),
         )
     )
     active_users = active_users_result.scalar() or 0
@@ -146,12 +146,12 @@ async def get_activity_metrics(
     # Peak hours
     peak_hours_result = await db.execute(
         select(
-            func.extract("hour", Response.created_at).label("hour"),
+            func.extract("hour", Response.submitted_at).label("hour"),
             func.count().label("count")
         ).where(
             Response.user_id.in_(org_user_ids),
-            Response.created_at.between(start_date, end_date),
-        ).group_by(func.extract("hour", Response.created_at))
+            Response.submitted_at.between(start_date, end_date),
+        ).group_by(func.extract("hour", Response.submitted_at))
         .order_by(func.count().desc())
         .limit(3)
     )
@@ -162,7 +162,7 @@ async def get_activity_metrics(
         select(func.count()).where(
             Response.user_id.in_(org_user_ids),
             Response.is_complete == True,
-            Response.created_at.between(start_date, end_date),
+            Response.submitted_at.between(start_date, end_date),
         )
     )
     total_count = total_completions.scalar() or 0
@@ -209,7 +209,7 @@ async def get_content_performance(
         .outerjoin(Grade, Response.id == Grade.response_id)
         .where(
             Response.user_id.in_(org_user_ids),
-            Response.created_at.between(start_date, end_date),
+            Response.submitted_at.between(start_date, end_date),
         )
     )
 
