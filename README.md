@@ -67,6 +67,29 @@ docker-compose up --build
    railway run -s backend bash -c "SEED_PROD=true python -m app.seed"
    ```
 
+## Staging Environment
+
+Staging mirrors production but uses a separate Railway project and database so you can test changes before going live.
+
+### Local staging (Docker Compose)
+
+```bash
+docker compose -f docker-compose.yml -f docker-compose.staging.yml up --build
+```
+
+This uses a separate Postgres volume (`pgdata_staging`) so staging data stays isolated from local dev.
+
+### Deploy staging to Railway
+
+Follow the same "Deploy to Railway" steps above but with these differences:
+
+1. Create a **separate** Railway project (e.g. "the-pit-staging").
+2. Set `APP_ENV=staging` on the Backend service.
+3. Pass `BUILD_ENV=staging` and `VITE_API_URL=https://<staging-backend>.up.railway.app/api` as build args on the Frontend service.
+4. Point the Railway project at the `staging-environment` branch (or whichever branch you use for staging).
+
+The staging backend runs without `--reload` (like production) but keeps seed data enabled by default so you always have test accounts available.
+
 ## Test Accounts
 
 Seed the database with `python -m app.seed` from the backend directory. By default, development test users are created; set `SEED_PROD=true` for demo/admin accounts. Add `SEED_CLEAN=true` to move non-seed users out of demo orgs for a clean demo slate.

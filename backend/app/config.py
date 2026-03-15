@@ -22,7 +22,7 @@ class Settings(BaseSettings):
     atlas_api_url: str = ""
     atlas_api_key: str = ""
     atlas_enabled: bool = False
-    app_env: str = "development"
+    app_env: str = "development"  # "development", "staging", or "production"
     app_port: int = 8000
     frontend_url: str = "http://localhost:5173"
     cors_origins: str = "http://localhost:5173"
