@@ -230,6 +230,7 @@ export default function QuickFirePage({
       }
 
       queryClient.invalidateQueries({ queryKey: ["user"] });
+      queryClient.invalidateQueries({ queryKey: ["daily-challenges"] });
       prefetch();
     },
   });

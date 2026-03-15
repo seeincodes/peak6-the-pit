@@ -189,6 +189,7 @@ export default function TrainingPage({
       queryClient.invalidateQueries({ queryKey: ["path-detail"] });
       queryClient.invalidateQueries({ queryKey: ["effective-difficulties"] });
       queryClient.invalidateQueries({ queryKey: ["category-summary"] });
+      queryClient.invalidateQueries({ queryKey: ["daily-challenges"] });
     },
   });
 
