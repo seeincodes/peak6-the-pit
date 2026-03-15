@@ -39,6 +39,9 @@ def _drop_role_checks(table_name: str) -> None:
 
 
 def upgrade() -> None:
+    _drop_role_checks("users")
+    _drop_role_checks("org_invites")
+
     op.execute(sa.text("UPDATE users SET role = 'analyst' WHERE role = 'ta'"))
     op.execute(sa.text("UPDATE users SET role = 'associate' WHERE role = 'experienced'"))
     op.execute(sa.text("UPDATE users SET role = 'trainer' WHERE role = 'educator'"))
@@ -48,9 +51,6 @@ def upgrade() -> None:
     op.execute(sa.text("UPDATE org_invites SET role = 'associate' WHERE role = 'experienced'"))
     op.execute(sa.text("UPDATE org_invites SET role = 'trainer' WHERE role = 'educator'"))
     op.execute(sa.text("UPDATE org_invites SET role = 'org_admin' WHERE role = 'admin'"))
-
-    _drop_role_checks("users")
-    _drop_role_checks("org_invites")
 
     op.create_check_constraint(
         "ck_users_role_enterprise",
