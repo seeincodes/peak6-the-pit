@@ -20,6 +20,7 @@ import UserProfilePage from "./pages/UserProfilePage";
 import QuickFirePage from "./pages/QuickFirePage";
 import DictionaryPage from "./pages/DictionaryPage";
 import ChatPage from "./pages/ChatPage";
+import { AdminDashboard } from "./pages/AdminDashboard";
 import { XPToastProvider } from "./context/XPToastContext";
 import api from "./api/client";
 
@@ -164,6 +165,7 @@ function AuthenticatedApp() {
             <Route path="/feed" element={<FeedPage />} />
             <Route path="/chat" element={<ChatPage />} />
             <Route path="/profile/:userId" element={<UserProfilePage />} />
+            <Route path="/admin/dashboard" element={<AdminDashboard currentUser={user} />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </main>
