@@ -1149,12 +1149,16 @@ async def seed():
         # ── 4. Activity Events ──
         events = _make_activity_events(now)
         for ae_data in events:
+            if ae_data["user_id"] not in valid_user_ids:
+                continue
             if not await session.get(ActivityEvent, ae_data["id"]):
                 session.add(ActivityEvent(**ae_data))
         print(f"  Activity Events: {len(events)}")
 
         # ── 5. Bookmarks ──
         for bk_data in DEMO_BOOKMARKS:
+            if bk_data["user_id"] not in valid_user_ids:
+                continue
             if not await session.get(Bookmark, bk_data["id"]):
                 session.add(Bookmark(**bk_data))
         print(f"  Bookmarks: {len(DEMO_BOOKMARKS)}")
@@ -1170,6 +1174,8 @@ async def seed():
 
         badge_award_count = 0
         for user_id, slugs in badge_slugs_to_award.items():
+            if user_id not in valid_user_ids:
+                continue
             for slug in slugs:
                 badge_row = (await session.execute(
                     select(Badge).where(Badge.slug == slug)
@@ -1190,6 +1196,8 @@ async def seed():
 
         # ── 7. Learning Path Progress ──
         for pp_data in DEMO_PATH_PROGRESS:
+            if pp_data["user_id"] not in valid_user_ids:
+                continue
             path_exists = await session.get(LearningPath, pp_data["path_id"])
             if not path_exists:
                 continue
