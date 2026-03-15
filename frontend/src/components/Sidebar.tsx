@@ -13,6 +13,7 @@ import {
   BookText,
   MessageSquare,
   UserCircle,
+  BarChart3,
 } from "lucide-react";
 import DailyChallengeCard from "./DailyChallengeCard";
 import StreakFlame from "./StreakFlame";
@@ -25,6 +26,7 @@ interface SidebarProps {
     xp_total: number;
     streak_days: number;
     avatar_id?: string;
+    role?: string;
   } | null;
   mobileOpen: boolean;
   onMobileClose: () => void;
@@ -153,6 +155,42 @@ export default function Sidebar({ user, mobileOpen, onMobileClose }: SidebarProp
             </div>
           </div>
         ))}
+
+        {/* Admin Dashboard */}
+        {user?.role === 'admin' && (
+          <div className="border-t border-cm-border mt-4 pt-4">
+            <p className="text-[10px] font-semibold text-cm-muted/60 uppercase tracking-widest px-3 mb-1">
+              Admin
+            </p>
+            <Link
+              to="/admin/dashboard"
+              onClick={isMobile ? onMobileClose : undefined}
+              className={`
+                relative flex items-center gap-3 rounded-lg h-9 px-3
+                transition-all duration-200 group focus-ring
+                ${isActive('/admin/dashboard', false)
+                  ? "bg-cm-primary/10 text-cm-primary"
+                  : "text-cm-muted hover:bg-cm-card-raised hover:text-cm-text"
+                }
+              `}
+            >
+              {isActive('/admin/dashboard', false) && (
+                <motion.div
+                  layoutId={isMobile ? "sidebar-active-mobile" : "sidebar-active"}
+                  className="absolute left-0 top-1.5 bottom-1.5 w-[3px] rounded-r-full bg-cm-primary"
+                  transition={{ type: "spring", stiffness: 350, damping: 30 }}
+                />
+              )}
+              <BarChart3
+                size={18}
+                className={`shrink-0 transition-colors duration-200 ${
+                  isActive('/admin/dashboard', false) ? "text-cm-primary" : "text-cm-muted group-hover:text-cm-text"
+                }`}
+              />
+              <span className="text-sm font-medium whitespace-nowrap">Analytics</span>
+            </Link>
+          </div>
+        )}
       </nav>
 
       {/* User section */}
