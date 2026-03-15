@@ -30,7 +30,7 @@ class User(Base):
 
     __table_args__ = (
         UniqueConstraint("org_id", "email", name="uq_users_org_email"),
-        CheckConstraint("role IN ('ta', 'intern', 'experienced', 'educator', 'admin')"),
+        CheckConstraint("role IN ('intern', 'analyst', 'associate', 'trainer', 'org_admin')"),
         CheckConstraint("ta_phase IS NULL OR (ta_phase >= 1 AND ta_phase <= 4)"),
         CheckConstraint("xp_total >= 0", name="ck_users_xp_non_negative"),
         CheckConstraint("level >= 1", name="ck_users_level_positive"),

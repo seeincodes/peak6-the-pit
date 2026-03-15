@@ -25,7 +25,7 @@ export function AdminDashboard({ currentUser }: AdminDashboardProps) {
   const [startDate, setStartDate] = useState('');
   const [endDate, setEndDate] = useState('');
 
-  if (currentUser.role !== 'admin') {
+  if (currentUser.role !== 'org_admin') {
     return (
       <div className="min-h-screen bg-cm-bg flex items-center justify-center p-4">
         <div className="text-center max-w-md">

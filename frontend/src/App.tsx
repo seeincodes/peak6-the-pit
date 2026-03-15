@@ -65,7 +65,7 @@ function AuthenticatedApp() {
   });
 
   const [mobileSidebarOpen, setMobileSidebarOpen] = useState(false);
-  const isAdmin = user?.role === "admin";
+  const isAdmin = user?.role === "org_admin";
 
   // Close mobile sidebar on route change
   const location = useLocation();

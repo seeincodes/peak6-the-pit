@@ -29,11 +29,11 @@ async def test_admin_cannot_access_other_org():
         email="admin1@test.com",
         password_hash="hash",
         display_name="Admin 1",
-        role="admin",
+        role="org_admin",
         org_id=org1_id,
     )
 
     # Verify that admin1 cannot access org2
     assert admin1.org_id == org1_id
     assert admin1.org_id != org2_id
-    assert admin1.role == "admin"
+    assert admin1.role == "org_admin"

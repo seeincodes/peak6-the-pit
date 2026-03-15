@@ -61,7 +61,7 @@ async def create_user(
     email: str,
     password: str,
     display_name: str,
-    role: str = "ta",
+    role: str = "analyst",
     ta_phase: int = 1,
 ) -> User:
     user = User(

@@ -31,7 +31,7 @@ router = APIRouter(prefix="/api/admin", tags=["admin"])
 
 class CreateInviteRequest(BaseModel):
     email: str
-    role: str = Field(default="ta")
+    role: str = Field(default="analyst")
     expires_in_days: int = Field(default=7, ge=1, le=30)
 
 
@@ -43,7 +43,7 @@ class CreateInviteResponse(BaseModel):
     expires_at: str
 
 
-ALLOWED_ROLES = {"ta", "intern", "experienced", "educator", "admin"}
+ALLOWED_ROLES = {"intern", "analyst", "associate", "trainer", "org_admin"}
 
 
 def _org_signup_url(org_slug: str, invite_token: str) -> str:

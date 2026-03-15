@@ -12,11 +12,11 @@ async def test_require_admin_passes_for_admin():
         email="admin@test.com",
         password_hash="hash",
         display_name="Admin",
-        role="admin",
+        role="org_admin",
         org_id="456"
     )
     result = await require_admin(admin_user)
-    assert result.role == "admin"
+    assert result.role == "org_admin"
 
 
 @pytest.mark.asyncio
@@ -27,7 +27,7 @@ async def test_require_admin_rejects_non_admin():
         email="ta@test.com",
         password_hash="hash",
         display_name="TA",
-        role="ta",
+        role="analyst",
         org_id="456"
     )
     with pytest.raises(HTTPException) as exc_info:

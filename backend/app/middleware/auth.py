@@ -32,6 +32,6 @@ async def require_admin(
     user: User = Depends(get_current_user),
 ) -> User:
     """Dependency to ensure user has admin role."""
-    if user.role != "admin":
+    if user.role != "org_admin":
         raise HTTPException(status_code=status.HTTP_403_FORBIDDEN, detail="Admin access required")
     return user

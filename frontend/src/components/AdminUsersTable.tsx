@@ -25,7 +25,7 @@ export function AdminUsersTable({ data, loading, orgId }: Props) {
   const [sortKey, setSortKey] = useState<SortKey>('display_name');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
   const [inviteEmail, setInviteEmail] = useState('');
-  const [inviteRole, setInviteRole] = useState('ta');
+  const [inviteRole, setInviteRole] = useState('analyst');
   const [inviteResult, setInviteResult] = useState<string | null>(null);
   const [inviteError, setInviteError] = useState<string | null>(null);
   const [inviteLoading, setInviteLoading] = useState(false);
@@ -167,11 +167,11 @@ export function AdminUsersTable({ data, loading, orgId }: Props) {
             placeholder="user@company.com"
           />
           <select value={inviteRole} onChange={(e) => setInviteRole(e.target.value)} className="cm-input sm:w-44">
-            <option value="ta">ta</option>
+            <option value="analyst">analyst</option>
             <option value="intern">intern</option>
-            <option value="experienced">experienced</option>
-            <option value="educator">educator</option>
-            <option value="admin">admin</option>
+            <option value="associate">associate</option>
+            <option value="trainer">trainer</option>
+            <option value="org_admin">org_admin</option>
           </select>
           <button onClick={createInvite} disabled={inviteLoading} className="cm-tab-active disabled:opacity-50">
             {inviteLoading ? 'Creating...' : 'Create Invite'}
