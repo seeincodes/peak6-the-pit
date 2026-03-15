@@ -1,9 +1,11 @@
 import { useMemo, useState } from 'react';
 import type { OrgUsersPerformanceData } from '../types/admin';
+import api from '../api/client';
 
 interface Props {
   data: OrgUsersPerformanceData | null;
   loading: boolean;
+  orgId: string;
 }
 
 type SortKey =
@@ -17,11 +19,16 @@ type SortKey =
   | 'avg_score'
   | 'last_active_at';
 
-export function AdminUsersTable({ data, loading }: Props) {
+export function AdminUsersTable({ data, loading, orgId }: Props) {
   const [query, setQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
   const [sortKey, setSortKey] = useState<SortKey>('display_name');
   const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
+  const [inviteEmail, setInviteEmail] = useState('');
+  const [inviteRole, setInviteRole] = useState('ta');
+  const [inviteResult, setInviteResult] = useState<string | null>(null);
+  const [inviteError, setInviteError] = useState<string | null>(null);
+  const [inviteLoading, setInviteLoading] = useState(false);
 
   const roles = useMemo(() => {
     const unique = new Set((data?.users || []).map((u) => u.role));
@@ -121,6 +128,25 @@ export function AdminUsersTable({ data, loading }: Props) {
     URL.revokeObjectURL(url);
   };
 
+  const createInvite = async () => {
+    setInviteError(null);
+    setInviteResult(null);
+    if (!inviteEmail.trim()) return;
+    setInviteLoading(true);
+    try {
+      const res = await api.post(`/admin/org/${orgId}/invites`, {
+        email: inviteEmail.trim().toLowerCase(),
+        role: inviteRole,
+      });
+      setInviteResult(res.data.signup_url);
+      setInviteEmail('');
+    } catch (err: any) {
+      setInviteError(err?.response?.data?.detail || 'Failed to create invite');
+    } finally {
+      setInviteLoading(false);
+    }
+  };
+
   const sortIndicator = (key: SortKey) => {
     if (sortKey !== key) return ' ';
     return sortDir === 'asc' ? ' ↑' : ' ↓';
@@ -131,6 +157,34 @@ export function AdminUsersTable({ data, loading }: Props) {
 
   return (
     <div className="space-y-4">
+      <div className="bg-cm-card-raised border border-cm-border rounded-lg p-4 space-y-3">
+        <div className="text-cm-text font-semibold">Invite User</div>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <input
+            value={inviteEmail}
+            onChange={(e) => setInviteEmail(e.target.value)}
+            className="cm-input flex-1"
+            placeholder="user@company.com"
+          />
+          <select value={inviteRole} onChange={(e) => setInviteRole(e.target.value)} className="cm-input sm:w-44">
+            <option value="ta">ta</option>
+            <option value="intern">intern</option>
+            <option value="experienced">experienced</option>
+            <option value="educator">educator</option>
+            <option value="admin">admin</option>
+          </select>
+          <button onClick={createInvite} disabled={inviteLoading} className="cm-tab-active disabled:opacity-50">
+            {inviteLoading ? 'Creating...' : 'Create Invite'}
+          </button>
+        </div>
+        {inviteResult && (
+          <div className="text-sm text-cm-muted">
+            Invite link: <a className="text-cm-primary hover:underline" href={inviteResult}>{inviteResult}</a>
+          </div>
+        )}
+        {inviteError && <div className="text-sm text-cm-red">{inviteError}</div>}
+      </div>
+
       <div className="flex flex-col sm:flex-row gap-3">
         <input
           value={query}

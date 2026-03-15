@@ -8,6 +8,7 @@ from sqlalchemy import select
 from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.config import settings
+from app.models.organization import Organization
 from app.models.user import User
 
 
@@ -40,8 +41,23 @@ async def get_user_by_email(db: AsyncSession, email: str) -> User | None:
     return result.scalar_one_or_none()
 
 
+async def get_user_by_org_and_email(db: AsyncSession, org_slug: str, email: str) -> User | None:
+    result = await db.execute(
+        select(User)
+        .join(Organization, Organization.id == User.org_id)
+        .where(Organization.slug == org_slug.lower(), User.email == email.lower())
+    )
+    return result.scalar_one_or_none()
+
+
+async def get_org_by_slug(db: AsyncSession, org_slug: str) -> Organization | None:
+    result = await db.execute(select(Organization).where(Organization.slug == org_slug.lower()))
+    return result.scalar_one_or_none()
+
+
 async def create_user(
     db: AsyncSession,
+    org_id: UUID,
     email: str,
     password: str,
     display_name: str,
@@ -49,7 +65,8 @@ async def create_user(
     ta_phase: int = 1,
 ) -> User:
     user = User(
-        email=email,
+        org_id=org_id,
+        email=email.lower(),
         password_hash=hash_password(password),
         display_name=display_name,
         role=role,
