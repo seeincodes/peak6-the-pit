@@ -202,7 +202,7 @@ async def get_content_performance(
             Scenario.category,
             Scenario.difficulty,
             func.count(Response.id).label("total_attempts"),
-            func.count(func.case((Response.is_complete == True, 1))).label("completions"),
+            func.sum(func.case((Response.is_complete == True, 1), else_=0)).label("completions"),
             func.avg(Grade.overall_score).label("avg_score"),
         )
         .outerjoin(Response, Scenario.id == Response.scenario_id)
