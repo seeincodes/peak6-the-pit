@@ -54,6 +54,7 @@ function App() {
 }
 
 function AuthenticatedApp() {
+  const { logout } = useAuth();
   const { data: user, isLoading } = useQuery({
     queryKey: ["user"],
     queryFn: async () => {
@@ -117,6 +118,12 @@ function AuthenticatedApp() {
           {user && isAdmin && (
             <div className="flex items-center gap-2">
               <span className="text-sm font-semibold text-cm-text">Admin Console</span>
+              <button
+                onClick={logout}
+                className="text-xs font-medium text-cm-muted hover:text-cm-text transition-colors"
+              >
+                Log out
+              </button>
             </div>
           )}
         </div>
@@ -160,7 +167,15 @@ function AuthenticatedApp() {
           )}
           {user && isAdmin && (
             <div className="hidden lg:flex items-center justify-end h-16 px-6 border-b border-cm-border bg-cm-card/50 sticky top-0 z-30 backdrop-blur-sm">
-              <div className="text-sm font-semibold text-cm-primary">Admin Dashboard</div>
+              <div className="flex items-center gap-4">
+                <div className="text-sm font-semibold text-cm-primary">Admin Dashboard</div>
+                <button
+                  onClick={logout}
+                  className="text-sm font-medium text-cm-muted hover:text-cm-text transition-colors"
+                >
+                  Log out
+                </button>
+              </div>
             </div>
           )}
 
