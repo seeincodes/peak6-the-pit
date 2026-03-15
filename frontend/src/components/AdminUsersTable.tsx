@@ -6,9 +6,22 @@ interface Props {
   loading: boolean;
 }
 
+type SortKey =
+  | 'display_name'
+  | 'role'
+  | 'level'
+  | 'xp_total'
+  | 'streak_days'
+  | 'total_attempts'
+  | 'completed_scenarios'
+  | 'avg_score'
+  | 'last_active_at';
+
 export function AdminUsersTable({ data, loading }: Props) {
   const [query, setQuery] = useState('');
   const [roleFilter, setRoleFilter] = useState('all');
+  const [sortKey, setSortKey] = useState<SortKey>('display_name');
+  const [sortDir, setSortDir] = useState<'asc' | 'desc'>('asc');
 
   const roles = useMemo(() => {
     const unique = new Set((data?.users || []).map((u) => u.role));
@@ -28,6 +41,90 @@ export function AdminUsersTable({ data, loading }: Props) {
       return matchesRole && matchesQuery;
     });
   }, [data?.users, roleFilter, query]);
+
+  const sortedUsers = useMemo(() => {
+    const sorted = [...filteredUsers];
+    sorted.sort((a, b) => {
+      const direction = sortDir === 'asc' ? 1 : -1;
+
+      if (sortKey === 'display_name' || sortKey === 'role') {
+        return a[sortKey].localeCompare(b[sortKey]) * direction;
+      }
+
+      if (sortKey === 'last_active_at') {
+        const aTime = a.last_active_at ? new Date(a.last_active_at).getTime() : 0;
+        const bTime = b.last_active_at ? new Date(b.last_active_at).getTime() : 0;
+        return (aTime - bTime) * direction;
+      }
+
+      const aVal = a[sortKey] ?? -1;
+      const bVal = b[sortKey] ?? -1;
+      return (Number(aVal) - Number(bVal)) * direction;
+    });
+    return sorted;
+  }, [filteredUsers, sortKey, sortDir]);
+
+  const toggleSort = (nextKey: SortKey) => {
+    if (sortKey === nextKey) {
+      setSortDir((prev) => (prev === 'asc' ? 'desc' : 'asc'));
+      return;
+    }
+    setSortKey(nextKey);
+    setSortDir(nextKey === 'display_name' || nextKey === 'role' ? 'asc' : 'desc');
+  };
+
+  const downloadCsv = () => {
+    const headers = [
+      'display_name',
+      'email',
+      'role',
+      'cohort',
+      'level',
+      'xp_total',
+      'streak_days',
+      'total_attempts',
+      'completed_scenarios',
+      'avg_score',
+      'last_active_at',
+    ];
+    const escape = (value: string | number | null) => {
+      const text = value === null ? '' : String(value);
+      return `"${text.replace(/"/g, '""')}"`;
+    };
+    const rows = sortedUsers.map((u) =>
+      [
+        u.display_name,
+        u.email,
+        u.role,
+        u.cohort,
+        u.level,
+        u.xp_total,
+        u.streak_days,
+        u.total_attempts,
+        u.completed_scenarios,
+        u.avg_score,
+        u.last_active_at,
+      ]
+        .map((v) => escape(v as string | number | null))
+        .join(',')
+    );
+
+    const csv = [headers.join(','), ...rows].join('\n');
+    const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `org-users-${new Date().toISOString().slice(0, 10)}.csv`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    URL.revokeObjectURL(url);
+  };
+
+  const sortIndicator = (key: SortKey) => {
+    if (sortKey !== key) return ' ';
+    return sortDir === 'asc' ? ' ↑' : ' ↓';
+  };
 
   if (loading) return <div className="p-4 text-cm-muted">Loading users...</div>;
   if (!data || data.users.length === 0) return <div className="p-4 text-cm-muted">No users found for this org.</div>;
@@ -52,25 +149,64 @@ export function AdminUsersTable({ data, loading }: Props) {
             </option>
           ))}
         </select>
+        <button onClick={downloadCsv} className="cm-tab sm:w-auto">
+          Export CSV
+        </button>
       </div>
 
       <div className="bg-cm-card-raised border border-cm-border rounded-lg overflow-x-auto">
         <table className="w-full text-sm">
           <thead className="bg-cm-bg border-b border-cm-border">
             <tr>
-              <th className="px-4 py-2 text-left text-cm-muted font-semibold">User</th>
-              <th className="px-4 py-2 text-left text-cm-muted font-semibold">Role</th>
-              <th className="px-4 py-2 text-right text-cm-muted font-semibold">Level</th>
-              <th className="px-4 py-2 text-right text-cm-muted font-semibold">XP</th>
-              <th className="px-4 py-2 text-right text-cm-muted font-semibold">Streak</th>
-              <th className="px-4 py-2 text-right text-cm-muted font-semibold">Attempts</th>
-              <th className="px-4 py-2 text-right text-cm-muted font-semibold">Completed</th>
-              <th className="px-4 py-2 text-right text-cm-muted font-semibold">Avg Score</th>
-              <th className="px-4 py-2 text-left text-cm-muted font-semibold">Last Active</th>
+              <th className="px-4 py-2 text-left text-cm-muted font-semibold">
+                <button onClick={() => toggleSort('display_name')} className="hover:text-cm-text transition-colors">
+                  User{sortIndicator('display_name')}
+                </button>
+              </th>
+              <th className="px-4 py-2 text-left text-cm-muted font-semibold">
+                <button onClick={() => toggleSort('role')} className="hover:text-cm-text transition-colors">
+                  Role{sortIndicator('role')}
+                </button>
+              </th>
+              <th className="px-4 py-2 text-right text-cm-muted font-semibold">
+                <button onClick={() => toggleSort('level')} className="hover:text-cm-text transition-colors">
+                  Level{sortIndicator('level')}
+                </button>
+              </th>
+              <th className="px-4 py-2 text-right text-cm-muted font-semibold">
+                <button onClick={() => toggleSort('xp_total')} className="hover:text-cm-text transition-colors">
+                  XP{sortIndicator('xp_total')}
+                </button>
+              </th>
+              <th className="px-4 py-2 text-right text-cm-muted font-semibold">
+                <button onClick={() => toggleSort('streak_days')} className="hover:text-cm-text transition-colors">
+                  Streak{sortIndicator('streak_days')}
+                </button>
+              </th>
+              <th className="px-4 py-2 text-right text-cm-muted font-semibold">
+                <button onClick={() => toggleSort('total_attempts')} className="hover:text-cm-text transition-colors">
+                  Attempts{sortIndicator('total_attempts')}
+                </button>
+              </th>
+              <th className="px-4 py-2 text-right text-cm-muted font-semibold">
+                <button onClick={() => toggleSort('completed_scenarios')} className="hover:text-cm-text transition-colors">
+                  Completed{sortIndicator('completed_scenarios')}
+                </button>
+              </th>
+              <th className="px-4 py-2 text-right text-cm-muted font-semibold">
+                <button onClick={() => toggleSort('avg_score')} className="hover:text-cm-text transition-colors">
+                  Avg Score{sortIndicator('avg_score')}
+                </button>
+              </th>
+              <th className="px-4 py-2 text-left text-cm-muted font-semibold">
+                <button onClick={() => toggleSort('last_active_at')} className="hover:text-cm-text transition-colors">
+                  Last Active{sortIndicator('last_active_at')}
+                </button>
+              </th>
             </tr>
           </thead>
           <tbody>
-            {filteredUsers.map((u) => (
+            {sortedUsers.map((u) => (
               <tr key={u.user_id} className="border-b border-cm-border hover:bg-cm-bg/60">
                 <td className="px-4 py-2">
                   <div className="text-cm-text font-medium">{u.display_name}</div>
