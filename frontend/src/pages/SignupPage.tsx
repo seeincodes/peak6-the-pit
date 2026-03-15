@@ -1,7 +1,16 @@
-import { useState, FormEvent } from "react";
-import { Link, useNavigate } from "react-router-dom";
+import { useState, FormEvent, useEffect } from "react";
+import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
+import api from "../api/client";
+
+interface InvitePreview {
+  org_slug: string;
+  org_name: string;
+  email: string;
+  role: string;
+  expires_at: string;
+}
 
 export default function SignupPage() {
   const [email, setEmail] = useState("");
@@ -9,15 +18,36 @@ export default function SignupPage() {
   const [displayName, setDisplayName] = useState("");
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
+  const [inviteLoading, setInviteLoading] = useState(true);
+  const [invite, setInvite] = useState<InvitePreview | null>(null);
+  const [searchParams] = useSearchParams();
+  const inviteToken = searchParams.get("invite") || "";
   const { signup } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    if (!inviteToken) {
+      setInviteLoading(false);
+      return;
+    }
+    api.get(`/auth/invite/${inviteToken}`)
+      .then((res) => {
+        setInvite(res.data);
+        setEmail(res.data.email);
+      })
+      .catch((err) => {
+        const detail = err?.response?.data?.detail || "Invalid invite link.";
+        setError(detail);
+      })
+      .finally(() => setInviteLoading(false));
+  }, [inviteToken]);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     setError("");
     setLoading(true);
     try {
-      await signup(email, password, displayName);
+      await signup(email, password, displayName, inviteToken);
       navigate("/");
     } catch (err: unknown) {
       if (err && typeof err === "object" && "response" in err) {
@@ -53,6 +83,19 @@ export default function SignupPage() {
         {/* Card */}
         <div className="rounded-md border border-cm-border bg-cm-card p-8">
           <h2 className="text-xl font-bold text-cm-text mb-6">Sign Up</h2>
+
+          {!inviteToken && !inviteLoading && (
+            <div role="alert" aria-live="polite" className="mb-4 p-3 rounded-md bg-cm-yellow/10 border border-cm-yellow/30 text-cm-yellow text-sm">
+              Signups are invite-only. Ask your admin for an invite link.
+            </div>
+          )}
+
+          {invite && (
+            <div className="mb-4 p-3 rounded-md bg-cm-primary/10 border border-cm-primary/30 text-sm">
+              <div className="text-cm-text font-semibold">Invited to {invite.org_name}</div>
+              <div className="text-cm-muted">Role: {invite.role}</div>
+            </div>
+          )}
 
           {error && (
             <div role="alert" aria-live="assertive" className="mb-4 p-3 rounded-md bg-cm-red/10 border border-cm-red/30 text-cm-red text-sm">
@@ -90,6 +133,7 @@ export default function SignupPage() {
                 aria-invalid={!!error}
                 className="w-full px-4 py-2.5 rounded-md bg-cm-bg border border-cm-border text-cm-text placeholder-cm-muted/50 focus:outline-none focus:border-cm-primary/50 transition-all duration-300 focus-ring"
                 placeholder="trader@example.com"
+                readOnly={!!invite}
               />
             </div>
 
@@ -112,7 +156,7 @@ export default function SignupPage() {
 
             <button
               type="submit"
-              disabled={loading}
+              disabled={loading || !inviteToken || inviteLoading || !!error}
               aria-busy={loading}
               className="w-full py-3 rounded bg-cm-primary text-white font-bold text-sm hover:bg-cm-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 focus-ring"
             >

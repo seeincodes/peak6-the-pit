@@ -145,7 +145,7 @@ export function AdminDashboard({ currentUser }: AdminDashboardProps) {
           <AdminScenarios data={contentPerformance.data} loading={contentPerformance.loading} />
         )}
         {activeTab === 'users' && (
-          <AdminUsersTable data={usersPerformance.data} loading={usersPerformance.loading} />
+          <AdminUsersTable data={usersPerformance.data} loading={usersPerformance.loading} orgId={orgId} />
         )}
       </div>
     </div>

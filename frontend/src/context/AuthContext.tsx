@@ -1,5 +1,6 @@
 import { createContext, useContext, useState, useEffect, ReactNode } from "react";
 import api from "../api/client";
+import { extractOrgSlugFromHostname } from "../utils/authTenant";
 
 interface AuthUser {
   id: string;
@@ -14,7 +15,7 @@ interface AuthContextType {
   token: string | null;
   isLoading: boolean;
   login: (email: string, password: string) => Promise<void>;
-  signup: (email: string, password: string, displayName: string) => Promise<void>;
+  signup: (email: string, password: string, displayName: string, inviteToken: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -58,7 +59,8 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, []);
 
   const login = async (email: string, password: string) => {
-    const res = await api.post("/auth/login", { email, password });
+    const orgSlug = extractOrgSlugFromHostname(window.location.hostname);
+    const res = await api.post("/auth/login", { email, password, org_slug: orgSlug });
     // Set header + localStorage immediately so child components have auth on first render
     api.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
     localStorage.setItem("token", res.data.token);
@@ -66,8 +68,13 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setUser(res.data.user);
   };
 
-  const signup = async (email: string, password: string, displayName: string) => {
-    const res = await api.post("/auth/signup", { email, password, display_name: displayName });
+  const signup = async (email: string, password: string, displayName: string, inviteToken: string) => {
+    const res = await api.post("/auth/signup", {
+      email,
+      password,
+      display_name: displayName,
+      invite_token: inviteToken,
+    });
     api.defaults.headers.common["Authorization"] = `Bearer ${res.data.token}`;
     localStorage.setItem("token", res.data.token);
     setToken(res.data.token);

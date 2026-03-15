@@ -34,11 +34,13 @@ U2 = uuid.UUID("00000000-0000-0000-0000-000000000002")
 U3 = uuid.UUID("00000000-0000-0000-0000-000000000003")
 U4 = uuid.UUID("00000000-0000-0000-0000-000000000004")
 U5 = uuid.UUID("00000000-0000-0000-0000-000000000005")
+U6 = uuid.UUID("00000000-0000-0000-0000-000000000006")
 
 # Prod users
 P1 = uuid.UUID("00000000-0000-0000-0000-000000000010")
 P2 = uuid.UUID("00000000-0000-0000-0000-000000000011")
 P3 = uuid.UUID("00000000-0000-0000-0000-000000000012")
+P4 = uuid.UUID("00000000-0000-0000-0000-000000000013")
 
 # Scenarios — sized for all 27 categories
 S = [uuid.UUID(f"20000000-0000-0000-0000-{str(i).zfill(12)}") for i in range(1, 30)]
@@ -149,6 +151,22 @@ TEST_USERS = [
         "has_onboarded": True,
         "org_id": "00000000-0000-0000-0000-000000000099",
     },
+    {
+        "id": U6,
+        "email": "admin@acme.dev",
+        "password": "acme2026",
+        "display_name": "Acme Admin",
+        "role": "admin",
+        "avatar_id": "shield",
+        "bio": None,
+        "ta_phase": None,
+        "xp_total": 0,
+        "level": 1,
+        "streak_days": 0,
+        "cohort": "acme-demo",
+        "has_onboarded": True,
+        "org_id": "00000000-0000-0000-0000-000000000100",
+    },
 ]
 
 PROD_USERS = [
@@ -199,6 +217,22 @@ PROD_USERS = [
         "cohort": "demo",
         "has_onboarded": True,
         "org_id": "00000000-0000-0000-0000-000000000099",
+    },
+    {
+        "id": P4,
+        "email": "admin@acme.dev",
+        "password": "acme2026",
+        "display_name": "Acme Admin",
+        "role": "admin",
+        "avatar_id": "shield",
+        "bio": None,
+        "ta_phase": None,
+        "xp_total": 0,
+        "level": 1,
+        "streak_days": 0,
+        "cohort": "acme-demo",
+        "has_onboarded": True,
+        "org_id": "00000000-0000-0000-0000-000000000100",
     },
 ]
 
@@ -793,18 +827,30 @@ async def seed():
     users_to_seed = PROD_USERS if is_prod else TEST_USERS
     now = datetime.utcnow()
 
-    # Create default organization
-    default_org = Organization(
-        id=uuid.UUID("00000000-0000-0000-0000-000000000099"),
-        name="Peak6"
-    )
+    # Ensure demo organizations exist before users.
+    organizations = [
+        Organization(
+            id=uuid.UUID("00000000-0000-0000-0000-000000000099"),
+            name="Peak6",
+            slug="peak6",
+        ),
+        Organization(
+            id=uuid.UUID("00000000-0000-0000-0000-000000000100"),
+            name="Acme",
+            slug="acme",
+        ),
+    ]
 
-    # Add org to session before users
     async with async_session() as session:
-        existing_org = await session.get(Organization, default_org.id)
-        if not existing_org:
-            session.add(default_org)
-            await session.commit()
+        for org in organizations:
+            existing_org = await session.get(Organization, org.id)
+            if existing_org:
+                existing_org.name = org.name
+                if hasattr(existing_org, "slug"):
+                    existing_org.slug = org.slug
+            else:
+                session.add(org)
+        await session.commit()
 
     async with async_session() as session:
         # ── 1. Users ──

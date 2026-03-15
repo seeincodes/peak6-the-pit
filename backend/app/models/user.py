@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import String, Integer, Boolean, DateTime, CheckConstraint, ForeignKey
+from sqlalchemy import String, Integer, Boolean, DateTime, CheckConstraint, ForeignKey, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -13,7 +13,7 @@ class User(Base):
 
     id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), primary_key=True, default=uuid.uuid4)
     org_id: Mapped[uuid.UUID] = mapped_column(UUID(as_uuid=True), ForeignKey("organizations.id"), nullable=False)
-    email: Mapped[str] = mapped_column(String(255), unique=True, nullable=False)
+    email: Mapped[str] = mapped_column(String(255), nullable=False)
     password_hash: Mapped[str] = mapped_column(String(255), nullable=False)
     display_name: Mapped[str] = mapped_column(String(100), nullable=False)
     role: Mapped[str] = mapped_column(String(20), nullable=False)
@@ -29,6 +29,7 @@ class User(Base):
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now_naive)
 
     __table_args__ = (
+        UniqueConstraint("org_id", "email", name="uq_users_org_email"),
         CheckConstraint("role IN ('ta', 'intern', 'experienced', 'educator', 'admin')"),
         CheckConstraint("ta_phase IS NULL OR (ta_phase >= 1 AND ta_phase <= 4)"),
         CheckConstraint("xp_total >= 0", name="ck_users_xp_non_negative"),

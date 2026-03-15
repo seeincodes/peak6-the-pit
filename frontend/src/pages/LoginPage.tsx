@@ -2,6 +2,7 @@ import { useState, FormEvent } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { motion } from "framer-motion";
 import { useAuth } from "../context/AuthContext";
+import { extractOrgSlugFromHostname } from "../utils/authTenant";
 
 export default function LoginPage() {
   const [email, setEmail] = useState("");
@@ -10,6 +11,7 @@ export default function LoginPage() {
   const [loading, setLoading] = useState(false);
   const { login } = useAuth();
   const navigate = useNavigate();
+  const orgSlug = extractOrgSlugFromHostname(window.location.hostname);
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -47,6 +49,11 @@ export default function LoginPage() {
             </span>
           </h1>
           <p className="text-cm-muted text-sm">Sign in to continue training</p>
+          {orgSlug && (
+            <p className="text-cm-primary text-xs mt-2 font-semibold uppercase tracking-wide">
+              Organization: {orgSlug}
+            </p>
+          )}
         </div>
 
         {/* Card */}
