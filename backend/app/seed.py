@@ -806,13 +806,18 @@ _WEAK_CATEGORIES: dict[uuid.UUID, set[str]] = {
 }
 
 
-def _make_responses_and_grades(now: datetime):
+def _make_responses_and_grades(
+    now: datetime,
+    valid_user_ids: set[uuid.UUID] | None = None,
+):
     """Generate 5 graded responses per mastered category per user for mastery proof."""
     from app.constants import MASTERY_SCENARIO_COUNT
     items = []
     counter = 0
 
     for user_id, categories in _USER_MASTERY.items():
+        if valid_user_ids is not None and user_id not in valid_user_ids:
+            continue
         strong = _STRONG_CATEGORIES.get(user_id, set())
         weak = _WEAK_CATEGORIES.get(user_id, set())
         for cat_idx, cat in enumerate(categories):
@@ -1128,7 +1133,8 @@ async def seed():
         await session.flush()
 
         # ── 3. Responses & Grades ──
-        rg_items = _make_responses_and_grades(now)
+        valid_user_ids = {user_data["id"] for user_data in users_to_seed}
+        rg_items = _make_responses_and_grades(now, valid_user_ids=valid_user_ids)
         for item in rg_items:
             r_data = item["response"]
             if not await session.get(Response, r_data["id"]):
