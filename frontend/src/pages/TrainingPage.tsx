@@ -457,11 +457,6 @@ export default function TrainingPage({
                                   }`}>
                                     {label}
                                   </span>
-                                  {stat && stat.attempts > 0 && (
-                                    <span className="text-[10px] text-cm-muted hidden sm:inline">
-                                      · {stat.attempts}
-                                    </span>
-                                  )}
                                 </div>
                               </div>
 
