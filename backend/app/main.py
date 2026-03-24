@@ -5,7 +5,7 @@ from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 
 from app.config import settings
-from app.routers import health, scenarios, scenarios_stream, responses, users, auth, mcq, leaderboard, badges, performance, bookmarks, challenges, metrics, peer_review, paths, activity, study_groups, chat, admin
+from app.routers import health, scenarios, scenarios_stream, responses, users, auth, mcq, leaderboard, badges, performance, bookmarks, challenges, metrics, peer_review, paths, activity, study_groups, chat, admin, notifications, events, skills, mentorships
 from app.services.mcq_pool import prewarm as mcq_prewarm
 from app.services.rag import prewarm_embeddings
 from app.services.market_data import prewarm_market_data
@@ -27,10 +27,11 @@ async def _safe(name: str, coro, timeout: float = 15):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Seed badges and learning paths (DB-only, safe to run)
+    # Seed badges, learning paths, and skill tree (DB-only, safe to run)
     await _safe("badge seeding", _seed_badges())
     await _safe("badge awarding", _award_existing_badges())
     await _safe("path seeding", _seed_paths())
+    await _safe("skill tree seeding", _seed_skill_tree())
 
     # Pre-warm caches (non-critical)
     await _safe("embedding prewarm", prewarm_embeddings(), timeout=30)
@@ -72,6 +73,14 @@ async def _seed_paths():
             print(f"Seeded {count} learning paths")
 
 
+async def _seed_skill_tree():
+    from app.services.skill_tree_seed import seed_skill_tree
+    async with async_session() as db:
+        count = await seed_skill_tree(db)
+        if count:
+            print(f"Seeded {count} skill tree nodes")
+
+
 app = FastAPI(
     title="The Pit",
     description="Gamified Scenario Training & MTSS Agent",
@@ -106,3 +115,7 @@ app.include_router(activity.router)
 app.include_router(study_groups.router)
 app.include_router(chat.router)
 app.include_router(admin.router)
+app.include_router(notifications.router)
+app.include_router(events.router)
+app.include_router(skills.router)
+app.include_router(mentorships.router)

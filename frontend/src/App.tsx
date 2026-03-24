@@ -21,7 +21,13 @@ import UserProfilePage from "./pages/UserProfilePage";
 import QuickFirePage from "./pages/QuickFirePage";
 import DictionaryPage from "./pages/DictionaryPage";
 import ChatPage from "./pages/ChatPage";
+import EventHubPage from "./pages/EventHubPage";
+import EventDetailPage from "./pages/EventDetailPage";
+import SkillTreePage from "./pages/SkillTreePage";
+import MentorshipHubPage from "./pages/MentorshipHubPage";
+import MentorDashboardPage from "./pages/MentorDashboardPage";
 import { AdminDashboard } from "./pages/AdminDashboard";
+import { AdminEventForm } from "./pages/Admin/AdminEventForm";
 import { XPToastProvider } from "./context/XPToastContext";
 import api from "./api/client";
 
@@ -184,6 +190,7 @@ function AuthenticatedApp() {
               <>
                 <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
                 <Route path="/admin/dashboard" element={<AdminDashboard currentUser={user} />} />
+                <Route path="/admin/events/new" element={<AdminEventForm />} />
                 <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
               </>
             ) : (
@@ -207,7 +214,12 @@ function AuthenticatedApp() {
                 <Route path="/paths" element={<LearningPathPage />} />
                 <Route path="/feed" element={<FeedPage />} />
                 <Route path="/chat" element={<ChatPage />} />
+                <Route path="/events" element={<EventHubPage />} />
+                <Route path="/events/:eventId" element={<EventDetailPage />} />
+                <Route path="/skills" element={<SkillTreePage />} />
                 <Route path="/profile/:userId" element={<UserProfilePage />} />
+                <Route path="/mentorship" element={<MentorshipHubPage />} />
+                <Route path="/mentorship/dashboard" element={<MentorDashboardPage />} />
                 <Route path="/admin/dashboard" element={<AdminDashboard currentUser={user} />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </>

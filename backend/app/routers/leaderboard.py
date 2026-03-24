@@ -35,6 +35,7 @@ async def get_team_leaderboard(
             func.avg(User.xp_total).label("avg_xp"),
         )
         .where(User.cohort.isnot(None))
+        .where(User.org_id == current_user.org_id)
         .group_by(User.cohort)
         .order_by(func.sum(User.xp_total).desc())
     )
@@ -45,6 +46,7 @@ async def get_team_leaderboard(
         members_result = await db.execute(
             select(User)
             .where(User.cohort == team.cohort)
+            .where(User.org_id == current_user.org_id)
             .order_by(User.xp_total.desc())
         )
         members = members_result.scalars().all()
@@ -80,7 +82,7 @@ async def get_leaderboard(
 ):
     if period == "all_time":
         result = await db.execute(
-            select(User).order_by(User.xp_total.desc())
+            select(User).where(User.org_id == current_user.org_id).order_by(User.xp_total.desc())
         )
         users = result.scalars().all()
 
@@ -107,7 +109,9 @@ async def get_leaderboard(
                 XPTransaction.user_id,
                 func.sum(XPTransaction.amount).label("weekly_xp"),
             )
+            .join(User, User.id == XPTransaction.user_id)
             .where(XPTransaction.created_at >= week_start)
+            .where(User.org_id == current_user.org_id)
             .group_by(XPTransaction.user_id)
             .order_by(func.sum(XPTransaction.amount).desc())
         )
@@ -129,7 +133,7 @@ async def get_leaderboard(
 
         # Include users with 0 weekly XP at the bottom
         weekly_user_ids = {row.user_id for row in weekly_rows}
-        all_users_result = await db.execute(select(User).order_by(User.display_name))
+        all_users_result = await db.execute(select(User).where(User.org_id == current_user.org_id).order_by(User.display_name))
         all_users = all_users_result.scalars().all()
         for user in all_users:
             if user.id not in weekly_user_ids:

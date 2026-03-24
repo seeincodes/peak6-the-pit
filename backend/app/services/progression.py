@@ -34,8 +34,8 @@ def check_mastery(scores: list[float]) -> bool:
     """Check if a list of scores meets mastery requirements."""
     if len(scores) < MASTERY_SCENARIO_COUNT:
         return False
-    recent = scores[-MASTERY_SCENARIO_COUNT:]
-    return (sum(recent) / len(recent)) >= MASTERY_THRESHOLD
+    from app.services.mastery_service import compute_mastery_level
+    return compute_mastery_level(scores) >= MASTERY_THRESHOLD
 
 
 async def get_mastered_categories(db: AsyncSession, user_id) -> set[str]:
@@ -48,12 +48,26 @@ async def get_mastered_categories(db: AsyncSession, user_id) -> set[str]:
     from app.models.grade import Grade
     from app.models.scenario import Scenario
 
-    rows = (await db.execute(
-        select(Scenario.category, Grade.overall_score)
+    # Fetch last MASTERY_SCENARIO_COUNT scores per category using a subquery
+    from sqlalchemy import func
+    subq = (
+        select(
+            Scenario.category,
+            Grade.overall_score,
+            func.row_number().over(
+                partition_by=Scenario.category,
+                order_by=Grade.graded_at.desc(),
+            ).label("rn"),
+        )
         .join(Response, Grade.response_id == Response.id)
         .join(Scenario, Response.scenario_id == Scenario.id)
         .where(Response.user_id == user_id, Response.is_complete == True)  # noqa: E712
-        .order_by(Grade.graded_at.asc())
+    ).subquery()
+
+    rows = (await db.execute(
+        select(subq.c.category, subq.c.overall_score)
+        .where(subq.c.rn <= MASTERY_SCENARIO_COUNT)
+        .order_by(subq.c.category, subq.c.rn.desc())
     )).all()
 
     scores_by_cat: dict[str, list[float]] = defaultdict(list)

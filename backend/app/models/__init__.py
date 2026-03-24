@@ -18,6 +18,10 @@ from app.models.mcq_bank import MCQBank
 from app.models.model_answer_bank import ModelAnswerBank
 from app.models.organization import Organization
 from app.models.org_invite import OrgInvite
+from app.models.notification import Notification
+from app.models.market_event import MarketEvent, EventParticipation, EventTeamScore
+from app.models.skill_node import SkillNode, UserSkillMastery
+from app.models.mentorship import Mentorship, MentorshipGoal
 
 __all__ = [
     "User", "Scenario", "Response", "Grade", "Document", "XPTransaction",
@@ -25,5 +29,8 @@ __all__ = [
     "PeerReview", "LearningPath", "UserPathProgress", "ActivityEvent",
     "StudyGroup", "StudyGroupMember", "ChatSession", "ChatMessage",
     "ScenarioBank", "MCQBank", "ModelAnswerBank", "Organization",
-    "OrgInvite",
+    "OrgInvite", "Notification",
+    "MarketEvent", "EventParticipation", "EventTeamScore",
+    "SkillNode", "UserSkillMastery",
+    "Mentorship", "MentorshipGoal",
 ]
