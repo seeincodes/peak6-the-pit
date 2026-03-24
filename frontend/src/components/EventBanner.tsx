@@ -43,7 +43,7 @@ export default function EventBanner() {
     >
       <Link
         to={`/events/${event.id}`}
-        className="flex items-center justify-between gap-3 rounded-lg border border-cm-primary/30 bg-gradient-to-r from-cm-primary/5 to-transparent px-4 py-3 hover:border-cm-primary/50 transition-colors group"
+        className="flex items-center justify-between gap-3 rounded-lg border border-cm-primary/30 bg-gradient-to-r from-cm-primary/5 to-transparent px-5 py-4 hover:border-cm-primary/50 transition-colors group"
       >
         <div className="flex items-center gap-3 min-w-0">
           <Calendar size={16} className="text-cm-primary shrink-0" />
