@@ -440,7 +440,7 @@ export default function TrainingPage({
                                 <span className="text-cm-text font-semibold text-sm leading-tight block truncate">
                                   {categoryShortDisplay[category] || category.replace(/_/g, " ")}
                                 </span>
-                                <div className="flex items-center gap-1.5 mt-0.5">
+                                <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
                                   <span className={`text-[10px] font-medium capitalize px-1.5 py-0.5 rounded inline-flex items-center gap-0.5 ${
                                     adaptiveDifficulty === "advanced" ? "bg-cm-red/15 text-cm-red" :
                                     adaptiveDifficulty === "intermediate" ? "bg-cm-amber/15 text-cm-amber" :
@@ -458,8 +458,8 @@ export default function TrainingPage({
                                     {label}
                                   </span>
                                   {stat && stat.attempts > 0 && (
-                                    <span className="text-[10px] text-cm-muted">
-                                      · {stat.attempts} done
+                                    <span className="text-[10px] text-cm-muted hidden sm:inline">
+                                      · {stat.attempts}
                                     </span>
                                   )}
                                 </div>
@@ -468,7 +468,7 @@ export default function TrainingPage({
                               {/* Learn */}
                               <button
                                 onClick={(e) => { e.stopPropagation(); setPrimerCategory(category); }}
-                                className="flex-shrink-0 text-cm-muted hover:text-cm-primary transition-colors p-1"
+                                className="flex-shrink-0 text-cm-muted hover:text-cm-primary transition-colors p-1 hidden sm:block"
                                 aria-label={`Learn ${categoryShortDisplay[category] || category} concepts`}
                               >
                                 <BookOpen size={14} />
