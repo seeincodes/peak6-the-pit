@@ -363,7 +363,7 @@ export default function SkillNode({ allCategories, unlockedCategories, level }: 
               >
                 {/* Arrow nub */}
                 <div
-                  className="absolute w-2.5 h-2.5 bg-cm-card border-cm-border/10 rotate-45"
+                  className="absolute w-2.5 h-2.5 bg-cm-card border-cm-border rotate-45"
                   style={{
                     left: Math.max(16, Math.min(
                       popoverRect.left + popoverRect.width / 2 - Math.max(12, Math.min(popoverRect.left + popoverRect.width / 2 - 120, window.innerWidth - 252)) - 4,

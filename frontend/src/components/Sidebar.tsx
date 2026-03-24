@@ -88,9 +88,9 @@ export default function Sidebar({ user, mobileOpen, onMobileClose }: SidebarProp
   const progressPct = Math.min((progressXP / neededXP) * 100, 100);
 
   const sidebarInner = (isMobile: boolean) => (
-    <aside className="flex flex-col bg-cm-card border-r border-cm-border/10 h-full w-[220px] overflow-hidden">
+    <aside className="flex flex-col bg-cm-card border-r border-cm-border h-full w-[220px] overflow-hidden">
       {/* Logo / Brand */}
-      <div className="flex items-center h-16 border-b border-cm-border/10 shrink-0 px-4">
+      <div className="flex items-center h-16 border-b border-cm-border shrink-0 px-4">
         <div className="flex items-center gap-3 min-w-0 flex-1">
           <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cm-primary to-cm-mint flex items-center justify-center shrink-0">
             <span className="text-cm-bg font-extrabold text-sm tracking-tight">P</span>
@@ -162,7 +162,7 @@ export default function Sidebar({ user, mobileOpen, onMobileClose }: SidebarProp
 
       {/* User section */}
       {user && (
-        <div className="border-t border-cm-border/10 px-3 py-4 shrink-0">
+        <div className="border-t border-cm-border px-3 py-4 shrink-0">
           {/* XP Progress */}
           <div className="mb-3">
             <div className="flex items-center justify-between mb-1.5">

@@ -196,7 +196,7 @@ export default function GradeReveal({
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.6, type: "spring", stiffness: 300 }}
-              className="border-t border-cm-border/10 pt-1 mt-1 w-full"
+              className="border-t border-cm-border pt-1 mt-1 w-full"
             >
               <span className="text-cm-mint font-bold text-lg">= {xpBreakdown.total} XP</span>
             </motion.div>

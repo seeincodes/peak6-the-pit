@@ -41,7 +41,7 @@ export function AdminDashboard({ currentUser }: AdminDashboardProps) {
           <p className="text-cm-muted text-sm mb-8">
             You don't have permission to access the admin dashboard. Please contact your administrator if you believe this is a mistake.
           </p>
-          <div className="bg-cm-card border border-cm-border/10 rounded-lg p-4 text-left mb-8">
+          <div className="bg-cm-card border border-cm-border rounded-lg p-4 text-left mb-8">
             <p className="text-cm-muted text-xs font-semibold mb-2">YOUR ACCOUNT</p>
             <p className="text-cm-text font-medium">{currentUser.id}</p>
             <p className="text-cm-muted text-sm capitalize">Role: {currentUser.role}</p>

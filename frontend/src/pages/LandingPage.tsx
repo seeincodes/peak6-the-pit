@@ -101,7 +101,7 @@ export default function LandingPage() {
           </Link>
           <Link
             to="/login"
-            className="px-8 py-3 rounded-lg border-2 border-cm-border/10 text-cm-text font-bold text-sm hover:border-cm-primary/50 hover:text-cm-primary transition-all duration-300 focus-ring"
+            className="px-8 py-3 rounded-lg border-2 border-cm-border text-cm-text font-bold text-sm hover:border-cm-primary/50 hover:text-cm-primary transition-all duration-300 focus-ring"
           >
             Sign In
           </Link>
@@ -116,7 +116,7 @@ export default function LandingPage() {
           {features.map((feature) => (
             <motion.div
               key={feature.title}
-              className="rounded-lg bg-cm-card border border-cm-border/10 p-5 hover:border-cm-primary/30 transition-all duration-300"
+              className="rounded-lg bg-cm-card border border-cm-border p-5 hover:border-cm-primary/30 transition-all duration-300"
               variants={itemVariants}
             >
               <feature.icon
@@ -137,7 +137,7 @@ export default function LandingPage() {
       </motion.section>
 
       {/* Footer */}
-      <footer className="border-t border-cm-border/10 py-4 text-center">
+      <footer className="border-t border-cm-border py-4 text-center">
         <p className="text-cm-muted text-xs tracking-wide">
           The Pit Training Platform
         </p>

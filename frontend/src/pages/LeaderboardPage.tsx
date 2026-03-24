@@ -40,7 +40,7 @@ function IndividualEntry({ entry, index }: { entry: LeaderboardEntry; index: num
       className={`flex items-center justify-between p-4 rounded-md border transition-all ${
         entry.is_current_user
           ? "border-cm-primary/50 bg-cm-primary/5"
-          : "border-cm-border/10 bg-cm-card/50"
+          : "border-cm-border bg-cm-card/50"
       }`}
     >
       <div className="flex items-center gap-4">
@@ -106,7 +106,7 @@ function TeamCard({ team, index }: { team: TeamEntry; index: number }) {
       className={`rounded-md border overflow-hidden transition-all ${
         team.is_current_user_team
           ? "border-cm-primary/50 bg-cm-primary/5"
-          : "border-cm-border/10 bg-cm-card/50"
+          : "border-cm-border bg-cm-card/50"
       }`}
     >
       <button
@@ -164,7 +164,7 @@ function TeamCard({ team, index }: { team: TeamEntry; index: number }) {
             transition={{ duration: 0.2 }}
             className="overflow-hidden"
           >
-            <div className="border-t border-cm-border/10 px-4 py-2 space-y-1">
+            <div className="border-t border-cm-border px-4 py-2 space-y-1">
               {team.members.map((m) => (
                 <div
                   key={m.user_id}

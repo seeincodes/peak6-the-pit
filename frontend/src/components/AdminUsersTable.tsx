@@ -157,7 +157,7 @@ export function AdminUsersTable({ data, loading, orgId }: Props) {
 
   return (
     <div className="space-y-4">
-      <div className="bg-cm-card-raised border border-cm-border/10 rounded-lg p-4 space-y-3">
+      <div className="bg-cm-card-raised border border-cm-border rounded-lg p-4 space-y-3">
         <div className="text-cm-text font-semibold">Invite User</div>
         <div className="flex flex-col sm:flex-row gap-3">
           <input
@@ -208,9 +208,9 @@ export function AdminUsersTable({ data, loading, orgId }: Props) {
         </button>
       </div>
 
-      <div className="bg-cm-card-raised border border-cm-border/10 rounded-lg overflow-x-auto">
+      <div className="bg-cm-card-raised border border-cm-border rounded-lg overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-cm-bg border-b border-cm-border/10">
+          <thead className="bg-cm-bg border-b border-cm-border">
             <tr>
               <th className="px-4 py-2 text-left text-cm-muted font-semibold">
                 <button onClick={() => toggleSort('display_name')} className="hover:text-cm-text transition-colors">
@@ -261,7 +261,7 @@ export function AdminUsersTable({ data, loading, orgId }: Props) {
           </thead>
           <tbody>
             {sortedUsers.map((u) => (
-              <tr key={u.user_id} className="border-b border-cm-border/10 hover:bg-cm-bg/60">
+              <tr key={u.user_id} className="border-b border-cm-border hover:bg-cm-bg/60">
                 <td className="px-4 py-2">
                   <div className="text-cm-text font-medium">{u.display_name}</div>
                   <div className="text-cm-muted text-xs">{u.email}</div>

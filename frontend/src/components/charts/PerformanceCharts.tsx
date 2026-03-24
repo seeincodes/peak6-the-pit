@@ -279,7 +279,7 @@ export default function PerformanceCharts() {
           className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
             showCohort
               ? "bg-cm-primary/15 text-cm-primary border border-cm-primary/30"
-              : "bg-cm-card-raised text-cm-muted border border-cm-border/10 hover:text-cm-text"
+              : "bg-cm-card-raised text-cm-muted border border-cm-border hover:text-cm-text"
           }`}
         >
           <Users size={14} />

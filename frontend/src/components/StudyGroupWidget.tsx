@@ -137,7 +137,7 @@ export default function StudyGroupWidget({
         <div className="space-y-2">
           {groupDetail.members.map((m) => (
             <div key={m.user_id} className="flex items-center gap-3">
-              <div className="w-7 h-7 rounded-full bg-cm-card-raised border border-cm-border/10 flex items-center justify-center text-sm shrink-0">
+              <div className="w-7 h-7 rounded-full bg-cm-card-raised border border-cm-border flex items-center justify-center text-sm shrink-0">
                 {AVATAR_PRESETS[m.avatar_id] || "👤"}
               </div>
               <div className="flex-1 min-w-0">
@@ -191,7 +191,7 @@ export default function StudyGroupWidget({
               value={groupName}
               onChange={(e) => setGroupName(e.target.value)}
               maxLength={100}
-              className="w-full px-3 py-2 rounded-lg bg-cm-bg border border-cm-border/10 text-sm text-cm-text placeholder:text-cm-muted/50 focus:outline-none focus:border-cm-primary/50"
+              className="w-full px-3 py-2 rounded-lg bg-cm-bg border border-cm-border text-sm text-cm-text placeholder:text-cm-muted/50 focus:outline-none focus:border-cm-primary/50"
             />
             <div className="flex gap-2">
               <button
@@ -226,7 +226,7 @@ export default function StudyGroupWidget({
               value={inviteCode}
               onChange={(e) => setInviteCode(e.target.value.toUpperCase())}
               maxLength={8}
-              className="w-full px-3 py-2 rounded-lg bg-cm-bg border border-cm-border/10 text-sm text-cm-text placeholder:text-cm-muted/50 focus:outline-none focus:border-cm-primary/50 font-mono tracking-wider text-center"
+              className="w-full px-3 py-2 rounded-lg bg-cm-bg border border-cm-border text-sm text-cm-text placeholder:text-cm-muted/50 focus:outline-none focus:border-cm-primary/50 font-mono tracking-wider text-center"
             />
             <div className="flex gap-2">
               <button
@@ -259,7 +259,7 @@ export default function StudyGroupWidget({
             </button>
             <button
               onClick={() => setShowJoin(true)}
-              className="flex-1 flex items-center justify-center gap-1 text-xs px-3 py-2 rounded-lg border border-cm-border/10 text-cm-text hover:bg-cm-card-raised transition-colors"
+              className="flex-1 flex items-center justify-center gap-1 text-xs px-3 py-2 rounded-lg border border-cm-border text-cm-text hover:bg-cm-card-raised transition-colors"
             >
               <UserPlus size={14} /> Join with Code
             </button>

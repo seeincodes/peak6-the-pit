@@ -59,7 +59,7 @@ export default function QuickFireScoreCard({
         </button>
         <button
           onClick={onExit}
-          className="px-6 py-2 rounded-md border border-cm-border/10 text-cm-muted hover:text-cm-text text-sm font-medium transition-colors"
+          className="px-6 py-2 rounded-md border border-cm-border text-cm-muted hover:text-cm-text text-sm font-medium transition-colors"
         >
           Exit
         </button>

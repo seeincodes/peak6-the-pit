@@ -55,7 +55,7 @@ export default function MCQFeedback({
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="rounded-md border border-cm-border/10 bg-cm-card p-6"
+      className="rounded-md border border-cm-border bg-cm-card p-6"
     >
       <div className="text-center mb-4" role="status">
         <motion.div
@@ -116,7 +116,7 @@ export default function MCQFeedback({
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.6, type: "spring", stiffness: 300 }}
-                className="border-t border-cm-border/10 pt-1 mt-1 w-full"
+                className="border-t border-cm-border pt-1 mt-1 w-full"
               >
                 <span className="text-cm-mint font-bold text-lg">= {xpBreakdown.total} XP</span>
               </motion.div>
@@ -160,12 +160,12 @@ export default function MCQFeedback({
       </motion.div>
 
       <div className="space-y-3 mb-4">
-        <div className="border-t border-cm-border/10 pt-3">
+        <div className="border-t border-cm-border pt-3">
           <h4 className="text-cm-amber text-xs font-semibold mb-1">Explanation</h4>
           <p className="text-cm-muted text-sm">{explanation}</p>
         </div>
 
-        <div className="border-t border-cm-border/10 pt-3">
+        <div className="border-t border-cm-border pt-3">
           <h4 className="text-cm-amber text-xs font-semibold mb-1">Your Reasoning</h4>
           <p className="text-cm-muted text-sm">{justificationNote}</p>
         </div>

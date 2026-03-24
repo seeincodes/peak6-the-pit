@@ -129,7 +129,7 @@ export default function UserProfilePage() {
         {/* Profile header */}
         <div className="cm-surface p-5">
           <div className="flex items-center gap-4">
-            <div className="w-14 h-14 rounded-full bg-cm-card-raised border-2 border-cm-border/10 flex items-center justify-center text-2xl">
+            <div className="w-14 h-14 rounded-full bg-cm-card-raised border-2 border-cm-border flex items-center justify-center text-2xl">
               {AVATAR_PRESETS[profile.avatar_id] || "👤"}
             </div>
             <div className="flex-1">
@@ -156,7 +156,7 @@ export default function UserProfilePage() {
           </div>
 
           {/* Stats row */}
-          <div className="grid grid-cols-4 gap-3 mt-4 pt-4 border-t border-cm-border/10">
+          <div className="grid grid-cols-4 gap-3 mt-4 pt-4 border-t border-cm-border">
             <div className="text-center">
               <div className="text-lg font-bold text-cm-text">{profile.xp_total.toLocaleString()}</div>
               <div className="text-xs text-cm-muted">XP</div>
@@ -191,7 +191,7 @@ export default function UserProfilePage() {
               {profile.badges.map((badge) => (
                 <div
                   key={badge.slug}
-                  className="flex flex-col items-center gap-1 p-2 rounded-lg bg-cm-card-raised/50 border border-cm-border/10"
+                  className="flex flex-col items-center gap-1 p-2 rounded-lg bg-cm-card-raised/50 border border-cm-border"
                   title={badge.description}
                 >
                   <span className="text-xl">{badge.icon}</span>

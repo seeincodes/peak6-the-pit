@@ -12,7 +12,7 @@
   --cm-bg: 6 13 10;
   --cm-card: 10 26 18;
   --cm-card-raised: 15 37 24;
-  --cm-border: 16 185 129;
+  --cm-border: 30 60 45;
   --cm-primary: 16 185 129;
   --cm-mint: 74 222 128;
   --cm-emerald: 52 211 153;
@@ -38,16 +38,16 @@
 
   /* ── Surfaces / Cards ────────────────────────────────────── */
   .cm-surface {
-    @apply rounded-lg border border-cm-border/10 bg-cm-card;
+    @apply rounded-lg border border-cm-border bg-cm-card;
   }
   .cm-surface-raised {
-    @apply rounded-lg border border-cm-border/10 bg-cm-card-raised;
+    @apply rounded-lg border border-cm-border bg-cm-card-raised;
   }
   .cm-surface-section {
-    @apply rounded-xl border border-cm-border/10 bg-cm-card/50;
+    @apply rounded-xl border border-cm-border bg-cm-card/50;
   }
   .cm-surface-interactive {
-    @apply rounded-lg border border-cm-border/10 bg-cm-card
+    @apply rounded-lg border border-cm-border bg-cm-card
            hover:border-cm-primary/30 hover:bg-cm-card-raised transition-all duration-200
            text-left focus-ring cursor-pointer;
   }
@@ -98,12 +98,12 @@
 
   /* ── Form Inputs ─────────────────────────────────────────── */
   .cm-input {
-    @apply w-full bg-cm-bg border border-cm-border/10 rounded-lg
+    @apply w-full bg-cm-bg border border-cm-border rounded-lg
            px-3 py-2 text-sm text-cm-text
            focus:outline-none focus:ring-2 focus:ring-cm-primary/50 focus:border-cm-primary/30;
   }
   .cm-textarea {
-    @apply w-full bg-cm-bg border border-cm-border/10 rounded-lg
+    @apply w-full bg-cm-bg border border-cm-border rounded-lg
            px-3 py-2 text-sm text-cm-text resize-none
            placeholder-cm-muted/50
            focus:outline-none focus:ring-2 focus:ring-cm-primary/50 focus:border-cm-primary/30;
@@ -134,11 +134,11 @@
 
   /* ── Tooltips & Popovers ─────────────────────────────────── */
   .cm-tooltip {
-    @apply px-3 py-2 bg-cm-card border border-cm-border/10
+    @apply px-3 py-2 bg-cm-card border border-cm-border
            rounded-lg shadow-xl pointer-events-none;
   }
   .cm-popover {
-    @apply px-3.5 py-3 bg-cm-card border border-cm-border/10
+    @apply px-3.5 py-3 bg-cm-card border border-cm-border
            rounded-xl shadow-2xl;
   }
 
@@ -149,13 +149,13 @@
 
   /* ── Dividers ────────────────────────────────────────────── */
   .cm-divider {
-    @apply border-t border-cm-border/10;
+    @apply border-t border-cm-border;
   }
 
   /* ── Tab Buttons ─────────────────────────────────────────── */
   .cm-tab {
     @apply px-4 py-2 rounded-lg text-sm font-semibold transition-all focus-ring
-           border border-cm-border/10 text-cm-muted hover:text-cm-text;
+           border border-cm-border text-cm-muted hover:text-cm-text;
   }
   .cm-tab-active {
     @apply px-4 py-2 rounded-lg text-sm font-semibold transition-all focus-ring

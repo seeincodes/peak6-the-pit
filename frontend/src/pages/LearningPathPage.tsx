@@ -319,7 +319,7 @@ function PathDetailView({
                       ? "bg-cm-emerald/15 border-2 border-cm-emerald"
                       : step.status === "current"
                         ? "bg-cm-primary/15 border-2 border-cm-primary"
-                        : "bg-cm-card-raised border-2 border-cm-border/10"
+                        : "bg-cm-card-raised border-2 border-cm-border"
                   }`}
                 >
                   {step.status === "completed" ? (

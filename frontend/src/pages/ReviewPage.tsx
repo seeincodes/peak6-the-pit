@@ -84,7 +84,7 @@ export default function ReviewPage() {
       <h2 className="cm-title">Review</h2>
 
       {/* Tabs */}
-      <div className="flex gap-1 bg-cm-bg border border-cm-border/10 rounded-lg p-1">
+      <div className="flex gap-1 bg-cm-bg border border-cm-border rounded-lg p-1">
         {tabs.map((tab) => (
           <button
             key={tab.key}
@@ -122,7 +122,7 @@ export default function ReviewPage() {
               <select
                 value={categoryFilter}
                 onChange={(e) => setCategoryFilter(e.target.value)}
-                className="bg-cm-bg border border-cm-border/10 rounded px-2 py-1 text-xs text-cm-text focus:outline-none focus:border-cm-primary/50"
+                className="bg-cm-bg border border-cm-border rounded px-2 py-1 text-xs text-cm-text focus:outline-none focus:border-cm-primary/50"
               >
                 <option value="">All Categories</option>
                 {Object.entries(categoryDisplay).map(([key, label]) => (
@@ -136,7 +136,7 @@ export default function ReviewPage() {
               className={`text-xs px-3 py-1 rounded-full border transition-colors ${
                 showLowOnly
                   ? "border-cm-red/40 bg-cm-red/10 text-cm-red"
-                  : "border-cm-border/10 text-cm-muted hover:text-cm-text"
+                  : "border-cm-border text-cm-muted hover:text-cm-text"
               }`}
             >
               {showLowOnly ? "Showing mistakes only" : "Show mistakes only"}

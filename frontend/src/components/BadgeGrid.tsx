@@ -28,7 +28,7 @@ export default function BadgeGrid() {
           {[...Array(6)].map((_, i) => (
             <div
               key={i}
-              className="w-20 h-24 rounded-lg bg-cm-card border border-cm-border/10 animate-pulse"
+              className="w-20 h-24 rounded-lg bg-cm-card border border-cm-border animate-pulse"
               aria-hidden="true"
             />
           ))}

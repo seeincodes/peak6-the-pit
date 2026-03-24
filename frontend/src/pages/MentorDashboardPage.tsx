@@ -97,7 +97,7 @@ function MenteeCard({ mentorship }: { mentorship: Mentorship }) {
       {/* Mentee header */}
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-cm-card-raised border border-cm-border/10 flex items-center justify-center text-xl shrink-0">
+          <div className="w-10 h-10 rounded-full bg-cm-card-raised border border-cm-border flex items-center justify-center text-xl shrink-0">
             {AVATAR_PRESETS["default"]}
           </div>
           <div>
@@ -195,7 +195,7 @@ function MenteeCard({ mentorship }: { mentorship: Mentorship }) {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="mt-3 pt-3 border-t border-cm-border/10 space-y-3"
+            className="mt-3 pt-3 border-t border-cm-border space-y-3"
           >
             <div>
               <label className="cm-label mb-1.5 block text-xs">Category</label>

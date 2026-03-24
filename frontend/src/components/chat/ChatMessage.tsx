@@ -68,7 +68,7 @@ export default function ChatMessage({
             {content}
           </div>
         ) : (
-          <div className="cm-body leading-relaxed prose prose-invert prose-sm max-w-none prose-headings:text-cm-text prose-p:text-cm-text prose-strong:text-cm-text prose-li:text-cm-text prose-a:text-cm-primary prose-code:text-cm-primary prose-code:bg-cm-primary/10 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-pre:bg-[rgb(var(--cm-bg))] prose-pre:border prose-pre:border-cm-border/10 prose-td:text-cm-text prose-th:text-cm-text prose-th:border-cm-border/10 prose-td:border-cm-border/10">
+          <div className="cm-body leading-relaxed prose prose-invert prose-sm max-w-none prose-headings:text-cm-text prose-p:text-cm-text prose-strong:text-cm-text prose-li:text-cm-text prose-a:text-cm-primary prose-code:text-cm-primary prose-code:bg-cm-primary/10 prose-code:px-1 prose-code:py-0.5 prose-code:rounded prose-pre:bg-[rgb(var(--cm-bg))] prose-pre:border prose-pre:border-cm-border prose-td:text-cm-text prose-th:text-cm-text prose-th:border-cm-border prose-td:border-cm-border">
             <ReactMarkdown remarkPlugins={[remarkGfm]}>
               {content}
             </ReactMarkdown>

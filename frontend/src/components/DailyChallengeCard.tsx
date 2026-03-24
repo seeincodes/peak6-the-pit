@@ -45,7 +45,7 @@ export default function DailyChallengeCard({
               {c.completed ? (
                 <Check size={10} className="flex-shrink-0" />
               ) : (
-                <div className="w-2.5 h-2.5 rounded-full border border-cm-border/10 flex-shrink-0" />
+                <div className="w-2.5 h-2.5 rounded-full border border-cm-border flex-shrink-0" />
               )}
               <div className="flex-1 min-w-0 truncate">
                 {c.completed ? <span className="line-through">{c.description}</span> : c.description}
@@ -103,7 +103,7 @@ export default function DailyChallengeCard({
                 {c.completed ? (
                   <Check size={14} className="text-cm-mint flex-shrink-0" />
                 ) : (
-                  <div className="w-3.5 h-3.5 rounded-full border border-cm-border/10 flex-shrink-0" />
+                  <div className="w-3.5 h-3.5 rounded-full border border-cm-border flex-shrink-0" />
                 )}
                 <div className="flex-1 min-w-0">
                   <p className={`text-xs ${c.completed ? "text-cm-mint line-through" : "text-cm-text"}`}>

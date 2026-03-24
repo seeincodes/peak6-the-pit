@@ -59,7 +59,7 @@ export default function LoginPage() {
         </div>
 
         {/* Card */}
-        <div className="rounded-lg border border-cm-border/10 bg-cm-card p-8">
+        <div className="rounded-lg border border-cm-border bg-cm-card p-8">
           <h2 className="text-xl font-extrabold tracking-tight text-cm-text mb-6">Sign In</h2>
 
           {error && (
@@ -77,7 +77,7 @@ export default function LoginPage() {
                 id="login-org"
                 value={orgSlug}
                 onChange={(e) => setOrgSlug(e.target.value)}
-                className="w-full px-4 py-2.5 rounded-lg bg-cm-bg border border-cm-border/10 text-cm-text focus:outline-none focus:border-cm-primary/50 transition-all duration-300 focus-ring"
+                className="w-full px-4 py-2.5 rounded-lg bg-cm-bg border border-cm-border text-cm-text focus:outline-none focus:border-cm-primary/50 transition-all duration-300 focus-ring"
               >
                 <option value="thepit">The Pit (thepit)</option>
                 <option value="acme">Acme (acme)</option>
@@ -95,7 +95,7 @@ export default function LoginPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 aria-invalid={!!error}
-                className="w-full px-4 py-2.5 rounded-lg bg-cm-bg border border-cm-border/10 text-cm-text placeholder-cm-muted/50 focus:outline-none focus:border-cm-primary/50 transition-all duration-300 focus-ring"
+                className="w-full px-4 py-2.5 rounded-lg bg-cm-bg border border-cm-border text-cm-text placeholder-cm-muted/50 focus:outline-none focus:border-cm-primary/50 transition-all duration-300 focus-ring"
                 placeholder="trader@example.com"
               />
             </div>
@@ -111,7 +111,7 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 required
                 aria-invalid={!!error}
-                className="w-full px-4 py-2.5 rounded-lg bg-cm-bg border border-cm-border/10 text-cm-text placeholder-cm-muted/50 focus:outline-none focus:border-cm-primary/50 transition-all duration-300 focus-ring"
+                className="w-full px-4 py-2.5 rounded-lg bg-cm-bg border border-cm-border text-cm-text placeholder-cm-muted/50 focus:outline-none focus:border-cm-primary/50 transition-all duration-300 focus-ring"
                 placeholder="Enter your password"
               />
             </div>

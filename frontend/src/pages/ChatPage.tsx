@@ -240,7 +240,7 @@ export default function ChatPage() {
             animate={{ width: 280, opacity: 1 }}
             exit={{ width: 0, opacity: 0 }}
             transition={{ duration: 0.2 }}
-            className="border-r border-cm-border/10 overflow-hidden flex-shrink-0"
+            className="border-r border-cm-border overflow-hidden flex-shrink-0"
           >
             <div className="w-[280px] h-full p-4">
               <ChatSidebar
@@ -259,7 +259,7 @@ export default function ChatPage() {
       {/* Main Chat Area */}
       <div className="flex-1 flex flex-col min-w-0">
         {/* Chat header */}
-        <div className="flex items-center gap-3 px-4 py-3 border-b border-cm-border/10 shrink-0">
+        <div className="flex items-center gap-3 px-4 py-3 border-b border-cm-border shrink-0">
           <button
             onClick={() => setSidebarOpen(!sidebarOpen)}
             className="cm-btn-ghost p-2"
@@ -341,7 +341,7 @@ export default function ChatPage() {
         </div>
 
         {/* Input area */}
-        <div className="border-t border-cm-border/10 px-4 py-3">
+        <div className="border-t border-cm-border px-4 py-3">
           <div className="max-w-3xl mx-auto flex gap-3 items-end">
             <textarea
               ref={inputRef}

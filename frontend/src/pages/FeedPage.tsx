@@ -85,11 +85,11 @@ function FeedItem({ event, index }: { event: FeedEvent; index: number }) {
       initial={{ opacity: 0, y: 8 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: index * 0.03 }}
-      className="flex items-start gap-3 p-4 rounded-lg border border-cm-border/10 bg-cm-card/50 hover:bg-cm-card-raised/30 transition-colors"
+      className="flex items-start gap-3 p-4 rounded-lg border border-cm-border bg-cm-card/50 hover:bg-cm-card-raised/30 transition-colors"
     >
       <Link
         to={`/profile/${event.user_id}`}
-        className="w-9 h-9 rounded-full bg-cm-card-raised border border-cm-border/10 flex items-center justify-center text-base shrink-0 hover:border-cm-primary/40 transition-colors"
+        className="w-9 h-9 rounded-full bg-cm-card-raised border border-cm-border flex items-center justify-center text-base shrink-0 hover:border-cm-primary/40 transition-colors"
       >
         {AVATAR_PRESETS[event.avatar_id] || "👤"}
       </Link>
@@ -170,7 +170,7 @@ export default function FeedPage() {
           {hasMore && !expanded && (
             <button
               onClick={() => setExpanded(true)}
-              className="w-full flex items-center justify-center gap-2 py-3 rounded-lg border border-cm-border/10 text-cm-muted hover:text-cm-text hover:border-cm-primary/40 transition-all text-sm"
+              className="w-full flex items-center justify-center gap-2 py-3 rounded-lg border border-cm-border text-cm-muted hover:text-cm-text hover:border-cm-primary/40 transition-all text-sm"
             >
               <ChevronDown size={16} />
               Show older ({(completed?.length || 0) - INITIAL_LIMIT} more)
