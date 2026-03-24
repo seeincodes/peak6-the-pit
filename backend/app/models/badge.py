@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import String, Integer, DateTime, ForeignKey, UniqueConstraint
+from sqlalchemy import String, Integer, DateTime, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -28,7 +28,4 @@ class UserBadge(Base):
     user_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("users.id"), nullable=False)
     badge_id: Mapped[uuid.UUID] = mapped_column(ForeignKey("badges.id"), nullable=False)
     awarded_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now_naive)
-
-    __table_args__ = (
-        UniqueConstraint("user_id", "badge_id"),
-    )
+    event_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("market_events.id"), nullable=True)

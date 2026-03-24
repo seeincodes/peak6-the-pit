@@ -19,6 +19,7 @@ from app.models.model_answer_bank import ModelAnswerBank
 from app.models.organization import Organization
 from app.models.org_invite import OrgInvite
 from app.models.notification import Notification
+from app.models.market_event import MarketEvent, EventParticipation, EventTeamScore
 
 __all__ = [
     "User", "Scenario", "Response", "Grade", "Document", "XPTransaction",
@@ -27,4 +28,5 @@ __all__ = [
     "StudyGroup", "StudyGroupMember", "ChatSession", "ChatMessage",
     "ScenarioBank", "MCQBank", "ModelAnswerBank", "Organization",
     "OrgInvite", "Notification",
+    "MarketEvent", "EventParticipation", "EventTeamScore",
 ]
