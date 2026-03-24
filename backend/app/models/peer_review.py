@@ -1,7 +1,7 @@
 import uuid
 from datetime import datetime
 
-from sqlalchemy import Text, Numeric, DateTime, ForeignKey, UniqueConstraint
+from sqlalchemy import String, Text, Numeric, DateTime, ForeignKey, UniqueConstraint
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
@@ -17,6 +17,8 @@ class PeerReview(Base):
     dimension_scores: Mapped[dict] = mapped_column(JSONB, nullable=False)
     feedback: Mapped[str] = mapped_column(Text, nullable=False)
     quality_score: Mapped[float | None] = mapped_column(Numeric(3, 2), nullable=True)
+    review_type: Mapped[str] = mapped_column(String(20), default="peer", server_default="peer")
+    requested_reviewer_id: Mapped[uuid.UUID | None] = mapped_column(UUID(as_uuid=True), ForeignKey("users.id"), nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now_naive)
 
     __table_args__ = (
