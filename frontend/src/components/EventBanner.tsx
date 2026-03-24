@@ -49,8 +49,8 @@ export default function EventBanner() {
           <Calendar size={16} className="text-cm-primary shrink-0" />
           <div className="min-w-0">
             <div className="text-sm font-semibold text-cm-text truncate">{event.title}</div>
-            <div className="flex items-center gap-2 text-xs text-cm-muted">
-              <span className="cm-chip bg-cm-primary/10 text-cm-primary">{categoryShortDisplay[event.theme] || event.theme.replace(/_/g, " ")}</span>
+            <div className="flex items-center gap-2 text-xs text-cm-muted mt-1">
+              <span className="cm-chip bg-cm-primary/10 text-cm-primary capitalize">{categoryShortDisplay[event.theme] || event.theme.replace(/_/g, " ")}</span>
               <span className="text-cm-emerald font-medium">{timeRemaining(event.end_at)}</span>
             </div>
           </div>
