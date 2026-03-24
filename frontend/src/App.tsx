@@ -24,6 +24,7 @@ import ChatPage from "./pages/ChatPage";
 import EventHubPage from "./pages/EventHubPage";
 import EventDetailPage from "./pages/EventDetailPage";
 import { AdminDashboard } from "./pages/AdminDashboard";
+import { AdminEventForm } from "./pages/Admin/AdminEventForm";
 import { XPToastProvider } from "./context/XPToastContext";
 import api from "./api/client";
 
@@ -186,6 +187,7 @@ function AuthenticatedApp() {
               <>
                 <Route path="/" element={<Navigate to="/admin/dashboard" replace />} />
                 <Route path="/admin/dashboard" element={<AdminDashboard currentUser={user} />} />
+                <Route path="/admin/events/new" element={<AdminEventForm />} />
                 <Route path="*" element={<Navigate to="/admin/dashboard" replace />} />
               </>
             ) : (
