@@ -68,7 +68,6 @@ export default function QuickFirePage({
   const [currentMCQ, setCurrentMCQ] = useState<MCQData | null>(initialMCQ ?? null);
   const [selectedKey, setSelectedKey] = useState<string | null>(null);
   const [justification, setJustification] = useState("");
-  const [pasteBlocked, setPasteBlocked] = useState(false);
   const [result, setResult] = useState<MCQResult | null>(null);
   const [streak, setStreak] = useState(0);
   const [totalXP, setTotalXP] = useState(0);
@@ -362,11 +361,6 @@ export default function QuickFirePage({
                 id="justification"
                 value={justification}
                 onChange={(e) => setJustification(e.target.value.slice(0, 200))}
-                onPaste={(e) => {
-                  e.preventDefault();
-                  setPasteBlocked(true);
-                  setTimeout(() => setPasteBlocked(false), 2500);
-                }}
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !e.shiftKey && justification.trim()) {
                     e.preventDefault();
@@ -383,11 +377,6 @@ export default function QuickFirePage({
                 rows={2}
                 className={`w-full bg-cm-bg border border-cm-border rounded px-4 py-3 text-cm-text text-sm placeholder-cm-muted/50 focus:outline-none focus:border-cm-primary/50 resize-none transition-opacity ${submitMutation.isPending ? "opacity-50 cursor-not-allowed" : ""}`}
               />
-              {pasteBlocked && (
-                <div className="text-cm-red text-xs mt-1 animate-pulse">
-                  Paste is disabled — please type your own reasoning.
-                </div>
-              )}
               <div className="flex items-center justify-between">
                 <span className="text-cm-muted text-xs" aria-live="off">{justification.length}/200</span>
                 <button

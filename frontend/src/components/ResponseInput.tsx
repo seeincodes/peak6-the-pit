@@ -8,7 +8,6 @@ interface ResponseInputProps {
 
 export default function ResponseInput({ onSubmit, placeholder, loading }: ResponseInputProps) {
   const [text, setText] = useState("");
-  const [pasteBlocked, setPasteBlocked] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const autoGrow = useCallback(() => {
@@ -39,20 +38,10 @@ export default function ResponseInput({ onSubmit, placeholder, loading }: Respon
         disabled={loading}
         placeholder={placeholder || "Type your analysis..."}
         className={`w-full min-h-[8rem] bg-transparent text-cm-text placeholder-cm-muted resize-none outline-none text-sm leading-relaxed focus-ring transition-opacity ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
-        onPaste={(e) => {
-          e.preventDefault();
-          setPasteBlocked(true);
-          setTimeout(() => setPasteBlocked(false), 2500);
-        }}
         onKeyDown={(e) => {
           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleSubmit();
         }}
       />
-      {pasteBlocked && (
-        <div className="text-cm-red text-xs mt-1 animate-pulse">
-          Paste is disabled — please type your own analysis.
-        </div>
-      )}
       <div className="flex justify-between items-center mt-2">
         <span className="text-cm-muted text-xs">{isMac ? "Cmd" : "Ctrl"}+Enter to submit</span>
         <button
