@@ -216,6 +216,11 @@ async def continue_response(
 
         await increment_challenge_progress(user.id, "streak_keep", db)
 
+    # Recalculate mastery for the completed scenario's category
+    if not blank_submission:
+        from app.services.mastery_service import recalculate_mastery
+        await recalculate_mastery(db, user.id, scenario.category)
+
     # Wire event scoring
     if response.event_id:
         from app.services.event_service import update_participation_score
