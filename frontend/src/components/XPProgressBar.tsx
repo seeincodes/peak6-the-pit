@@ -38,7 +38,7 @@ export default function XPProgressBar({
       </div>
       <div className="relative w-full h-2 bg-cm-bg rounded-full overflow-hidden">
         <motion.div
-          className="absolute inset-y-0 left-0 bg-gradient-to-r from-cm-primary to-cm-emerald rounded-full"
+          className="absolute inset-y-0 left-0 bg-gradient-to-r from-cm-primary to-cm-mint rounded-full"
           initial={animated ? { width: 0 } : { width: `${pct}%` }}
           animate={{
             width: `${pct}%`,

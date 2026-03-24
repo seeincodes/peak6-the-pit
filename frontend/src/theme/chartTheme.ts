@@ -1,15 +1,15 @@
 import { colors } from "./colors";
 
 export const CHART_COLORS = {
-  grid: colors.border,
+  grid: "rgba(16, 185, 129, 0.1)",
   axis: colors.muted,
   tooltip: {
     bg: colors.card,
-    border: colors.border,
+    border: "rgba(16, 185, 129, 0.15)",
     text: colors.text,
   },
   radar: {
-    fill: "rgba(124, 92, 255, 0.22)",
+    fill: "rgba(16, 185, 129, 0.18)",
     stroke: colors.primary,
   },
 } as const;
@@ -22,10 +22,10 @@ export const DIMENSION_LABELS: Record<string, string> = {
 };
 
 export const DIMENSION_COLORS: Record<string, string> = {
-  reasoning: "#4D34EF",
-  terminology: "#A78BFA",
-  trade_logic: "#34D399",
-  risk_awareness: "#FCD34D",
+  reasoning: "#4ade80",
+  terminology: "#38bdf8",
+  trade_logic: "#a78bfa",
+  risk_awareness: "#fbbf24",
 };
 
 export const CATEGORY_CHART_TYPE: Record<string, "line" | "candle" | "area" | "heatmap"> = {

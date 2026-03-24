@@ -44,7 +44,14 @@ function scoreColor(score: number): string {
   if (score < 2.0) return "text-cm-red";
   if (score < 3.5) return "text-cm-amber";
   if (score < 4.5) return "text-cm-emerald";
-  return "text-cm-lime";
+  return "text-cm-mint";
+}
+
+function scoreLabel(score: number): string {
+  if (score < 2.0) return "Needs Work";
+  if (score < 3.5) return "Good";
+  if (score < 4.5) return "Excellent";
+  return "Perfect";
 }
 
 export default function GradeReveal({
@@ -106,12 +113,15 @@ export default function GradeReveal({
           className="relative inline-flex items-center gap-3"
           aria-label={`Overall score: ${overallScore.toFixed(1)} out of 5`}
         >
-          <span className={`text-5xl font-bold ${scoreColor(overallScore)}`}>
+          <span className={`text-6xl font-black tracking-tight ${scoreColor(overallScore)}`}>
             {overallScore.toFixed(1)}
           </span>
-          <span className="text-cm-muted text-xl">/ 5.0</span>
+          <span className="text-cm-muted text-lg">/ 5.0</span>
           {isPerfect && <StarBurst count={5} />}
         </motion.div>
+        <div className={`text-sm font-semibold mt-1 ${scoreColor(overallScore)}`}>
+          {scoreLabel(overallScore)}
+        </div>
       </div>
 
       {/* XP Breakdown */}
@@ -186,14 +196,14 @@ export default function GradeReveal({
               initial={{ opacity: 0, scale: 0.5 }}
               animate={{ opacity: 1, scale: 1 }}
               transition={{ delay: 0.6, type: "spring", stiffness: 300 }}
-              className="border-t border-cm-border pt-1 mt-1 w-full"
+              className="border-t border-cm-border/10 pt-1 mt-1 w-full"
             >
-              <span className="text-cm-lime font-bold text-lg">= {xpBreakdown.total} XP</span>
+              <span className="text-cm-mint font-bold text-lg">= {xpBreakdown.total} XP</span>
             </motion.div>
           </div>
         ) : (
           <>
-            <span className="text-cm-lime font-bold text-lg">+{xpEarned} XP</span>
+            <span className="text-cm-mint font-bold text-lg">+{xpEarned} XP</span>
             {(bonuses?.daily_first || bonuses?.perfect || bonuses?.no_hints) && (
               <div className="flex items-center justify-center gap-3 mt-1.5">
                 {bonuses.daily_first && (

@@ -50,6 +50,8 @@ export default function LessonPlanCard({
       : plan.difficulty === "intermediate"
         ? "text-cm-amber border-cm-amber/30 bg-cm-amber/10"
         : "text-cm-red border-cm-red/30 bg-cm-red/10";
+  const difficultyIcon =
+    plan.difficulty === "beginner" ? "●" : plan.difficulty === "intermediate" ? "◆" : "▲";
 
   return (
     <div className="space-y-4">
@@ -61,7 +63,8 @@ export default function LessonPlanCard({
         </div>
         <p className="cm-body text-cm-muted text-sm">{plan.overview}</p>
         <div className="flex items-center gap-3 mt-2">
-          <span className={`cm-chip text-xs ${difficultyColor}`}>
+          <span className={`cm-chip text-xs inline-flex items-center gap-1 ${difficultyColor}`}>
+            <span className="text-[8px]">{difficultyIcon}</span>
             {plan.difficulty}
           </span>
           {plan.estimated_minutes > 0 && (

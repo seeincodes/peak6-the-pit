@@ -83,9 +83,9 @@ export default function EventDetailPage() {
     return (
       <div className="cm-page max-w-2xl">
         <div className="animate-pulse space-y-4">
-          <div className="h-6 bg-cm-border rounded w-1/2" />
-          <div className="h-4 bg-cm-border rounded w-3/4" />
-          <div className="h-4 bg-cm-border rounded w-1/3" />
+          <div className="h-6 bg-cm-primary/10 rounded w-1/2" />
+          <div className="h-4 bg-cm-primary/10 rounded w-3/4" />
+          <div className="h-4 bg-cm-primary/10 rounded w-1/3" />
         </div>
       </div>
     );

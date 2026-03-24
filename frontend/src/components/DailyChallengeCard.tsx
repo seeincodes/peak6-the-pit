@@ -39,13 +39,13 @@ export default function DailyChallengeCard({
             <div
               key={c.id}
               className={`flex items-center gap-2 text-[11px] ${
-                c.completed ? "text-cm-lime" : "text-cm-muted"
+                c.completed ? "text-cm-mint" : "text-cm-muted"
               }`}
             >
               {c.completed ? (
                 <Check size={10} className="flex-shrink-0" />
               ) : (
-                <div className="w-2.5 h-2.5 rounded-full border border-cm-border flex-shrink-0" />
+                <div className="w-2.5 h-2.5 rounded-full border border-cm-border/10 flex-shrink-0" />
               )}
               <div className="flex-1 min-w-0 truncate">
                 {c.completed ? <span className="line-through">{c.description}</span> : c.description}
@@ -96,21 +96,21 @@ export default function DailyChallengeCard({
                 key={c.id}
                 className={`flex items-center gap-3 p-2 rounded-md border transition-colors ${
                   c.completed
-                    ? "border-cm-lime/30 bg-cm-lime/5"
+                    ? "border-cm-mint/30 bg-cm-mint/5"
                     : "border-cm-border/30"
                 }`}
               >
                 {c.completed ? (
-                  <Check size={14} className="text-cm-lime flex-shrink-0" />
+                  <Check size={14} className="text-cm-mint flex-shrink-0" />
                 ) : (
-                  <div className="w-3.5 h-3.5 rounded-full border border-cm-border flex-shrink-0" />
+                  <div className="w-3.5 h-3.5 rounded-full border border-cm-border/10 flex-shrink-0" />
                 )}
                 <div className="flex-1 min-w-0">
-                  <p className={`text-xs ${c.completed ? "text-cm-lime line-through" : "text-cm-text"}`}>
+                  <p className={`text-xs ${c.completed ? "text-cm-mint line-through" : "text-cm-text"}`}>
                     {c.description}
                   </p>
                   {!c.completed && (
-                    <div className="mt-1 h-1 rounded-full bg-cm-border/40 overflow-hidden">
+                    <div className="mt-1 h-1 rounded-full bg-cm-primary/10 overflow-hidden">
                       <div
                         className="h-full rounded-full bg-cm-primary transition-all duration-500"
                         style={{ width: `${pct}%` }}

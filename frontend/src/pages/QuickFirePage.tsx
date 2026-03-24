@@ -306,14 +306,14 @@ export default function QuickFirePage({
           </button>
 
           <StreakBadge count={streak} />
-          <span className="text-cm-lime font-bold text-sm">+{totalXP} XP</span>
+          <span className="text-cm-mint font-bold text-sm">+{totalXP} XP</span>
           <span className="text-cm-muted text-xs">Q{questionCount}</span>
         </div>
       </div>
 
       {/* Timer bar */}
       {timerOption > 0 && phase === "question" && (
-        <div className="h-1 rounded-full bg-cm-border/40 overflow-hidden">
+        <div className="h-1 rounded-full bg-cm-primary/10 overflow-hidden">
           <div
             className="h-full rounded-full transition-all duration-1000 ease-linear"
             style={{
@@ -381,7 +381,7 @@ export default function QuickFirePage({
                 placeholder="Brief justification (1-2 sentences)..."
                 maxLength={200}
                 rows={2}
-                className={`w-full bg-cm-bg border border-cm-border rounded px-4 py-3 text-cm-text text-sm placeholder-cm-muted/50 focus:outline-none focus:border-cm-primary/50 resize-none transition-opacity ${submitMutation.isPending ? "opacity-50 cursor-not-allowed" : ""}`}
+                className={`w-full bg-cm-bg border border-cm-border/10 rounded px-4 py-3 text-cm-text text-sm placeholder-cm-muted/50 focus:outline-none focus:border-cm-primary/50 resize-none transition-opacity ${submitMutation.isPending ? "opacity-50 cursor-not-allowed" : ""}`}
               />
               {pasteBlocked && (
                 <div className="text-cm-red text-xs mt-1 animate-pulse">
@@ -399,7 +399,7 @@ export default function QuickFirePage({
                     })
                   }
                   disabled={!justification.trim() || submitMutation.isPending}
-                  className="px-4 py-2 rounded bg-cm-primary text-white text-sm font-bold hover:bg-cm-primary/90 transition-all disabled:opacity-40 focus-ring"
+                  className="px-4 py-2 rounded bg-cm-primary text-cm-bg text-sm font-bold hover:bg-cm-primary/90 transition-all disabled:opacity-40 focus-ring"
                 >
                   {submitMutation.isPending ? "Grading..." : "Submit"}
                 </button>

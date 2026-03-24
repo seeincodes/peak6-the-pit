@@ -76,14 +76,14 @@ export default function SkillNodeDetail({ node, mastery, onClose }: SkillNodeDet
 
   return (
     <motion.div
-      className="absolute top-0 right-0 h-full w-80 bg-cm-card border-l border-cm-border shadow-2xl flex flex-col z-20"
+      className="absolute top-0 right-0 h-full w-80 bg-cm-card border-l border-cm-border/10 shadow-2xl flex flex-col z-20"
       initial={{ x: 320 }}
       animate={{ x: 0 }}
       exit={{ x: 320 }}
       transition={{ type: "spring", stiffness: 300, damping: 30 }}
     >
       {/* Header */}
-      <div className="flex items-start justify-between p-5 border-b border-cm-border">
+      <div className="flex items-start justify-between p-5 border-b border-cm-border/10">
         <div className="flex-1 min-w-0 pr-3">
           <div
             className="text-[10px] font-semibold uppercase tracking-widest mb-1"
@@ -161,7 +161,7 @@ export default function SkillNodeDetail({ node, mastery, onClose }: SkillNodeDet
       </div>
 
       {/* Footer */}
-      <div className="p-5 border-t border-cm-border">
+      <div className="p-5 border-t border-cm-border/10">
         <button
           className="cm-btn-primary w-full flex items-center justify-center gap-2"
           onClick={() => navigate(`/?category=${node.category}`)}

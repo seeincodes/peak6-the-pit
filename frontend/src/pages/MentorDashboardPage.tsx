@@ -97,7 +97,7 @@ function MenteeCard({ mentorship }: { mentorship: Mentorship }) {
       {/* Mentee header */}
       <div className="flex items-center justify-between gap-4">
         <div className="flex items-center gap-3">
-          <div className="w-10 h-10 rounded-full bg-cm-card-raised border border-cm-border flex items-center justify-center text-xl shrink-0">
+          <div className="w-10 h-10 rounded-full bg-cm-card-raised border border-cm-border/10 flex items-center justify-center text-xl shrink-0">
             {AVATAR_PRESETS["default"]}
           </div>
           <div>
@@ -142,7 +142,7 @@ function MenteeCard({ mentorship }: { mentorship: Mentorship }) {
             {[1, 2].map((i) => (
               <div
                 key={i}
-                className="animate-pulse h-3 bg-cm-border rounded w-2/3"
+                className="animate-pulse h-3 bg-cm-primary/10 rounded w-2/3"
               />
             ))}
           </div>
@@ -177,7 +177,7 @@ function MenteeCard({ mentorship }: { mentorship: Mentorship }) {
                   </div>
                   <div className="relative w-full h-1.5 bg-cm-bg rounded-full overflow-hidden">
                     <motion.div
-                      className="absolute inset-y-0 left-0 bg-gradient-to-r from-cm-primary to-cm-emerald rounded-full"
+                      className="absolute inset-y-0 left-0 bg-gradient-to-r from-cm-primary to-cm-mint rounded-full"
                       initial={{ width: 0 }}
                       animate={{ width: `${pct}%` }}
                       transition={{ duration: 0.6, ease: "easeOut" }}
@@ -195,7 +195,7 @@ function MenteeCard({ mentorship }: { mentorship: Mentorship }) {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: "auto" }}
             exit={{ opacity: 0, height: 0 }}
-            className="mt-3 pt-3 border-t border-cm-border space-y-3"
+            className="mt-3 pt-3 border-t border-cm-border/10 space-y-3"
           >
             <div>
               <label className="cm-label mb-1.5 block text-xs">Category</label>
@@ -280,9 +280,9 @@ export default function MentorDashboardPage() {
               key={i}
               className="animate-pulse cm-surface rounded-lg p-5 space-y-3"
             >
-              <div className="h-4 bg-cm-border rounded w-1/3" />
-              <div className="h-3 bg-cm-border rounded w-1/2" />
-              <div className="h-3 bg-cm-border rounded w-2/3" />
+              <div className="h-4 bg-cm-primary/10 rounded w-1/3" />
+              <div className="h-3 bg-cm-primary/10 rounded w-1/2" />
+              <div className="h-3 bg-cm-primary/10 rounded w-2/3" />
             </div>
           ))}
         </div>

@@ -1,5 +1,6 @@
 import { useRef, useEffect } from "react";
 import { motion } from "framer-motion";
+import { CheckCircle, XCircle } from "lucide-react";
 import ScoreGauge from "./charts/ScoreGauge";
 import XPProgressBar from "./XPProgressBar";
 
@@ -54,15 +55,16 @@ export default function MCQFeedback({
     <motion.div
       initial={{ opacity: 0, scale: 0.95 }}
       animate={{ opacity: 1, scale: 1 }}
-      className="rounded-md border border-cm-border bg-cm-card p-6"
+      className="rounded-md border border-cm-border/10 bg-cm-card p-6"
     >
       <div className="text-center mb-4" role="status">
         <motion.div
           initial={{ scale: 0 }}
           animate={{ scale: 1 }}
           transition={{ type: "spring", stiffness: 300 }}
-          className={`inline-block text-3xl font-bold ${isCorrect ? "text-cm-emerald" : "text-cm-red"}`}
+          className={`inline-flex items-center gap-2 text-3xl font-bold ${isCorrect ? "text-cm-emerald" : "text-cm-red"}`}
         >
+          {isCorrect ? <CheckCircle size={28} /> : <XCircle size={28} />}
           {isCorrect ? "Correct!" : "Incorrect"}
         </motion.div>
         {!isCorrect && (
@@ -114,13 +116,13 @@ export default function MCQFeedback({
                 initial={{ opacity: 0, scale: 0.5 }}
                 animate={{ opacity: 1, scale: 1 }}
                 transition={{ delay: 0.6, type: "spring", stiffness: 300 }}
-                className="border-t border-cm-border pt-1 mt-1 w-full"
+                className="border-t border-cm-border/10 pt-1 mt-1 w-full"
               >
-                <span className="text-cm-lime font-bold text-lg">= {xpBreakdown.total} XP</span>
+                <span className="text-cm-mint font-bold text-lg">= {xpBreakdown.total} XP</span>
               </motion.div>
             </div>
           ) : (
-            <span className="text-cm-lime font-bold text-lg">+{xpEarned} XP</span>
+            <span className="text-cm-mint font-bold text-lg">+{xpEarned} XP</span>
           )}
         </div>
 
@@ -145,23 +147,25 @@ export default function MCQFeedback({
           <ScoreGauge isCorrect={isCorrect} justificationQuality={justificationQuality} size={110} />
         </div>
         <div className="flex justify-center gap-3 text-xs">
-          <span className={isCorrect ? "text-cm-emerald" : "text-cm-red"}>
+          <span className={`inline-flex items-center gap-1 ${isCorrect ? "text-cm-emerald" : "text-cm-red"}`}>
+            {isCorrect ? <CheckCircle size={12} /> : <XCircle size={12} />}
             Answer: {isCorrect ? "Correct" : "Wrong"}
           </span>
-          <span className="text-cm-border">|</span>
-          <span className={justificationQuality === "good" ? "text-cm-emerald" : "text-cm-muted"}>
+          <span className="text-cm-muted">|</span>
+          <span className={`inline-flex items-center gap-1 ${justificationQuality === "good" ? "text-cm-emerald" : "text-cm-muted"}`}>
+            {justificationQuality === "good" ? <CheckCircle size={12} /> : <XCircle size={12} />}
             Reasoning: {justificationQuality === "good" ? "Strong" : "Weak"}
           </span>
         </div>
       </motion.div>
 
       <div className="space-y-3 mb-4">
-        <div className="border-t border-cm-border pt-3">
+        <div className="border-t border-cm-border/10 pt-3">
           <h4 className="text-cm-amber text-xs font-semibold mb-1">Explanation</h4>
           <p className="text-cm-muted text-sm">{explanation}</p>
         </div>
 
-        <div className="border-t border-cm-border pt-3">
+        <div className="border-t border-cm-border/10 pt-3">
           <h4 className="text-cm-amber text-xs font-semibold mb-1">Your Reasoning</h4>
           <p className="text-cm-muted text-sm">{justificationNote}</p>
         </div>
@@ -171,7 +175,7 @@ export default function MCQFeedback({
         <button
           ref={nextRef}
           onClick={onNext}
-          className="px-6 py-2 rounded bg-cm-primary text-white font-bold hover:bg-cm-primary/90 transition-all focus-ring"
+          className="px-6 py-2 rounded bg-cm-primary text-cm-bg font-bold hover:bg-cm-primary/90 transition-all focus-ring"
         >
           Next Question
         </button>

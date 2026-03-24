@@ -3,13 +3,13 @@ export const colors = {
   card: "rgb(var(--cm-card))",
   border: "rgb(var(--cm-border))",
   primary: "rgb(var(--cm-primary))",
-  cyan: "rgb(var(--cm-primary))",
-  lime: "rgb(var(--cm-lime))",
+  mint: "rgb(var(--cm-mint))",
   emerald: "rgb(var(--cm-emerald))",
   amber: "rgb(var(--cm-amber))",
   red: "rgb(var(--cm-red))",
   text: "rgb(var(--cm-text))",
   muted: "rgb(var(--cm-muted))",
+  info: "rgb(var(--cm-info))",
 } as const;
 
 export const categoryDisplay: Record<string, string> = {

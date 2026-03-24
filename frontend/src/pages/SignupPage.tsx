@@ -70,19 +70,21 @@ export default function SignupPage() {
         className="w-full max-w-md"
       >
         {/* Branding */}
-        <div className="text-center mb-8">
-          <h1 className="text-4xl font-bold mb-1">
-            <span className="text-cm-text">The </span>
-            <span className="text-cm-primary">
-              Pit
-            </span>
-          </h1>
+        <div className="flex flex-col items-center mb-8">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-10 h-10 rounded-xl bg-gradient-to-br from-cm-primary to-cm-mint flex items-center justify-center">
+              <span className="text-cm-bg text-xl font-extrabold leading-none">P</span>
+            </div>
+            <h1 className="text-2xl font-extrabold tracking-tight uppercase text-cm-text">
+              THE PIT
+            </h1>
+          </div>
           <p className="text-cm-muted text-sm">Create your trading profile</p>
         </div>
 
         {/* Card */}
-        <div className="rounded-md border border-cm-border bg-cm-card p-8">
-          <h2 className="text-xl font-bold text-cm-text mb-6">Sign Up</h2>
+        <div className="rounded-lg border border-cm-border/10 bg-cm-card p-8">
+          <h2 className="text-xl font-extrabold tracking-tight text-cm-text mb-6">Sign Up</h2>
 
           {!inviteToken && !inviteLoading && (
             <div role="alert" aria-live="polite" className="mb-4 p-3 rounded-md bg-cm-yellow/10 border border-cm-yellow/30 text-cm-yellow text-sm">
@@ -116,7 +118,7 @@ export default function SignupPage() {
                 onChange={(e) => setDisplayName(e.target.value)}
                 required
                 aria-invalid={!!error}
-                className="w-full px-4 py-2.5 rounded-md bg-cm-bg border border-cm-border text-cm-text placeholder-cm-muted/50 focus:outline-none focus:border-cm-primary/50 transition-all duration-300 focus-ring"
+                className="w-full px-4 py-2.5 rounded-lg bg-cm-bg border border-cm-border/10 text-cm-text placeholder-cm-muted/50 focus:outline-none focus:border-cm-primary/50 transition-all duration-300 focus-ring"
                 placeholder="TradingAce"
               />
             </div>
@@ -132,7 +134,7 @@ export default function SignupPage() {
                 onChange={(e) => setEmail(e.target.value)}
                 required
                 aria-invalid={!!error}
-                className="w-full px-4 py-2.5 rounded-md bg-cm-bg border border-cm-border text-cm-text placeholder-cm-muted/50 focus:outline-none focus:border-cm-primary/50 transition-all duration-300 focus-ring"
+                className="w-full px-4 py-2.5 rounded-lg bg-cm-bg border border-cm-border/10 text-cm-text placeholder-cm-muted/50 focus:outline-none focus:border-cm-primary/50 transition-all duration-300 focus-ring"
                 placeholder="trader@example.com"
                 readOnly={!!invite}
               />
@@ -150,7 +152,7 @@ export default function SignupPage() {
                 required
                 minLength={6}
                 aria-invalid={!!error}
-                className="w-full px-4 py-2.5 rounded-md bg-cm-bg border border-cm-border text-cm-text placeholder-cm-muted/50 focus:outline-none focus:border-cm-primary/50 transition-all duration-300 focus-ring"
+                className="w-full px-4 py-2.5 rounded-lg bg-cm-bg border border-cm-border/10 text-cm-text placeholder-cm-muted/50 focus:outline-none focus:border-cm-primary/50 transition-all duration-300 focus-ring"
                 placeholder="Min. 6 characters"
               />
             </div>
@@ -159,7 +161,7 @@ export default function SignupPage() {
               type="submit"
               disabled={loading || !!error}
               aria-busy={loading}
-              className="w-full py-3 rounded bg-cm-primary text-white font-bold text-sm hover:bg-cm-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 focus-ring"
+              className="w-full py-3 rounded-lg bg-cm-primary text-cm-bg font-bold text-sm hover:bg-cm-primary/90 disabled:opacity-50 disabled:cursor-not-allowed transition-all duration-300 focus-ring"
             >
               {loading ? (
                 <span className="animate-pulse">Creating account...</span>

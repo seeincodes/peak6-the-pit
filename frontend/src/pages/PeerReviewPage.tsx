@@ -76,7 +76,7 @@ function ConversationBubble({ role, content }: { role: string; content: string }
         className={`max-w-[80%] rounded-lg px-3 py-2 text-sm ${
           isUser
             ? "bg-cm-primary/15 text-cm-text border border-cm-primary/20"
-            : "bg-cm-card-raised text-cm-text border border-cm-border"
+            : "bg-cm-card-raised text-cm-text border border-cm-border/10"
         }`}
       >
         <div className="text-xs text-cm-muted mb-1 font-medium">
@@ -106,7 +106,7 @@ function CategoryFilter({
         className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
           selected === null
             ? "bg-cm-primary/15 text-cm-primary border border-cm-primary/30"
-            : "bg-cm-card-raised text-cm-muted border border-cm-border hover:text-cm-text"
+            : "bg-cm-card-raised text-cm-muted border border-cm-border/10 hover:text-cm-text"
         }`}
       >
         All ({categories.reduce((sum, c) => sum + c.count, 0)})
@@ -118,7 +118,7 @@ function CategoryFilter({
           className={`px-3 py-1.5 rounded-lg text-xs font-medium transition-all capitalize ${
             selected === c.category
               ? "bg-cm-primary/15 text-cm-primary border border-cm-primary/30"
-              : "bg-cm-card-raised text-cm-muted border border-cm-border hover:text-cm-text"
+              : "bg-cm-card-raised text-cm-muted border border-cm-border/10 hover:text-cm-text"
           }`}
         >
           {c.category.replace(/_/g, " ")} ({c.count})
@@ -342,15 +342,15 @@ function SuccessView({
       animate={{ opacity: 1, scale: 1 }}
       className="cm-surface p-8 text-center space-y-4"
     >
-      <div className="w-16 h-16 rounded-full bg-cm-lime/15 flex items-center justify-center mx-auto">
-        <Award size={32} className="text-cm-lime" />
+      <div className="w-16 h-16 rounded-full bg-cm-mint/15 flex items-center justify-center mx-auto">
+        <Award size={32} className="text-cm-mint" />
       </div>
 
       <h3 className="text-lg font-bold text-cm-text">Review Submitted!</h3>
 
       <div className="flex items-center justify-center gap-2">
-        <Zap size={18} className="text-cm-lime" />
-        <span className="text-cm-lime font-bold text-xl">+{result.xp_earned} XP</span>
+        <Zap size={18} className="text-cm-mint" />
+        <span className="text-cm-mint font-bold text-xl">+{result.xp_earned} XP</span>
       </div>
 
       {result.quality_bonus && (

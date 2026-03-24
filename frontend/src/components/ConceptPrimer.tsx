@@ -38,7 +38,7 @@ export default function ConceptPrimer({
           initial={{ opacity: 0, y: 30 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: 30 }}
-          className="bg-cm-card border border-cm-border rounded-md p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto relative z-10"
+          className="bg-cm-card border border-cm-border/10 rounded-md p-6 max-w-lg w-full max-h-[80vh] overflow-y-auto relative z-10"
           onClick={(e) => e.stopPropagation()}
         >
           <div className="flex items-center justify-between mb-4">

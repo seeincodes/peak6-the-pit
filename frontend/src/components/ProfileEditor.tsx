@@ -49,7 +49,7 @@ export default function ProfileEditor({ displayName, avatarId, bio, onClose }: P
             className={`w-10 h-10 rounded-lg flex items-center justify-center text-lg transition-all focus-ring ${
               selectedAvatar === id
                 ? "bg-cm-primary/20 ring-2 ring-cm-primary"
-                : "bg-cm-card-raised hover:bg-cm-border"
+                : "bg-cm-card-raised hover:bg-cm-primary/10"
             }`}
           >
             {emoji}

@@ -441,11 +441,12 @@ export default function TrainingPage({
                                   {categoryShortDisplay[category] || category.replace(/_/g, " ")}
                                 </span>
                                 <div className="flex items-center gap-1.5 mt-0.5">
-                                  <span className={`text-[10px] font-medium capitalize px-1.5 py-0.5 rounded ${
+                                  <span className={`text-[10px] font-medium capitalize px-1.5 py-0.5 rounded inline-flex items-center gap-0.5 ${
                                     adaptiveDifficulty === "advanced" ? "bg-cm-red/15 text-cm-red" :
                                     adaptiveDifficulty === "intermediate" ? "bg-cm-amber/15 text-cm-amber" :
                                     "bg-cm-primary/15 text-cm-primary"
                                   }`}>
+                                    <span className="text-[7px]">{adaptiveDifficulty === "advanced" ? "▲" : adaptiveDifficulty === "intermediate" ? "◆" : "●"}</span>
                                     {adaptiveDifficulty}
                                   </span>
                                   <span className={`text-[11px] font-medium ${

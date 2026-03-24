@@ -47,7 +47,7 @@ export default function EventLeaderboard({ entries, currentUserId }: EventLeader
             className={`flex items-center justify-between rounded-lg border px-4 py-3 ${
               isCurrentUser
                 ? "bg-cm-primary/10 border border-cm-primary/30"
-                : "bg-cm-card/50 border-cm-border"
+                : "bg-cm-card/50 border-cm-border/10"
             }`}
           >
             <div className="flex items-center gap-3">
@@ -59,7 +59,7 @@ export default function EventLeaderboard({ entries, currentUserId }: EventLeader
               >
                 {rankIcon(entry.rank)}
               </span>
-              <div className="w-8 h-8 rounded-full bg-cm-card-raised border border-cm-border flex items-center justify-center text-base">
+              <div className="w-8 h-8 rounded-full bg-cm-card-raised border border-cm-border/10 flex items-center justify-center text-base">
                 {avatar}
               </div>
               <div>

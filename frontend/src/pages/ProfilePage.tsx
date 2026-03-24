@@ -47,7 +47,7 @@ export default function ProfilePage() {
           />
         ) : (
           <div className="flex items-start gap-5 flex-1 min-w-0">
-            <div className="w-16 h-16 rounded-xl bg-cm-card-raised border border-cm-border flex items-center justify-center text-3xl shrink-0">
+            <div className="w-16 h-16 rounded-xl bg-cm-card-raised border border-cm-border/10 flex items-center justify-center text-3xl shrink-0">
               {avatarEmoji}
             </div>
             <div className="flex-1 min-w-0">
@@ -95,7 +95,7 @@ export default function ProfilePage() {
             Click a node to see your mastery details and start training.
           </p>
           {skillNodes && mastery ? (
-            <div className="relative h-[500px] rounded-lg overflow-hidden border border-cm-border bg-cm-bg">
+            <div className="relative h-[500px] rounded-lg overflow-hidden border border-cm-border/10 bg-cm-bg">
               <SkillTreeCanvas
                 nodes={skillNodes}
                 mastery={mastery}
@@ -103,7 +103,7 @@ export default function ProfilePage() {
               />
             </div>
           ) : (
-            <div className="h-[500px] rounded-lg border border-cm-border bg-cm-bg flex items-center justify-center">
+            <div className="h-[500px] rounded-lg border border-cm-border/10 bg-cm-bg flex items-center justify-center">
               <div className="w-6 h-6 border-2 border-cm-primary/30 border-t-cm-primary rounded-full animate-spin" />
             </div>
           )}

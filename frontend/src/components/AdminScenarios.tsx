@@ -36,9 +36,9 @@ export function AdminScenarios({ data, loading }: Props) {
         </button>
       </div>
 
-      <div className="bg-cm-card-raised border border-cm-border rounded-lg overflow-x-auto">
+      <div className="bg-cm-card-raised border border-cm-border/10 rounded-lg overflow-x-auto">
         <table className="w-full text-sm">
-          <thead className="bg-cm-bg border-b border-cm-border">
+          <thead className="bg-cm-bg border-b border-cm-border/10">
             <tr>
               <th className="px-4 py-2 text-left text-cm-muted font-semibold">Scenario</th>
               <th className="px-4 py-2 text-left text-cm-muted font-semibold">Category</th>
@@ -50,7 +50,7 @@ export function AdminScenarios({ data, loading }: Props) {
           </thead>
           <tbody>
             {sorted.map((scenario) => (
-              <tr key={scenario.scenario_id} className="border-b border-cm-border hover:bg-cm-bg/60">
+              <tr key={scenario.scenario_id} className="border-b border-cm-border/10 hover:bg-cm-bg/60">
                 <td className="px-4 py-2 text-cm-text">{scenario.title}</td>
                 <td className="px-4 py-2 text-cm-muted">{scenario.category}</td>
                 <td className="px-4 py-2 text-cm-muted capitalize">{scenario.difficulty}</td>

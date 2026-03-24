@@ -96,7 +96,7 @@ function AuthenticatedApp() {
         <a href="#main-content" className="skip-link">Skip to main content</a>
 
         {/* Mobile top bar */}
-        <div className="fixed top-0 left-0 right-0 h-14 bg-cm-card border-b border-cm-border flex items-center justify-between px-4 z-30 lg:hidden">
+        <div className="fixed top-0 left-0 right-0 h-14 bg-cm-card border-b border-cm-border/10 flex items-center justify-between px-4 z-30 lg:hidden">
           <div className="flex items-center">
             <button
               onClick={() => setMobileSidebarOpen(true)}
@@ -106,16 +106,16 @@ function AuthenticatedApp() {
               <Menu size={22} />
             </button>
             <div className="flex items-center gap-2 ml-3">
-              <div className="w-7 h-7 rounded-md bg-gradient-to-br from-cm-primary to-cm-emerald flex items-center justify-center shrink-0">
-                <span className="text-white font-bold text-[10px] tracking-tight">TP</span>
+              <div className="w-7 h-7 rounded-lg bg-gradient-to-br from-cm-primary to-cm-mint flex items-center justify-center shrink-0">
+                <span className="text-cm-bg font-extrabold text-[10px] tracking-tight">P</span>
               </div>
-              <span className="text-cm-text font-bold text-sm">The Pit</span>
+              <span className="text-cm-text font-extrabold text-sm tracking-tight">THE PIT</span>
             </div>
           </div>
           {user && !isAdmin && (
             <Link to="/profile" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
               <span className="text-sm font-medium text-cm-text hidden xs:inline">{user.display_name}</span>
-              <div className="w-8 h-8 rounded-full bg-cm-card-raised border border-cm-border flex items-center justify-center text-base">
+              <div className="w-8 h-8 rounded-full bg-cm-card-raised border border-cm-border/10 flex items-center justify-center text-base">
                 {AVATAR_PRESETS[user.avatar_id || "default"] || "👤"}
               </div>
             </Link>
@@ -158,20 +158,20 @@ function AuthenticatedApp() {
         >
           {/* Desktop top bar */}
           {user && !isAdmin && (
-            <div className="hidden lg:flex items-center justify-end h-16 px-6 border-b border-cm-border bg-cm-card/50 sticky top-0 z-30 backdrop-blur-sm">
+            <div className="hidden lg:flex items-center justify-end h-16 px-6 border-b border-cm-border/10 bg-cm-card/50 sticky top-0 z-30 backdrop-blur-sm">
               <Link to="/profile" className="relative z-10 flex items-center gap-3 hover:opacity-80 transition-opacity">
                 <div className="text-right">
                   <div className="text-sm font-semibold text-cm-text leading-tight">{user.display_name}</div>
                   <div className="text-[11px] text-cm-primary">{user.level_title}</div>
                 </div>
-                <div className="w-9 h-9 rounded-full bg-cm-card-raised border border-cm-border flex items-center justify-center text-lg">
+                <div className="w-9 h-9 rounded-full bg-cm-card-raised border border-cm-border/10 flex items-center justify-center text-lg">
                   {AVATAR_PRESETS[user.avatar_id || "default"] || "👤"}
                 </div>
               </Link>
             </div>
           )}
           {user && isAdmin && (
-            <div className="hidden lg:flex items-center justify-end h-16 px-6 border-b border-cm-border bg-cm-card/50 sticky top-0 z-30 backdrop-blur-sm">
+            <div className="hidden lg:flex items-center justify-end h-16 px-6 border-b border-cm-border/10 bg-cm-card/50 sticky top-0 z-30 backdrop-blur-sm">
               <div className="flex items-center gap-4">
                 <div className="text-sm font-semibold text-cm-primary">Admin Dashboard</div>
                 <button

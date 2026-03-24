@@ -63,7 +63,7 @@ export default function MCQCard({
       <p className="cm-body mb-4">{content.context}</p>
 
       {content.concept_explainer && (
-        <div className="mb-4 rounded-lg border border-cm-border bg-cm-card-raised p-3">
+        <div className="mb-4 rounded-lg border border-cm-border/10 bg-cm-card-raised p-3">
           <p className="text-xs font-semibold text-cm-primary mb-1">Concept Lesson</p>
           <p className="text-sm text-cm-text">{content.concept_explainer}</p>
         </div>
@@ -85,7 +85,7 @@ export default function MCQCard({
             className={`w-full text-left p-3 rounded-md border transition-all focus-ring ${
               selectedKey === choice.key
                 ? "border-cm-primary bg-cm-primary/10 text-cm-text"
-                : "border-cm-border bg-cm-card hover:border-cm-primary/40 text-cm-muted hover:text-cm-text"
+                : "border-cm-border/10 bg-cm-card hover:border-cm-primary/40 text-cm-muted hover:text-cm-text"
             } ${disabled ? "opacity-60 cursor-not-allowed" : "cursor-pointer"}`}
           >
             <span className="font-mono text-cm-primary mr-3">{choice.key}.</span>

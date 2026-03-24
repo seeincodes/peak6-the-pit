@@ -106,7 +106,7 @@ export default function MarketChart({
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
       transition={{ delay: 0.3, duration: 0.4 }}
-      className={`rounded-lg border border-cm-border bg-cm-bg/50 p-3 ${className}`}
+      className={`rounded-lg border border-cm-border/10 bg-cm-bg/50 p-3 ${className}`}
     >
       {chartType === "heatmap" ? (
         <div>

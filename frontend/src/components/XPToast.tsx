@@ -19,9 +19,9 @@ export default function XPToast({ amount, sessionTotal, onDone }: XPToastProps) 
       }}
       className="pointer-events-auto flex items-center gap-3 px-4 py-3 rounded-lg border border-cm-primary/30 bg-cm-card shadow-lg shadow-cm-primary/10"
     >
-      <Zap size={16} className="text-cm-lime shrink-0" />
+      <Zap size={16} className="text-cm-mint shrink-0" />
       <div>
-        <div className="text-cm-lime font-bold text-sm">+{amount} XP</div>
+        <div className="text-cm-mint font-bold text-sm">+{amount} XP</div>
         <div className="text-cm-muted text-[11px]">Session: {sessionTotal} XP</div>
       </div>
       <motion.div

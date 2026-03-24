@@ -38,8 +38,8 @@ export default function QuickFireScoreCard({
           <p className="text-xs text-cm-muted">Accuracy</p>
         </div>
         <div className="p-3 rounded-md bg-cm-bg/50 border border-cm-border/30">
-          <Zap size={18} className="mx-auto text-cm-lime mb-1" />
-          <p className="text-2xl font-bold text-cm-lime">+{totalXP}</p>
+          <Zap size={18} className="mx-auto text-cm-mint mb-1" />
+          <p className="text-2xl font-bold text-cm-mint">+{totalXP}</p>
           <p className="text-xs text-cm-muted">XP Earned</p>
         </div>
         <div className="p-3 rounded-md bg-cm-bg/50 border border-cm-border/30">
@@ -59,7 +59,7 @@ export default function QuickFireScoreCard({
         </button>
         <button
           onClick={onExit}
-          className="px-6 py-2 rounded-md border border-cm-border text-cm-muted hover:text-cm-text text-sm font-medium transition-colors"
+          className="px-6 py-2 rounded-md border border-cm-border/10 text-cm-muted hover:text-cm-text text-sm font-medium transition-colors"
         >
           Exit
         </button>

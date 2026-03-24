@@ -59,7 +59,7 @@ export default function SkillTreePage() {
     <div className="relative h-[calc(100vh-4rem)] overflow-hidden bg-cm-bg">
       {/* Title overlay */}
       <div className="absolute top-4 left-4 z-10 pointer-events-none">
-        <div className="cm-surface px-4 py-3 rounded-xl shadow-lg border border-cm-border pointer-events-auto">
+        <div className="cm-surface px-4 py-3 rounded-xl shadow-lg border border-cm-border/10 pointer-events-auto">
           <div className="flex items-center gap-2">
             <GitBranch size={18} className="text-cm-primary shrink-0" />
             <div>

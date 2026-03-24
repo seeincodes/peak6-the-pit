@@ -110,7 +110,7 @@ export default function InlineChart({ chart }: { chart: ChartData }) {
     <motion.div
       initial={{ opacity: 0, y: 10 }}
       animate={{ opacity: 1, y: 0 }}
-      className="my-3 rounded-lg border border-cm-border bg-cm-bg/50 p-3"
+      className="my-3 rounded-lg border border-cm-border/10 bg-cm-bg/50 p-3"
     >
       <div className="text-xs font-semibold text-cm-muted mb-2">{chart.title}</div>
       <ResponsiveContainer width="100%" height={220}>

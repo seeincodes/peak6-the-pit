@@ -21,7 +21,7 @@ export default function StarBurst({ count = 5 }: StarBurstProps) {
       {stars.map((star, i) => (
         <motion.span
           key={i}
-          className="absolute left-1/2 top-1/2 text-cm-lime"
+          className="absolute left-1/2 top-1/2 text-cm-mint"
           style={{ fontSize: 12 + Math.random() * 4 }}
           initial={{ opacity: 0, scale: 0, x: 0, y: 0 }}
           animate={{

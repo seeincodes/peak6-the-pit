@@ -19,10 +19,10 @@ export default function XPBar({ current, nextLevel, level }: XPBarProps) {
         aria-valuemin={0}
         aria-valuemax={nextLevel}
         aria-label={`Level ${level} progress: ${current} of ${nextLevel} XP`}
-        className="relative w-48 h-2 bg-cm-card rounded-sm border border-cm-border overflow-hidden"
+        className="relative w-48 h-2 bg-cm-card rounded-sm border border-cm-border/10 overflow-hidden"
       >
         <motion.div
-          className="absolute inset-y-0 left-0 bg-gradient-to-r from-cm-primary to-cm-emerald rounded-sm"
+          className="absolute inset-y-0 left-0 bg-gradient-to-r from-cm-primary to-cm-mint rounded-sm"
           initial={{ width: 0 }}
           animate={{ width: `${pct}%` }}
           transition={{ duration: 0.8, ease: "easeOut" }}

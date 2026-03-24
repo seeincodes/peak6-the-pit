@@ -87,9 +87,9 @@ export default function EventHubPage() {
               key={i}
               className="animate-pulse cm-surface rounded-lg p-5 space-y-3"
             >
-              <div className="h-4 bg-cm-border rounded w-1/2" />
-              <div className="h-3 bg-cm-border rounded w-3/4" />
-              <div className="h-3 bg-cm-border rounded w-1/3" />
+              <div className="h-4 bg-cm-primary/10 rounded w-1/2" />
+              <div className="h-3 bg-cm-primary/10 rounded w-3/4" />
+              <div className="h-3 bg-cm-primary/10 rounded w-1/3" />
             </div>
           ))}
         </div>

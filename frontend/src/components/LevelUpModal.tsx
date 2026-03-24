@@ -44,7 +44,7 @@ export default function LevelUpModal({ show, level, title, newUnlocks, onClose }
             exit={{ scale: 0.5, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300 }}
             ref={modalRef}
-            className="bg-cm-card border border-cm-primary rounded-md p-8 text-center max-w-md relative z-10"
+            className="bg-cm-card border border-cm-mint/20 rounded-xl p-8 text-center max-w-md relative z-10"
             onClick={(e) => e.stopPropagation()}
           >
             <motion.div
@@ -53,9 +53,9 @@ export default function LevelUpModal({ show, level, title, newUnlocks, onClose }
               transition={{ delay: 0.2, type: "spring" }}
               className="mb-4 flex justify-center"
             >
-              <ArrowUpCircle size={48} className="text-cm-lime" aria-hidden="true" />
+              <ArrowUpCircle size={48} className="text-cm-mint" aria-hidden="true" />
             </motion.div>
-            <h2 id="levelup-title" className="text-3xl font-bold text-cm-lime mb-2">LEVEL UP!</h2>
+            <h2 id="levelup-title" className="text-3xl font-black text-cm-mint tracking-tight mb-2">LEVEL UP!</h2>
             <p className="text-cm-text text-xl mb-1">Level {level}</p>
             <p className="text-cm-amber font-semibold mb-6">{title}</p>
 

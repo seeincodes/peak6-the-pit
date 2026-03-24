@@ -31,7 +31,7 @@ export default function CategoryProgress() {
               <span className="text-xs text-cm-text w-28 truncate">
                 {categoryDisplay[s.category] || s.category.replace(/_/g, " ")}
               </span>
-              <div className="flex-1 h-1.5 rounded-full bg-cm-border/40 overflow-hidden">
+              <div className="flex-1 h-1.5 rounded-full bg-cm-primary/10 overflow-hidden">
                 <div
                   className="h-full rounded-full transition-all duration-500"
                   style={{ width: `${pct}%`, backgroundColor: color }}

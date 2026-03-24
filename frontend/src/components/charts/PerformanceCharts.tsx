@@ -141,8 +141,8 @@ function XPTimelineChart({ data }: { data: PerformanceData["xp_trend"] }) {
       <AreaChart data={formatted}>
         <defs>
           <linearGradient id="xpGrad" x1="0" y1="0" x2="0" y2="1">
-            <stop offset="5%" stopColor={colors.lime} stopOpacity={0.3} />
-            <stop offset="95%" stopColor={colors.lime} stopOpacity={0.02} />
+            <stop offset="5%" stopColor={colors.mint} stopOpacity={0.3} />
+            <stop offset="95%" stopColor={colors.mint} stopOpacity={0.02} />
           </linearGradient>
         </defs>
         <CartesianGrid strokeDasharray="3 3" stroke={CHART_COLORS.grid} />
@@ -152,7 +152,7 @@ function XPTimelineChart({ data }: { data: PerformanceData["xp_trend"] }) {
         <Area
           type="monotone"
           dataKey="xp"
-          stroke={colors.lime}
+          stroke={colors.mint}
           strokeWidth={2}
           fill="url(#xpGrad)"
           isAnimationActive
@@ -251,10 +251,10 @@ export default function PerformanceCharts() {
           color={colors.primary}
         />
         <StatCard
-          icon={<Zap size={18} style={{ color: colors.lime }} />}
+          icon={<Zap size={18} style={{ color: colors.mint }} />}
           label="Total XP"
           value={data.totals.total_xp.toLocaleString()}
-          color={colors.lime}
+          color={colors.mint}
         />
         <StatCard
           icon={<TrendingUp size={18} style={{ color: colors.emerald }} />}
@@ -279,7 +279,7 @@ export default function PerformanceCharts() {
           className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-medium transition-all ${
             showCohort
               ? "bg-cm-primary/15 text-cm-primary border border-cm-primary/30"
-              : "bg-cm-card-raised text-cm-muted border border-cm-border hover:text-cm-text"
+              : "bg-cm-card-raised text-cm-muted border border-cm-border/10 hover:text-cm-text"
           }`}
         >
           <Users size={14} />

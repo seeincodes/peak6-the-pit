@@ -92,8 +92,15 @@ function DifficultyBadge({ level }: { level: string }) {
     advanced: "bg-cm-red/15 text-cm-red border-cm-red/30",
     mixed: "bg-cm-primary/15 text-cm-primary border-cm-primary/30",
   };
+  const icons: Record<string, string> = {
+    beginner: "●",
+    intermediate: "◆",
+    advanced: "▲",
+    mixed: "○",
+  };
   return (
-    <span className={`text-xs px-2 py-0.5 rounded-full capitalize border ${colors[level] || colors.mixed}`}>
+    <span className={`text-xs px-2 py-0.5 rounded-full capitalize border inline-flex items-center gap-1 ${colors[level] || colors.mixed}`}>
+      <span className="text-[8px]">{icons[level] || icons.mixed}</span>
       {level}
     </span>
   );
@@ -147,7 +154,7 @@ function PathCard({
                 </span>
                 <span className="text-xs font-medium text-cm-primary">{path.progress_pct}%</span>
               </div>
-              <div className="w-full h-1.5 bg-cm-border rounded-full overflow-hidden">
+              <div className="w-full h-1.5 bg-cm-primary/10 rounded-full overflow-hidden">
                 <motion.div
                   className={`h-full rounded-full ${isCompleted ? "bg-cm-emerald" : "bg-cm-primary"}`}
                   initial={{ width: 0 }}
@@ -268,7 +275,7 @@ function PathDetailView({
               </span>
               <span className="text-xs font-medium text-cm-primary">{progressPct}%</span>
             </div>
-            <div className="w-full h-2 bg-cm-border rounded-full overflow-hidden">
+            <div className="w-full h-2 bg-cm-primary/10 rounded-full overflow-hidden">
               <div
                 className={`h-full rounded-full transition-all duration-500 ${isCompleted ? "bg-cm-emerald" : "bg-cm-primary"}`}
                 style={{ width: `${progressPct}%` }}
@@ -312,7 +319,7 @@ function PathDetailView({
                       ? "bg-cm-emerald/15 border-2 border-cm-emerald"
                       : step.status === "current"
                         ? "bg-cm-primary/15 border-2 border-cm-primary"
-                        : "bg-cm-card-raised border-2 border-cm-border"
+                        : "bg-cm-card-raised border-2 border-cm-border/10"
                   }`}
                 >
                   {step.status === "completed" ? (
@@ -326,7 +333,7 @@ function PathDetailView({
                 {!isLast && (
                   <div
                     className={`w-0.5 flex-1 min-h-[24px] ${
-                      step.status === "completed" ? "bg-cm-emerald/40" : "bg-cm-border"
+                      step.status === "completed" ? "bg-cm-emerald/40" : "bg-cm-primary/10"
                     }`}
                   />
                 )}

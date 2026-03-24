@@ -76,7 +76,7 @@ export default function BadgeCard({ name, description, icon, tier, earned, award
         className={`w-16 h-16 rounded-xl flex items-center justify-center text-2xl transition-all focus-ring ${
           earned
             ? "bg-cm-card-raised border-2"
-            : "bg-cm-card border border-cm-border opacity-40 grayscale"
+            : "bg-cm-card border border-cm-border/10 opacity-40 grayscale"
         }`}
         style={earned ? { borderColor: tierColor, boxShadow: `0 0 12px ${tierColor}30` } : {}}
         whileHover={{ scale: earned ? 1.1 : 1.02 }}
