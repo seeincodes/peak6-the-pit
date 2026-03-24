@@ -839,7 +839,7 @@ def _make_responses_and_grades(
                 counter += 1
                 r_id = _stable_uuid("response", counter)
                 g_id = _stable_uuid("grade", counter)
-                score = scores[attempt]
+                score = scores[attempt % len(scores)]
 
                 # Build realistic conversation
                 cat_answers = _TRAINEE_ANSWERS.get(cat, _DEFAULT_ANSWERS)

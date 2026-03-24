@@ -1,7 +1,7 @@
 """phase2 skill tree tables
 
-Revision ID: c3d4e5f6a7b8
-Revises: b2c3d4e5f6a7
+Revision ID: phase2_20260323
+Revises: phase1_20260323
 Create Date: 2026-03-23
 """
 
@@ -9,8 +9,8 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 
-revision = "c3d4e5f6a7b8"
-down_revision = "b2c3d4e5f6a7"
+revision = "phase2_20260323"
+down_revision = "phase1_20260323"
 branch_labels = None
 depends_on = None
 

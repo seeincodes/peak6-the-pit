@@ -1,6 +1,6 @@
 """phase0 prerequisites: notifications, peer_review extensions
 
-Revision ID: a1b2c3d4e5f6
+Revision ID: phase0_20260323
 Revises: q8r9s0t1u2v3
 Create Date: 2026-03-23
 """
@@ -9,7 +9,7 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 
-revision = "a1b2c3d4e5f6"
+revision = "phase0_20260323"
 down_revision = "q8r9s0t1u2v3"
 branch_labels = None
 depends_on = None

@@ -1,7 +1,7 @@
 """phase3 mentorship tables
 
-Revision ID: d4e5f6a7b8c9
-Revises: c3d4e5f6a7b8
+Revision ID: phase3_20260323
+Revises: phase2_20260323
 Create Date: 2026-03-23
 """
 
@@ -9,8 +9,8 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 
-revision = "d4e5f6a7b8c9"
-down_revision = "c3d4e5f6a7b8"
+revision = "phase3_20260323"
+down_revision = "phase2_20260323"
 branch_labels = None
 depends_on = None
 

@@ -1,7 +1,7 @@
 """phase1 market events
 
-Revision ID: b2c3d4e5f6a7
-Revises: a1b2c3d4e5f6
+Revision ID: phase1_20260323
+Revises: phase0_20260323
 Create Date: 2026-03-23
 """
 
@@ -9,8 +9,8 @@ from alembic import op
 import sqlalchemy as sa
 from sqlalchemy.dialects.postgresql import UUID, JSONB
 
-revision = "b2c3d4e5f6a7"
-down_revision = "a1b2c3d4e5f6"
+revision = "phase1_20260323"
+down_revision = "phase0_20260323"
 branch_labels = None
 depends_on = None
 
