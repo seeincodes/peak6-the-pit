@@ -20,6 +20,7 @@ from app.models.organization import Organization
 from app.models.org_invite import OrgInvite
 from app.models.notification import Notification
 from app.models.market_event import MarketEvent, EventParticipation, EventTeamScore
+from app.models.skill_node import SkillNode, UserSkillMastery
 
 __all__ = [
     "User", "Scenario", "Response", "Grade", "Document", "XPTransaction",
@@ -29,4 +30,5 @@ __all__ = [
     "ScenarioBank", "MCQBank", "ModelAnswerBank", "Organization",
     "OrgInvite", "Notification",
     "MarketEvent", "EventParticipation", "EventTeamScore",
+    "SkillNode", "UserSkillMastery",
 ]
