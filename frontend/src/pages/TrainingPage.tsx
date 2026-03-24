@@ -3,6 +3,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
 import { ArrowLeft, BookOpen, HelpCircle, Check } from "lucide-react";
+import EventBanner from "../components/EventBanner";
 import ScenarioCard from "../components/ScenarioCard";
 import ResponseInput from "../components/ResponseInput";
 import GradeReveal from "../components/GradeReveal";
@@ -349,6 +350,7 @@ export default function TrainingPage({
 
   return (
     <div className="cm-page max-w-3xl space-y-6">
+      <EventBanner />
       {/* Category selection — grouped by skill with difficulty routes */}
       {mode === "select" && (
         <div>
