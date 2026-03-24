@@ -28,7 +28,7 @@ export default function ResponseInput({ onSubmit, placeholder, loading }: Respon
   const isMac = typeof navigator !== "undefined" && /Mac|iPhone|iPad/.test(navigator.userAgent);
 
   return (
-    <div className="cm-surface p-4">
+    <div className="cm-surface rounded-xl p-4">
       <label htmlFor="response-input" className="sr-only">Your analysis</label>
       <textarea
         ref={textareaRef}

@@ -98,15 +98,15 @@
 
   /* ── Form Inputs ─────────────────────────────────────────── */
   .cm-input {
-    @apply w-full bg-cm-bg border border-cm-border rounded-lg
+    @apply w-full bg-cm-bg border border-cm-border rounded-xl
            px-3 py-2 text-sm text-cm-text
-           focus:outline-none focus:ring-2 focus:ring-cm-primary/50 focus:border-cm-primary/30;
+           focus:outline-none focus:ring-1 focus:ring-cm-primary/30 focus:border-cm-primary/20;
   }
   .cm-textarea {
-    @apply w-full bg-cm-bg border border-cm-border rounded-lg
+    @apply w-full bg-cm-bg border border-cm-border rounded-xl
            px-3 py-2 text-sm text-cm-text resize-none
            placeholder-cm-muted/50
-           focus:outline-none focus:ring-2 focus:ring-cm-primary/50 focus:border-cm-primary/30;
+           focus:outline-none focus:ring-1 focus:ring-cm-primary/30 focus:border-cm-primary/20;
   }
 
   /* ── Chips / Badges ──────────────────────────────────────── */
@@ -178,7 +178,7 @@ body {
 
 /* Focus ring utility */
 .focus-ring {
-  @apply focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-cm-primary focus-visible:ring-offset-2 focus-visible:ring-offset-cm-bg;
+  @apply focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-cm-primary/40 focus-visible:ring-offset-1 focus-visible:ring-offset-cm-bg;
 }
 
 /* Reduced motion */
