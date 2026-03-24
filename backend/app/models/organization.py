@@ -2,7 +2,7 @@ import uuid
 from datetime import datetime
 
 from sqlalchemy import String, DateTime, Boolean
-from sqlalchemy.dialects.postgresql import UUID
+from sqlalchemy.dialects.postgresql import UUID, JSONB
 from sqlalchemy.orm import Mapped, mapped_column
 
 from app.database import Base, utc_now_naive
@@ -16,3 +16,4 @@ class Organization(Base):
     slug: Mapped[str] = mapped_column(String(80), nullable=False, unique=True)
     invite_only_signup: Mapped[bool] = mapped_column(Boolean, default=True, nullable=False)
     created_at: Mapped[datetime] = mapped_column(DateTime, default=utc_now_naive)
+    mentorship_config: Mapped[dict | None] = mapped_column(JSONB, nullable=True)
