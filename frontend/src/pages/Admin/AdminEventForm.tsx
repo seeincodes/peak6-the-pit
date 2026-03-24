@@ -64,8 +64,8 @@ export function AdminEventForm() {
         title,
         description,
         theme,
-        start_date: startDate,
-        end_date: endDate,
+        start_at: startDate,
+        end_at: endDate,
         ...(maxScenarios ? { max_scenarios: parseInt(maxScenarios, 10) } : {}),
         scenario_pool,
         scoring_config: {

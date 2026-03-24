@@ -3,12 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { ArrowRight, Calendar } from "lucide-react";
 import api from "../api/client";
+import { categoryShortDisplay } from "../theme/colors";
 
 interface MarketEvent {
   id: string;
   title: string;
   theme: string;
-  end_date: string;
+  end_at: string;
 }
 
 function timeRemaining(endDate: string): string {
@@ -49,8 +50,8 @@ export default function EventBanner() {
           <div className="min-w-0">
             <div className="text-sm font-semibold text-cm-text truncate">{event.title}</div>
             <div className="flex items-center gap-2 text-xs text-cm-muted">
-              <span className="cm-chip bg-cm-primary/10 text-cm-primary">{event.theme}</span>
-              <span className="text-cm-emerald font-medium">{timeRemaining(event.end_date)}</span>
+              <span className="cm-chip bg-cm-primary/10 text-cm-primary">{categoryShortDisplay[event.theme] || event.theme.replace(/_/g, " ")}</span>
+              <span className="text-cm-emerald font-medium">{timeRemaining(event.end_at)}</span>
             </div>
           </div>
         </div>

@@ -4,6 +4,7 @@ import { useQuery } from "@tanstack/react-query";
 import { motion } from "framer-motion";
 import { Trophy, Calendar, Clock } from "lucide-react";
 import api from "../api/client";
+import { categoryShortDisplay } from "../theme/colors";
 
 type EventStatus = "active" | "upcoming" | "completed";
 
@@ -13,8 +14,8 @@ interface MarketEvent {
   description: string;
   theme: string;
   status: EventStatus;
-  start_date: string;
-  end_date: string;
+  start_at: string;
+  end_at: string;
 }
 
 function timeRemaining(endDate: string): string {
@@ -127,15 +128,15 @@ export default function EventHubPage() {
               </div>
 
               <div className="flex flex-wrap items-center gap-3 text-xs text-cm-muted">
-                <span className="cm-chip bg-cm-primary/10 text-cm-primary">{event.theme}</span>
+                <span className="cm-chip bg-cm-primary/10 text-cm-primary">{categoryShortDisplay[event.theme] || event.theme.replace(/_/g, " ")}</span>
                 <span className="flex items-center gap-1">
                   <Calendar size={13} />
-                  {formatDate(event.start_date)} – {formatDate(event.end_date)}
+                  {formatDate(event.start_at)} – {formatDate(event.end_at)}
                 </span>
                 {event.status === "active" && (
                   <span className="flex items-center gap-1 text-cm-emerald font-medium">
                     <Clock size={13} />
-                    {timeRemaining(event.end_date)}
+                    {timeRemaining(event.end_at)}
                   </span>
                 )}
               </div>
@@ -177,7 +178,7 @@ export default function EventHubPage() {
                     {event.title}
                   </Link>
                   <div className="text-xs text-cm-muted">
-                    {formatDate(event.start_date)} – {formatDate(event.end_date)}
+                    {formatDate(event.start_at)} – {formatDate(event.end_at)}
                   </div>
                 </div>
               </div>

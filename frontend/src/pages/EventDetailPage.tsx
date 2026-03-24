@@ -11,8 +11,8 @@ interface MarketEvent {
   description: string;
   theme: string;
   status: "active" | "upcoming" | "completed";
-  start_date: string;
-  end_date: string;
+  start_at: string;
+  end_at: string;
   max_scenarios?: number;
   is_joined?: boolean;
   scoring_config?: {
@@ -124,7 +124,7 @@ export default function EventDetailPage() {
           <span className="cm-chip bg-cm-primary/10 text-cm-primary">{event.theme}</span>
           <span className="flex items-center gap-1">
             <Calendar size={13} />
-            {formatDate(event.start_date)} – {formatDate(event.end_date)}
+            {formatDate(event.start_at)} – {formatDate(event.end_at)}
           </span>
           {event.max_scenarios && (
             <span className="flex items-center gap-1">
