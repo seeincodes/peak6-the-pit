@@ -19,6 +19,7 @@ from app.services.event_service import (
     get_events_for_org,
     finalize_event,
 )
+from app.services.activity import emit_activity
 
 router = APIRouter(prefix="/api/events", tags=["events"])
 
@@ -220,6 +221,7 @@ async def join_event_endpoint(
     except ValueError as e:
         raise HTTPException(status_code=409, detail=str(e))
 
+    await emit_activity(db, user.id, "event_joined", {"event_id": str(event_id), "title": event.title})
     await db.commit()
     await db.refresh(participation)
     return {

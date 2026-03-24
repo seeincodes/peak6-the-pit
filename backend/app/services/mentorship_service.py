@@ -12,6 +12,7 @@ from app.models.skill_node import UserSkillMastery
 from app.models.xp_transaction import XPTransaction
 from app.services.notification_service import create_notification
 from app.services.progression import compute_level_from_xp
+from app.services.activity import emit_activity
 
 
 async def request_mentorship(
@@ -66,6 +67,7 @@ async def accept_mentorship(db: AsyncSession, mentorship_id: uuid.UUID) -> Mento
     mentorship.status = "active"
     mentorship.started_at = utc_now_naive()
     await db.flush()
+    await emit_activity(db, mentorship.mentee_id, "mentorship_started", {"mentor_id": str(mentorship.mentor_id), "mentorship_id": str(mentorship.id)})
     return mentorship
 
 
