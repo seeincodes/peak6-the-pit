@@ -437,37 +437,19 @@ export default function TrainingPage({
 
                               {/* Text content */}
                               <div className="flex-1 min-w-0">
-                                <span className="text-cm-text font-semibold text-sm leading-tight block truncate">
-                                  {categoryShortDisplay[category] || category.replace(/_/g, " ")}
-                                </span>
-                                <div className="flex items-center gap-1.5 mt-0.5 flex-wrap">
-                                  <span className={`text-[10px] font-medium capitalize px-1.5 py-0.5 rounded inline-flex items-center gap-0.5 ${
+                                <div className="flex items-center justify-between gap-2">
+                                  <span className="text-cm-text font-semibold text-sm leading-tight truncate">
+                                    {categoryShortDisplay[category] || category.replace(/_/g, " ")}
+                                  </span>
+                                  <span className={`text-[10px] font-medium capitalize px-2 py-0.5 rounded-full shrink-0 ${
                                     adaptiveDifficulty === "advanced" ? "bg-cm-red/15 text-cm-red" :
                                     adaptiveDifficulty === "intermediate" ? "bg-cm-amber/15 text-cm-amber" :
                                     "bg-cm-primary/15 text-cm-primary"
                                   }`}>
-                                    <span className="text-[7px]">{adaptiveDifficulty === "advanced" ? "▲" : adaptiveDifficulty === "intermediate" ? "◆" : "●"}</span>
                                     {adaptiveDifficulty}
-                                  </span>
-                                  <span className={`text-[11px] font-medium ${
-                                    label === "Mastery" ? "text-cm-emerald" :
-                                    label === "Proficient" ? "text-cm-amber" :
-                                    label === "Developing" ? "text-cm-primary" :
-                                    "text-cm-muted"
-                                  }`}>
-                                    {label}
                                   </span>
                                 </div>
                               </div>
-
-                              {/* Learn */}
-                              <button
-                                onClick={(e) => { e.stopPropagation(); setPrimerCategory(category); }}
-                                className="flex-shrink-0 text-cm-muted hover:text-cm-primary transition-colors p-1 hidden sm:block"
-                                aria-label={`Learn ${categoryShortDisplay[category] || category} concepts`}
-                              >
-                                <BookOpen size={14} />
-                              </button>
                             </button>
                           );
                         })}
