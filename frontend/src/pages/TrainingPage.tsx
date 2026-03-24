@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocation, useNavigate } from "react-router-dom";
 import { motion, AnimatePresence } from "framer-motion";
-import { ArrowLeft, BookOpen, HelpCircle, Check } from "lucide-react";
+import { ArrowLeft, HelpCircle, Check } from "lucide-react";
 import EventBanner from "../components/EventBanner";
 import ScenarioCard from "../components/ScenarioCard";
 import ResponseInput from "../components/ResponseInput";
@@ -404,13 +404,6 @@ export default function TrainingPage({
                           const adaptiveDifficulty = effectiveDifficulties?.[category] || sorted[0];
                           const stat = statsMap.get(category);
                           const pct = stat ? Math.round((stat.avg_score / 5) * 100) : 0;
-                          const label = !stat || stat.attempts === 0
-                            ? "New"
-                            : stat.avg_score >= 3.5
-                              ? "Mastery"
-                              : stat.avg_score >= 2.5
-                                ? "Proficient"
-                                : "Developing";
                           const strokeDash = circumference * (pct / 100);
 
                           return (
