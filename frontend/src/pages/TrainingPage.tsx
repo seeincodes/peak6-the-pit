@@ -350,7 +350,7 @@ export default function TrainingPage({
 
   return (
     <div className="cm-page max-w-3xl space-y-6">
-      <EventBanner />
+      {mode === "select" && <EventBanner />}
       {/* Category selection — grouped by skill with difficulty routes */}
       {mode === "select" && (
         <div>
