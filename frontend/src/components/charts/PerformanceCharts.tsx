@@ -60,7 +60,7 @@ function StatCard({ icon, label, value, color }: { icon: React.ReactNode; label:
       </div>
       <div className="min-w-0">
         <div className="text-cm-muted text-xs">{label}</div>
-        <div className="text-cm-text font-bold text-base truncate" title={value}>{value}</div>
+        <div className="text-cm-text font-bold text-sm truncate" title={value}>{value}</div>
       </div>
     </div>
   );
