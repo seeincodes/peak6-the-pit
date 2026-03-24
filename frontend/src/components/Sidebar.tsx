@@ -15,6 +15,7 @@ import {
   UserCircle,
   Calendar,
   GitBranch,
+  Heart,
 } from "lucide-react";
 import DailyChallengeCard from "./DailyChallengeCard";
 import StreakFlame from "./StreakFlame";
@@ -59,6 +60,7 @@ const NAV_GROUPS = [
       { to: "/feed", icon: Activity, label: "Feed", matchExact: false },
       { to: "/peer-review", icon: Users, label: "Peer Review", matchExact: false },
       { to: "/events", icon: Calendar, label: "Events", matchExact: false },
+      { to: "/mentorship", icon: Heart, label: "Mentorship", matchExact: false },
     ],
   },
   {

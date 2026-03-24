@@ -24,6 +24,8 @@ import ChatPage from "./pages/ChatPage";
 import EventHubPage from "./pages/EventHubPage";
 import EventDetailPage from "./pages/EventDetailPage";
 import SkillTreePage from "./pages/SkillTreePage";
+import MentorshipHubPage from "./pages/MentorshipHubPage";
+import MentorDashboardPage from "./pages/MentorDashboardPage";
 import { AdminDashboard } from "./pages/AdminDashboard";
 import { AdminEventForm } from "./pages/Admin/AdminEventForm";
 import { XPToastProvider } from "./context/XPToastContext";
@@ -216,6 +218,8 @@ function AuthenticatedApp() {
                 <Route path="/events/:eventId" element={<EventDetailPage />} />
                 <Route path="/skills" element={<SkillTreePage />} />
                 <Route path="/profile/:userId" element={<UserProfilePage />} />
+                <Route path="/mentorship" element={<MentorshipHubPage />} />
+                <Route path="/mentorship/dashboard" element={<MentorDashboardPage />} />
                 <Route path="/admin/dashboard" element={<AdminDashboard currentUser={user} />} />
                 <Route path="*" element={<Navigate to="/" replace />} />
               </>
