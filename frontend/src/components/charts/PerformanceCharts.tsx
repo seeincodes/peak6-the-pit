@@ -53,7 +53,6 @@ function ChartCard({ title, children }: { title: string; children: React.ReactNo
 }
 
 function StatCard({ icon, label, value, color }: { icon: React.ReactNode; label: string; value: string; color: string }) {
-  const isLong = value.length > 6;
   return (
     <div className="cm-surface p-3 flex items-center gap-3 min-w-0">
       <div className="p-2 rounded-lg shrink-0" style={{ backgroundColor: `${color}15` }}>
@@ -61,7 +60,7 @@ function StatCard({ icon, label, value, color }: { icon: React.ReactNode; label:
       </div>
       <div className="min-w-0">
         <div className="text-cm-muted text-xs">{label}</div>
-        <div className={`text-cm-text font-bold truncate ${isLong ? "text-sm" : "text-lg"}`}>{value}</div>
+        <div className="text-cm-text font-bold text-base truncate" title={value}>{value}</div>
       </div>
     </div>
   );
@@ -267,7 +266,7 @@ export default function PerformanceCharts() {
           icon={<Award size={18} style={{ color: colors.amber }} />}
           label="Best Category"
           value={data.totals.best_category
-            ? (categoryShortDisplay[data.totals.best_category] || data.totals.best_category)
+            ? (categoryShortDisplay[data.totals.best_category] || data.totals.best_category).split(" ")[0]
             : "—"}
           color={colors.amber}
         />
