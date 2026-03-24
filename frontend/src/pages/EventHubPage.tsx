@@ -128,7 +128,7 @@ export default function EventHubPage() {
               </div>
 
               <div className="flex flex-wrap items-center gap-3 text-xs text-cm-muted">
-                <span className="cm-chip bg-cm-primary/10 text-cm-primary">{categoryShortDisplay[event.theme] || event.theme.replace(/_/g, " ")}</span>
+                <span className="cm-chip bg-cm-primary/10 text-cm-primary capitalize">{categoryShortDisplay[event.theme] || event.theme.replace(/_/g, " ")}</span>
                 <span className="flex items-center gap-1">
                   <Calendar size={13} />
                   {formatDate(event.start_at)} – {formatDate(event.end_at)}
