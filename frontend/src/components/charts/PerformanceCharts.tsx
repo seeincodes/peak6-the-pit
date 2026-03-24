@@ -60,7 +60,7 @@ function StatCard({ icon, label, value, color }: { icon: React.ReactNode; label:
       </div>
       <div className="min-w-0">
         <div className="text-cm-muted text-xs">{label}</div>
-        <div className="text-cm-text font-bold text-xs truncate" title={value}>{value}</div>
+        <div className="text-cm-text font-bold text-lg truncate" title={value}>{value}</div>
       </div>
     </div>
   );
@@ -265,9 +265,14 @@ export default function PerformanceCharts() {
         <StatCard
           icon={<Award size={18} style={{ color: colors.amber }} />}
           label="Best Category"
-          value={data.totals.best_category
-            ? (categoryShortDisplay[data.totals.best_category] || data.totals.best_category).split(" ")[0]
-            : "—"}
+          value={(() => {
+            if (!data.totals.best_category) return "—";
+            const name = categoryShortDisplay[data.totals.best_category] || data.totals.best_category;
+            if (name.length <= 8) return name;
+            const words = name.split(" ");
+            if (words.length > 1) return words[0];
+            return name.slice(0, 6) + ".";
+          })()}
           color={colors.amber}
         />
       </div>
