@@ -262,19 +262,14 @@ export default function PerformanceCharts() {
           value={String(data.totals.total_attempts)}
           color={colors.emerald}
         />
-        <div className="cm-surface p-3 flex items-center gap-3 min-w-0">
-          <div className="p-2 rounded-lg shrink-0" style={{ backgroundColor: `${colors.amber}15` }}>
-            <Award size={18} style={{ color: colors.amber }} />
-          </div>
-          <div className="min-w-0">
-            <div className="text-cm-muted text-xs">Best Category</div>
-            <div className="text-cm-text font-bold text-xs truncate">
-              {data.totals.best_category
-                ? (categoryShortDisplay[data.totals.best_category] || data.totals.best_category)
-                : "—"}
-            </div>
-          </div>
-        </div>
+        <StatCard
+          icon={<Award size={18} style={{ color: colors.amber }} />}
+          label="Best Category"
+          value={data.totals.best_category
+            ? (categoryShortDisplay[data.totals.best_category] || data.totals.best_category)
+            : "—"}
+          color={colors.amber}
+        />
       </div>
 
       {/* Cohort toggle */}
