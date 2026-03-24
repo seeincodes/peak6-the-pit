@@ -19,6 +19,24 @@ BADGE_CATALOG = [
     {"slug": "perfectionist", "name": "Perfectionist", "description": "Score 5/5 on any scenario", "icon": "award", "category": "activity", "tier": "gold", "sort_order": 24},
 ]
 
+# Event badges
+BADGE_CATALOG += [
+    {"slug": "event_warrior", "name": "Event Warrior", "description": "Complete 5 events", "icon": "calendar", "category": "events", "tier": "silver", "sort_order": 20},
+    {"slug": "event_champion", "name": "Event Champion", "description": "Finish top 3 in any event", "icon": "trophy", "category": "events", "tier": "gold", "sort_order": 21},
+]
+
+# Skill tree badges
+BADGE_CATALOG += [
+    {"slug": "tree_climber", "name": "Tree Climber", "description": "Master 5 skill tree nodes", "icon": "git-branch", "category": "skills", "tier": "silver", "sort_order": 22},
+    {"slug": "full_canopy", "name": "Full Canopy", "description": "Master all Tier 1 nodes", "icon": "tree-pine", "category": "skills", "tier": "gold", "sort_order": 23},
+]
+
+# Mentorship badges
+BADGE_CATALOG += [
+    {"slug": "sherpa", "name": "Sherpa", "description": "Mentor 3 mentees to goal completion", "icon": "heart", "category": "mentorship", "tier": "gold", "sort_order": 24},
+    {"slug": "guided", "name": "Guided", "description": "Complete all mentorship goals", "icon": "compass", "category": "mentorship", "tier": "silver", "sort_order": 25},
+]
+
 # Mastery badges — one per category
 for i, cat in enumerate(SCENARIO_CATEGORIES):
     display = cat.replace("_", " ").title()

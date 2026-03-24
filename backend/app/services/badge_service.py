@@ -9,6 +9,7 @@ from app.models.user import User
 from app.models.response import Response
 from app.models.grade import Grade
 from app.models.xp_transaction import XPTransaction
+from app.models.skill_node import UserSkillMastery
 
 
 async def check_and_award_badges(user_id: uuid.UUID, db: AsyncSession) -> list[dict]:
@@ -55,6 +56,27 @@ async def check_and_award_badges(user_id: uuid.UUID, db: AsyncSession) -> list[d
     )
     has_perfect = (perfect_result.scalar() or 0) > 0
 
+    # Count mastered skill tree nodes (mastery_level >= 70)
+    mastered_nodes_result = await db.execute(
+        select(func.count()).select_from(UserSkillMastery).where(
+            UserSkillMastery.user_id == user_id,
+            UserSkillMastery.mastery_level >= 70,
+        )
+    )
+    mastered_nodes_count = mastered_nodes_result.scalar() or 0
+
+    # Check if all Tier 1 categories (fundamentals, iv_analysis, realized_vol) are mastered
+    tier1_categories = {"fundamentals", "iv_analysis", "realized_vol"}
+    mastered_tier1_result = await db.execute(
+        select(UserSkillMastery.category).where(
+            UserSkillMastery.user_id == user_id,
+            UserSkillMastery.mastery_level >= 70,
+            UserSkillMastery.category.in_(tier1_categories),
+        )
+    )
+    mastered_tier1 = {row[0] for row in mastered_tier1_result.all()}
+    has_full_canopy = tier1_categories.issubset(mastered_tier1)
+
     # Badge trigger conditions
     conditions: dict[str, bool] = {
         "first_steps": scenario_count >= 1,
@@ -68,6 +90,15 @@ async def check_and_award_badges(user_id: uuid.UUID, db: AsyncSession) -> list[d
         "unstoppable": user.streak_days >= 30,
         "quick_draw": mcq_count >= 10,
         "perfectionist": has_perfect,
+        # Skill tree badges
+        "tree_climber": mastered_nodes_count >= 5,
+        "full_canopy": has_full_canopy,
+        # Event badges — TODO: implement once event participation queries are available
+        # "event_warrior": ...,   # Complete 5 events
+        # "event_champion": ...,  # Finish top 3 in any event
+        # Mentorship badges — TODO: implement once mentorship goal queries are available
+        # "sherpa": ...,          # Mentor 3 mentees to goal completion
+        # "guided": ...,          # Complete all mentorship goals
     }
 
     newly_awarded = []
