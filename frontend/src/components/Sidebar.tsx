@@ -14,6 +14,7 @@ import {
   MessageSquare,
   UserCircle,
   Calendar,
+  GitBranch,
 } from "lucide-react";
 import DailyChallengeCard from "./DailyChallengeCard";
 import StreakFlame from "./StreakFlame";
@@ -42,6 +43,7 @@ const NAV_GROUPS = [
       { to: "/quick-fire", icon: Zap, label: "Quick Fire", matchExact: false },
       { to: "/paths", icon: Map, label: "Lessons", matchExact: false },
       { to: "/chat", icon: MessageSquare, label: "AI Tutor", matchExact: false },
+      { to: "/skills", icon: GitBranch, label: "Skill Tree", matchExact: false },
     ],
   },
   {
