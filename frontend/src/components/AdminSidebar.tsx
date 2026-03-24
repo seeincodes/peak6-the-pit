@@ -24,9 +24,9 @@ export default function AdminSidebar({ user, mobileOpen, onMobileClose, onLogout
   };
 
   const sidebarInner = (isMobile: boolean) => (
-    <aside className="flex flex-col bg-cm-card border-r border-cm-border h-full w-[220px] overflow-hidden">
+    <aside className="flex flex-col bg-cm-card h-full w-[220px] overflow-hidden">
       {/* Logo / Brand */}
-      <div className="flex items-center h-16 border-b border-cm-border shrink-0 px-4">
+      <div className="flex items-center h-16 shrink-0 px-4">
         <div className="flex items-center gap-3 min-w-0 flex-1">
           <div className="w-9 h-9 rounded-lg bg-gradient-to-br from-cm-primary to-cm-mint flex items-center justify-center shrink-0">
             <span className="text-cm-bg font-extrabold text-sm tracking-tight">P</span>

@@ -158,20 +158,20 @@ function AuthenticatedApp() {
         >
           {/* Desktop top bar */}
           {user && !isAdmin && (
-            <div className="hidden lg:flex items-center justify-end h-16 px-6 border-b border-cm-border bg-cm-card/50 sticky top-0 z-30 backdrop-blur-sm">
+            <div className="hidden lg:flex items-center justify-end h-16 px-6 bg-cm-bg sticky top-0 z-30">
               <Link to="/profile" className="relative z-10 flex items-center gap-3 hover:opacity-80 transition-opacity">
                 <div className="text-right">
                   <div className="text-sm font-semibold text-cm-text leading-tight">{user.display_name}</div>
                   <div className="text-[11px] text-cm-primary">{user.level_title}</div>
                 </div>
-                <div className="w-9 h-9 rounded-full bg-cm-card-raised border border-cm-border flex items-center justify-center text-lg">
+                <div className="w-9 h-9 rounded-full bg-cm-card-raised flex items-center justify-center text-lg">
                   {AVATAR_PRESETS[user.avatar_id || "default"] || "👤"}
                 </div>
               </Link>
             </div>
           )}
           {user && isAdmin && (
-            <div className="hidden lg:flex items-center justify-end h-16 px-6 border-b border-cm-border bg-cm-card/50 sticky top-0 z-30 backdrop-blur-sm">
+            <div className="hidden lg:flex items-center justify-end h-16 px-6 bg-cm-bg sticky top-0 z-30">
               <div className="flex items-center gap-4">
                 <div className="text-sm font-semibold text-cm-primary">Admin Dashboard</div>
                 <button
