@@ -126,8 +126,11 @@ CATEGORY_PREREQUISITES: dict[str, str] = {
     "pit_tooling": "risk_management",
 }
 
-MASTERY_THRESHOLD = 3.5
-MASTERY_SCENARIO_COUNT = 5
+MASTERY_THRESHOLD = 70.0
+MASTERY_SCENARIO_COUNT = 10
+MASTERY_DECAY_RATE = 0.05
+MASTERY_DECAY_FLOOR_PCT = 0.50
+MASTERY_RECENCY_WEIGHT = 2.0
 DIFFICULTY_MULTIPLIER = {"beginner": 1.0, "intermediate": 1.5, "advanced": 2.0}
 
 # XP thresholds per level (Duolingo-style exponential curve)
