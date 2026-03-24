@@ -72,7 +72,7 @@ export default function ScenarioCard({ id, category, difficulty, content, onHint
         </div>
       )}
 
-      <p className="cm-body mb-4">{content.setup}</p>
+      <p className="text-sm text-cm-text/80 leading-relaxed mb-4">{content.setup}</p>
 
       <MarketChart scenarioId={id} category={category} height={160} className="mb-4" />
 
