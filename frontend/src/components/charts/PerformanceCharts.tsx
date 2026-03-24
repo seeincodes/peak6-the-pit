@@ -53,14 +53,15 @@ function ChartCard({ title, children }: { title: string; children: React.ReactNo
 }
 
 function StatCard({ icon, label, value, color }: { icon: React.ReactNode; label: string; value: string; color: string }) {
+  const isLong = value.length > 6;
   return (
-    <div className="cm-surface p-3 flex items-center gap-3">
-      <div className="p-2 rounded-lg" style={{ backgroundColor: `${color}15` }}>
+    <div className="cm-surface p-3 flex items-center gap-3 min-w-0">
+      <div className="p-2 rounded-lg shrink-0" style={{ backgroundColor: `${color}15` }}>
         {icon}
       </div>
-      <div>
+      <div className="min-w-0">
         <div className="text-cm-muted text-xs">{label}</div>
-        <div className="text-cm-text font-bold text-lg">{value}</div>
+        <div className={`text-cm-text font-bold truncate ${isLong ? "text-sm" : "text-lg"}`}>{value}</div>
       </div>
     </div>
   );
