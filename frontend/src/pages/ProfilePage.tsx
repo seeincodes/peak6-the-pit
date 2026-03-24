@@ -1,20 +1,33 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Check, Lock, LogOut, Pencil } from "lucide-react";
-import SkillNode from "../components/SkillNode";
+import { LogOut, Pencil } from "lucide-react";
+import { AnimatePresence } from "framer-motion";
 import BadgeGrid from "../components/BadgeGrid";
 import ProfileEditor from "../components/ProfileEditor";
+import SkillTreeCanvas from "../components/SkillTreeCanvas";
+import SkillNodeDetail from "../components/SkillNodeDetail";
 import { AVATAR_PRESETS } from "../constants/avatars";
 import { useAuth } from "../context/AuthContext";
 import api from "../api/client";
 
 export default function ProfilePage() {
   const [editing, setEditing] = useState(false);
+  const [selectedNode, setSelectedNode] = useState<any>(null);
   const { logout } = useAuth();
 
   const { data: user } = useQuery({
     queryKey: ["user"],
     queryFn: async () => (await api.get("/users/me")).data,
+  });
+
+  const { data: skillNodes } = useQuery({
+    queryKey: ["skill-tree"],
+    queryFn: async () => (await api.get("/skills/tree")).data,
+  });
+
+  const { data: mastery } = useQuery({
+    queryKey: ["skill-mastery"],
+    queryFn: async () => (await api.get("/skills/mastery")).data,
   });
 
   if (!user) return null;
@@ -75,23 +88,37 @@ export default function ProfilePage() {
         {/* Divider */}
         <div className="my-8 cm-divider" />
 
-        {/* Skill Nodes section */}
+        {/* Skill Tree section */}
         <div>
-          <h3 className="cm-subtitle mb-2">Skill Nodes</h3>
-          <p className="cm-body mb-6">
-            Unlock categories by leveling up. Master each area to progress.
+          <h3 className="cm-subtitle mb-2">Skill Tree</h3>
+          <p className="cm-body mb-4">
+            Click a node to see your mastery details and start training.
           </p>
-          <div className="flex items-center gap-6 mb-6 text-sm text-cm-muted">
-            <span className="flex items-center gap-2"><Check size={14} className="text-cm-emerald shrink-0" /> Unlocked</span>
-            <span className="flex items-center gap-2"><Lock size={14} className="shrink-0" /> Locked</span>
-          </div>
-          <SkillNode
-            allCategories={user.all_categories}
-            unlockedCategories={user.unlocked_categories}
-            level={user.level}
-          />
+          {skillNodes && mastery ? (
+            <div className="relative h-[500px] rounded-lg overflow-hidden border border-cm-border bg-cm-bg">
+              <SkillTreeCanvas
+                nodes={skillNodes}
+                mastery={mastery}
+                onNodeClick={setSelectedNode}
+              />
+            </div>
+          ) : (
+            <div className="h-[500px] rounded-lg border border-cm-border bg-cm-bg flex items-center justify-center">
+              <div className="w-6 h-6 border-2 border-cm-primary/30 border-t-cm-primary rounded-full animate-spin" />
+            </div>
+          )}
         </div>
       </div>
+
+      <AnimatePresence>
+        {selectedNode && (
+          <SkillNodeDetail
+            node={selectedNode}
+            mastery={mastery?.find((m: any) => m.category === selectedNode.category) || null}
+            onClose={() => setSelectedNode(null)}
+          />
+        )}
+      </AnimatePresence>
 
     </div>
   );

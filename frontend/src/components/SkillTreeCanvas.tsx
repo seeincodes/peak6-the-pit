@@ -43,7 +43,8 @@ function getArcPath(cx: number, cy: number, r: number, pct: number): string {
 export default function SkillTreeCanvas({ nodes, mastery, onNodeClick }: SkillTreeCanvasProps) {
   const svgRef = useRef<SVGSVGElement>(null);
   const [pan, setPan] = useState({ x: 0, y: 0 });
-  const [zoom, setZoom] = useState(0.85);
+  const [zoom, setZoom] = useState(1);
+  const [fitted, setFitted] = useState(false);
   const dragging = useRef(false);
   const dragStart = useRef({ x: 0, y: 0, panX: 0, panY: 0 });
   const didDrag = useRef(false);
@@ -57,6 +58,39 @@ export default function SkillTreeCanvas({ nodes, mastery, onNodeClick }: SkillTr
   for (const n of nodes) {
     nodeMap.set(n.id, n);
   }
+
+  // Auto-fit all nodes into view on mount
+  useEffect(() => {
+    if (!svgRef.current || nodes.length === 0 || fitted) return;
+    const svg = svgRef.current;
+    const rect = svg.getBoundingClientRect();
+    const w = rect.width;
+    const h = rect.height;
+    if (w === 0 || h === 0) return;
+
+    const pad = NODE_RADIUS + 24; // padding for node radius + label
+    const minX = Math.min(...nodes.map((n) => n.position_x)) - pad;
+    const maxX = Math.max(...nodes.map((n) => n.position_x)) + pad;
+    const minY = Math.min(...nodes.map((n) => n.position_y)) - pad;
+    const maxY = Math.max(...nodes.map((n) => n.position_y)) + pad + 20; // extra for labels
+
+    const contentW = maxX - minX;
+    const contentH = maxY - minY;
+
+    const scaleX = w / contentW;
+    const scaleY = h / contentH;
+    const fitZoom = Math.min(scaleX, scaleY, 1.2); // cap at 1.2 so it doesn't over-zoom small trees
+
+    const centerX = (minX + maxX) / 2;
+    const centerY = (minY + maxY) / 2;
+
+    setPan({
+      x: w / 2 - centerX * fitZoom,
+      y: h / 2 - centerY * fitZoom,
+    });
+    setZoom(fitZoom);
+    setFitted(true);
+  }, [nodes, fitted]);
 
   const getNodeStatus = useCallback(
     (node: SkillNode): "locked" | "available" | "in_progress" | "mastered" => {
