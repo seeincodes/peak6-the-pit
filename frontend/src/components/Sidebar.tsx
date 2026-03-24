@@ -13,6 +13,7 @@ import {
   BookText,
   MessageSquare,
   UserCircle,
+  Calendar,
 } from "lucide-react";
 import DailyChallengeCard from "./DailyChallengeCard";
 import StreakFlame from "./StreakFlame";
@@ -55,6 +56,7 @@ const NAV_GROUPS = [
     items: [
       { to: "/feed", icon: Activity, label: "Feed", matchExact: false },
       { to: "/peer-review", icon: Users, label: "Peer Review", matchExact: false },
+      { to: "/events", icon: Calendar, label: "Events", matchExact: false },
     ],
   },
   {
