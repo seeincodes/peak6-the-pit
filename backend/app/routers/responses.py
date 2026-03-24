@@ -1,3 +1,4 @@
+import uuid
 from datetime import datetime, timezone
 from uuid import UUID
 from typing import Optional
@@ -29,6 +30,7 @@ router = APIRouter(prefix="/api/responses", tags=["responses"])
 class SubmitRequest(BaseModel):
     scenario_id: str
     answer_text: str
+    event_id: str | None = None
 
 
 class ContinueRequest(BaseModel):
@@ -58,6 +60,8 @@ async def submit_response(
         conversation=conversation,
         is_complete=False,
     )
+    if req.event_id:
+        response.event_id = uuid.UUID(req.event_id)
     db.add(response)
     await db.commit()
     await db.refresh(response)
@@ -211,6 +215,15 @@ async def continue_response(
             await increment_challenge_progress(user.id, "try_category", db)
 
         await increment_challenge_progress(user.id, "streak_keep", db)
+
+    # Wire event scoring
+    if response.event_id:
+        from app.services.event_service import update_participation_score
+        await update_participation_score(db, response.event_id, user.id, grade_data["overall_score"])
+        await emit_activity(db, user.id, "event_scenario_completed", {
+            "event_id": str(response.event_id),
+            "score": grade_data["overall_score"],
+        })
 
     await db.commit()
 
