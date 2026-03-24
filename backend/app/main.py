@@ -27,10 +27,11 @@ async def _safe(name: str, coro, timeout: float = 15):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
-    # Seed badges and learning paths (DB-only, safe to run)
+    # Seed badges, learning paths, and skill tree (DB-only, safe to run)
     await _safe("badge seeding", _seed_badges())
     await _safe("badge awarding", _award_existing_badges())
     await _safe("path seeding", _seed_paths())
+    await _safe("skill tree seeding", _seed_skill_tree())
 
     # Pre-warm caches (non-critical)
     await _safe("embedding prewarm", prewarm_embeddings(), timeout=30)
@@ -70,6 +71,14 @@ async def _seed_paths():
         count = await seed_learning_paths(db)
         if count:
             print(f"Seeded {count} learning paths")
+
+
+async def _seed_skill_tree():
+    from app.services.skill_tree_seed import seed_skill_tree
+    async with async_session() as db:
+        count = await seed_skill_tree(db)
+        if count:
+            print(f"Seeded {count} skill tree nodes")
 
 
 app = FastAPI(
