@@ -18,6 +18,10 @@ from app.models.bookmark import Bookmark
 from app.models.badge import Badge, UserBadge
 from app.models.learning_path import LearningPath, UserPathProgress
 from app.models.peer_review import PeerReview
+from app.models.market_event import MarketEvent, EventParticipation, EventTeamScore
+from app.models.skill_node import UserSkillMastery
+from app.models.mentorship import Mentorship, MentorshipGoal
+from app.models.notification import Notification
 from app.services.auth import hash_password
 
 
@@ -74,6 +78,19 @@ LP_GREEKS = uuid.UUID("10000000-0000-0000-0000-000000000001")
 LP_VOL_SURFACE = uuid.UUID("10000000-0000-0000-0000-000000000002")
 LP_RISK_MGMT = uuid.UUID("10000000-0000-0000-0000-000000000003")
 LP_MACRO = uuid.UUID("10000000-0000-0000-0000-000000000004")
+
+# Market Events
+ME = [uuid.UUID(f"a0000000-0000-0000-0000-{str(i).zfill(12)}") for i in range(1, 10)]
+
+# Mentorships
+MS = [uuid.UUID(f"b0000000-0000-0000-0000-{str(i).zfill(12)}") for i in range(1, 10)]
+
+# Mentorship Goals
+MG = [uuid.UUID(f"b1000000-0000-0000-0000-{str(i).zfill(12)}") for i in range(1, 20)]
+
+# Org IDs
+ORG_THEPIT = uuid.UUID("00000000-0000-0000-0000-000000000099")
+ORG_ACME = uuid.UUID("00000000-0000-0000-0000-000000000100")
 
 # Backward compat
 TEST_USER_ID = U1
@@ -1355,6 +1372,250 @@ async def seed():
             if not await session.get(PeerReview, pr_data["id"]):
                 session.add(PeerReview(**pr_data))
         print(f"  Peer Reviews: {len(demo_peer_reviews)}")
+
+        # ── 9. Market Events ──
+        event_count = 0
+        demo_events = [
+            {
+                "id": ME[0],
+                "org_id": ORG_THEPIT,
+                "title": "Volatility Crush Week",
+                "description": "Earnings season is here! Analyze how implied volatility behaves around earnings announcements. Focus on IV crush patterns, straddle pricing, and post-event vol behavior.",
+                "theme": "earnings_volatility",
+                "start_at": now - timedelta(days=3),
+                "end_at": now + timedelta(days=4),
+                "scenario_pool": [
+                    {"category": "iv_analysis", "difficulty": "beginner"},
+                    {"category": "iv_analysis", "difficulty": "intermediate"},
+                    {"category": "event_vol", "difficulty": "beginner"},
+                    {"category": "term_structure", "difficulty": "beginner"},
+                ],
+                "scoring_config": {
+                    "xp_multiplier": 1.5,
+                    "dimension_weights": {"reasoning": 0.3, "terminology": 0.2, "trade_logic": 0.3, "risk_awareness": 0.2},
+                    "completion_bonus": 50,
+                    "perfect_score_bonus": 100,
+                },
+                "max_scenarios_per_user": 20,
+                "status": "active",
+                "created_by": U6,
+                "created_at": now - timedelta(days=5),
+            },
+            {
+                "id": ME[1],
+                "org_id": ORG_THEPIT,
+                "title": "Greeks Gauntlet",
+                "description": "Test your understanding of the Greeks across all difficulty levels. From basic delta hedging to advanced gamma scalping and vanna/volga effects.",
+                "theme": "greeks_mastery",
+                "start_at": now + timedelta(days=7),
+                "end_at": now + timedelta(days=21),
+                "scenario_pool": [
+                    {"category": "greeks", "difficulty": "beginner"},
+                    {"category": "greeks", "difficulty": "intermediate"},
+                    {"category": "greeks", "difficulty": "advanced"},
+                ],
+                "scoring_config": {
+                    "xp_multiplier": 2.0,
+                    "dimension_weights": {"reasoning": 0.25, "terminology": 0.25, "trade_logic": 0.25, "risk_awareness": 0.25},
+                    "completion_bonus": 75,
+                    "perfect_score_bonus": 150,
+                },
+                "max_scenarios_per_user": 30,
+                "status": "draft",
+                "created_by": U6,
+                "created_at": now - timedelta(days=1),
+            },
+            {
+                "id": ME[2],
+                "org_id": ORG_THEPIT,
+                "title": "Macro Madness: Fed Week",
+                "description": "The FOMC just met. Analyze how macro events drive volatility across asset classes. Cover rate decisions, forward guidance, and cross-asset correlations.",
+                "theme": "macro_events",
+                "start_at": now - timedelta(days=21),
+                "end_at": now - timedelta(days=7),
+                "scenario_pool": [
+                    {"category": "macro", "difficulty": "beginner"},
+                    {"category": "macro", "difficulty": "intermediate"},
+                    {"category": "correlation", "difficulty": "beginner"},
+                ],
+                "scoring_config": {
+                    "xp_multiplier": 1.5,
+                    "dimension_weights": {"reasoning": 0.3, "terminology": 0.2, "trade_logic": 0.3, "risk_awareness": 0.2},
+                    "completion_bonus": 50,
+                    "perfect_score_bonus": 100,
+                },
+                "max_scenarios_per_user": 15,
+                "status": "completed",
+                "created_by": U6,
+                "created_at": now - timedelta(days=25),
+            },
+        ]
+
+        for e_data in demo_events:
+            if not await session.get(MarketEvent, e_data["id"]):
+                session.add(MarketEvent(**e_data))
+                event_count += 1
+
+        # Event participations for the active event (Vol Crush Week)
+        participation_data = [
+            {"id": _stable_uuid("ep", 1), "event_id": ME[0], "user_id": U2, "team_identifier": "Alpha", "individual_score": 18.5, "scenarios_completed": 5, "joined_at": now - timedelta(days=2)},
+            {"id": _stable_uuid("ep", 2), "event_id": ME[0], "user_id": U3, "team_identifier": "Alpha", "individual_score": 22.3, "scenarios_completed": 6, "joined_at": now - timedelta(days=3)},
+            {"id": _stable_uuid("ep", 3), "event_id": ME[0], "user_id": U5, "team_identifier": "Beta", "individual_score": 24.8, "scenarios_completed": 7, "joined_at": now - timedelta(days=3)},
+            {"id": _stable_uuid("ep", 4), "event_id": ME[0], "user_id": U4, "team_identifier": "Beta", "individual_score": 8.2, "scenarios_completed": 3, "joined_at": now - timedelta(days=1)},
+            {"id": _stable_uuid("ep", 5), "event_id": ME[0], "user_id": U1, "team_identifier": "Alpha", "individual_score": 6.5, "scenarios_completed": 2, "joined_at": now - timedelta(hours=12)},
+        ]
+
+        # Participations for the completed event (Macro Madness)
+        participation_data += [
+            {"id": _stable_uuid("ep", 10), "event_id": ME[2], "user_id": U2, "team_identifier": "Alpha", "individual_score": 32.1, "scenarios_completed": 10, "joined_at": now - timedelta(days=20)},
+            {"id": _stable_uuid("ep", 11), "event_id": ME[2], "user_id": U3, "team_identifier": "Alpha", "individual_score": 41.7, "scenarios_completed": 12, "joined_at": now - timedelta(days=21)},
+            {"id": _stable_uuid("ep", 12), "event_id": ME[2], "user_id": U5, "team_identifier": "Beta", "individual_score": 45.0, "scenarios_completed": 15, "joined_at": now - timedelta(days=21)},
+            {"id": _stable_uuid("ep", 13), "event_id": ME[2], "user_id": U4, "team_identifier": "Beta", "individual_score": 15.3, "scenarios_completed": 7, "joined_at": now - timedelta(days=18)},
+        ]
+
+        ep_count = 0
+        for ep_data in participation_data:
+            if ep_data["user_id"] not in valid_user_ids:
+                continue
+            if not await session.get(EventParticipation, ep_data["id"]):
+                session.add(EventParticipation(**ep_data))
+                ep_count += 1
+
+        # Team scores for completed event
+        team_scores = [
+            {"id": _stable_uuid("ets", 1), "event_id": ME[2], "team_identifier": "Alpha", "aggregate_score": 73.8, "member_count": 2},
+            {"id": _stable_uuid("ets", 2), "event_id": ME[2], "team_identifier": "Beta", "aggregate_score": 60.3, "member_count": 2},
+        ]
+        for ts_data in team_scores:
+            if not await session.get(EventTeamScore, ts_data["id"]):
+                session.add(EventTeamScore(**ts_data))
+
+        print(f"  Market Events: {event_count}, Participations: {ep_count}")
+
+        # ── 10. Skill Mastery Records ──
+        mastery_records = []
+        # U1 (Level 1) — beginner, low mastery
+        for cat in ["iv_analysis", "realized_vol", "fundamentals"]:
+            mastery_records.append({"user_id": U1, "category": cat, "mastery_level": 45.0, "peak_mastery": 48.0, "scenarios_completed": 10, "avg_score": 2.25, "last_attempt_at": now - timedelta(days=1)})
+
+        # U2 (Level 4) — solid foundation, some intermediate
+        for cat in ["iv_analysis", "realized_vol", "fundamentals"]:
+            mastery_records.append({"user_id": U2, "category": cat, "mastery_level": 78.0, "peak_mastery": 80.0, "scenarios_completed": 10, "avg_score": 3.9, "last_attempt_at": now - timedelta(days=2)})
+        for cat in ["greeks", "order_flow", "macro"]:
+            mastery_records.append({"user_id": U2, "category": cat, "mastery_level": 72.0, "peak_mastery": 74.0, "scenarios_completed": 10, "avg_score": 3.6, "last_attempt_at": now - timedelta(days=3)})
+        for cat in ["technical_analysis", "sentiment"]:
+            mastery_records.append({"user_id": U2, "category": cat, "mastery_level": 55.0, "peak_mastery": 58.0, "scenarios_completed": 8, "avg_score": 2.75, "last_attempt_at": now - timedelta(days=5)})
+
+        # U3 (Level 7) — advanced, many mastered
+        for cat in ["iv_analysis", "realized_vol", "fundamentals", "greeks", "order_flow", "macro"]:
+            mastery_records.append({"user_id": U3, "category": cat, "mastery_level": 88.0, "peak_mastery": 90.0, "scenarios_completed": 10, "avg_score": 4.4, "last_attempt_at": now - timedelta(days=1)})
+        for cat in ["skew", "term_structure", "event_vol", "risk_management", "position_sizing", "trade_structuring"]:
+            mastery_records.append({"user_id": U3, "category": cat, "mastery_level": 82.0, "peak_mastery": 84.0, "scenarios_completed": 10, "avg_score": 4.1, "last_attempt_at": now - timedelta(days=2)})
+        for cat in ["correlation", "tail_risk", "microstructure", "vol_surface"]:
+            mastery_records.append({"user_id": U3, "category": cat, "mastery_level": 74.0, "peak_mastery": 76.0, "scenarios_completed": 10, "avg_score": 3.7, "last_attempt_at": now - timedelta(days=4)})
+
+        # U4 (Level 3) — foundation only
+        for cat in ["iv_analysis", "realized_vol", "fundamentals"]:
+            mastery_records.append({"user_id": U4, "category": cat, "mastery_level": 62.0, "peak_mastery": 65.0, "scenarios_completed": 10, "avg_score": 3.1, "last_attempt_at": now - timedelta(days=3)})
+
+        # U5 (Level 10) — everything mastered
+        all_cats = ["iv_analysis", "realized_vol", "fundamentals", "greeks", "order_flow", "macro",
+                    "technical_analysis", "sentiment", "skew", "term_structure", "event_vol",
+                    "tail_risk", "correlation", "microstructure", "position_sizing",
+                    "trade_structuring", "risk_management", "vol_surface", "fixed_income",
+                    "seasonality", "commodities", "geopolitical", "alt_data", "crypto",
+                    "exotic_structures", "portfolio_mgmt", "pit_tooling"]
+        for cat in all_cats:
+            mastery_records.append({"user_id": U5, "category": cat, "mastery_level": 92.0, "peak_mastery": 95.0, "scenarios_completed": 10, "avg_score": 4.6, "last_attempt_at": now - timedelta(hours=12)})
+
+        mastery_count = 0
+        for mr in mastery_records:
+            if mr["user_id"] not in valid_user_ids:
+                continue
+            existing = (await session.execute(
+                select(UserSkillMastery).where(
+                    UserSkillMastery.user_id == mr["user_id"],
+                    UserSkillMastery.category == mr["category"],
+                )
+            )).scalar_one_or_none()
+            if not existing:
+                session.add(UserSkillMastery(**mr))
+                mastery_count += 1
+        print(f"  Skill Mastery: {mastery_count}")
+
+        # ── 11. Mentorships ──
+        mentorship_data = [
+            # U5 (Level 10) mentors U1 (Level 1) — active
+            {
+                "id": MS[0],
+                "org_id": ORG_THEPIT,
+                "mentor_id": U5,
+                "mentee_id": U1,
+                "status": "active",
+                "started_at": now - timedelta(days=14),
+                "notes": "Focusing on IV fundamentals first, then moving to greeks.",
+            },
+            # U3 (Level 7) mentors U4 (Level 3) — active
+            {
+                "id": MS[1],
+                "org_id": ORG_THEPIT,
+                "mentor_id": U3,
+                "mentee_id": U4,
+                "status": "active",
+                "started_at": now - timedelta(days=7),
+                "notes": "James needs help breaking through to intermediate greeks.",
+            },
+            # U5 mentors U2 — completed
+            {
+                "id": MS[2],
+                "org_id": ORG_THEPIT,
+                "mentor_id": U5,
+                "mentee_id": U2,
+                "status": "completed",
+                "started_at": now - timedelta(days=60),
+                "completed_at": now - timedelta(days=10),
+                "notes": "Alex graduated to independent study. Strong progress on greeks.",
+            },
+            # U3 mentors U1 — pending request
+            {
+                "id": MS[3],
+                "org_id": ORG_THEPIT,
+                "mentor_id": U3,
+                "mentee_id": U1,
+                "status": "pending",
+                "started_at": now - timedelta(hours=6),
+            },
+        ]
+
+        ms_count = 0
+        for m_data in mentorship_data:
+            if m_data["mentor_id"] not in valid_user_ids or m_data["mentee_id"] not in valid_user_ids:
+                continue
+            if not await session.get(Mentorship, m_data["id"]):
+                session.add(Mentorship(**m_data))
+                ms_count += 1
+
+        # Mentorship Goals
+        goal_data = [
+            # U5→U1 goals
+            {"id": MG[0], "mentorship_id": MS[0], "category": "iv_analysis", "target_mastery": 70.0, "current_mastery": 45.0, "created_at": now - timedelta(days=14)},
+            {"id": MG[1], "mentorship_id": MS[0], "category": "realized_vol", "target_mastery": 70.0, "current_mastery": 45.0, "created_at": now - timedelta(days=14)},
+            {"id": MG[2], "mentorship_id": MS[0], "category": "greeks", "target_mastery": 50.0, "current_mastery": 0.0, "created_at": now - timedelta(days=7)},
+            # U3→U4 goals
+            {"id": MG[3], "mentorship_id": MS[1], "category": "greeks", "target_mastery": 70.0, "current_mastery": 35.0, "created_at": now - timedelta(days=7)},
+            {"id": MG[4], "mentorship_id": MS[1], "category": "iv_analysis", "target_mastery": 80.0, "current_mastery": 62.0, "created_at": now - timedelta(days=7)},
+            # U5→U2 completed goals
+            {"id": MG[5], "mentorship_id": MS[2], "category": "greeks", "target_mastery": 75.0, "current_mastery": 78.0, "achieved_at": now - timedelta(days=15), "created_at": now - timedelta(days=55)},
+            {"id": MG[6], "mentorship_id": MS[2], "category": "order_flow", "target_mastery": 70.0, "current_mastery": 72.0, "achieved_at": now - timedelta(days=12), "created_at": now - timedelta(days=50)},
+        ]
+
+        mg_count = 0
+        for g_data in goal_data:
+            if not await session.get(MentorshipGoal, g_data["id"]):
+                session.add(MentorshipGoal(**g_data))
+                mg_count += 1
+
+        print(f"  Mentorships: {ms_count}, Goals: {mg_count}")
 
         await session.commit()
 
