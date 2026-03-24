@@ -61,7 +61,7 @@ describe("TrainingPage scenario start", () => {
   it("starts streaming generation when category card is clicked", async () => {
     renderTrainingPage();
 
-    const ivButtons = screen.getAllByRole("button", { name: /Implied Volatility \(IV\) Analysis/i });
+    const ivButtons = screen.getAllByRole("button", { name: /IV Analysis/i });
     fireEvent.click(ivButtons[0]);
 
     await waitFor(() => {
@@ -77,10 +77,10 @@ describe("TrainingPage scenario start", () => {
     renderTrainingPage();
 
     expect(
-      screen.getAllByRole("button", { name: /Implied Volatility \(IV\) Analysis/i }).length
+      screen.getAllByRole("button", { name: /IV Analysis/i }).length
     ).toBeGreaterThan(0);
     expect(
-      screen.getAllByRole("button", { name: /Volatility Surface/i }).length
+      screen.getAllByRole("button", { name: /Vol Surface/i }).length
     ).toBeGreaterThan(0);
   });
 });

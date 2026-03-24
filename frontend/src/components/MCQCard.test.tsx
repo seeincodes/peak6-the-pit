@@ -25,7 +25,7 @@ describe("MCQCard", () => {
   it("renders category and question", () => {
     render(<MCQCard {...defaultProps} />);
 
-    expect(screen.getAllByText(/IV ANALYSIS/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Implied Volatility \(IV\) Analysis/).length).toBeGreaterThan(0);
     expect(screen.getByText(/SPX 30-day IV has risen/)).toBeTruthy();
     expect(screen.getByText(/What is the best course of action/)).toBeTruthy();
   });

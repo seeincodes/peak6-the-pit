@@ -112,6 +112,6 @@ describe("QuickFirePage", () => {
   it("displays category badge", () => {
     renderQuickFirePage({ initialMCQ: mockMCQ });
 
-    expect(screen.getAllByText(/IV ANALYSIS/).length).toBeGreaterThan(0);
+    expect(screen.getAllByText(/Implied Volatility \(IV\) Analysis/).length).toBeGreaterThan(0);
   });
 });

@@ -1,6 +1,7 @@
 import { describe, it, expect, vi, beforeEach } from "vitest";
 import { render, fireEvent, waitFor, within } from "@testing-library/react";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { MemoryRouter } from "react-router-dom";
 import ProfilePage from "./ProfilePage";
 import api from "../api/client";
 
@@ -8,6 +9,10 @@ vi.mock("../api/client", () => ({
   default: {
     get: vi.fn(),
   },
+}));
+
+vi.mock("../context/AuthContext", () => ({
+  useAuth: () => ({ logout: vi.fn() }),
 }));
 
 const mockUser = {
@@ -42,9 +47,11 @@ function renderProfilePage() {
     defaultOptions: { queries: { retry: false } },
   });
   return render(
-    <QueryClientProvider client={queryClient}>
-      <ProfilePage />
-    </QueryClientProvider>
+    <MemoryRouter>
+      <QueryClientProvider client={queryClient}>
+        <ProfilePage />
+      </QueryClientProvider>
+    </MemoryRouter>
   );
 }
 
@@ -108,11 +115,11 @@ describe("ProfilePage", () => {
     });
   });
 
-  it("shows Skill Nodes section", async () => {
+  it("shows Skill Tree section", async () => {
     const { container } = renderProfilePage();
 
     await waitFor(() => {
-      expect(within(container).getByText(/Skill Nodes/)).toBeTruthy();
+      expect(within(container).getByText(/Skill Tree/)).toBeTruthy();
     });
   });
 });
