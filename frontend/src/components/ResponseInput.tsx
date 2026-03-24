@@ -37,7 +37,7 @@ export default function ResponseInput({ onSubmit, placeholder, loading }: Respon
         onChange={(e) => { setText(e.target.value); autoGrow(); }}
         disabled={loading}
         placeholder={placeholder || "Type your analysis..."}
-        className={`w-full min-h-[8rem] bg-transparent text-cm-text placeholder-cm-muted resize-none outline-none text-sm leading-relaxed rounded-xl focus-ring transition-opacity ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
+        className={`w-full min-h-[8rem] bg-transparent text-cm-text placeholder-cm-muted resize-none outline-none text-sm leading-relaxed rounded-xl px-3 py-2 focus-ring transition-opacity ${loading ? "opacity-50 cursor-not-allowed" : ""}`}
         onKeyDown={(e) => {
           if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) handleSubmit();
         }}
