@@ -41,7 +41,7 @@ export default function ProfileEditor({ displayName, avatarId, bio, onClose }: P
 
       {/* Avatar picker */}
       <label className="block cm-label mb-2">Avatar</label>
-      <div className="grid grid-cols-7 gap-2 mb-4">
+      <div className="grid grid-cols-5 sm:grid-cols-6 md:grid-cols-7 gap-2 mb-4">
         {Object.entries(AVATAR_PRESETS).map(([id, emoji]) => (
           <button
             key={id}

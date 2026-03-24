@@ -36,8 +36,8 @@ export function AdminScenarios({ data, loading }: Props) {
         </button>
       </div>
 
-      <div className="bg-cm-card-raised border border-cm-border rounded-lg overflow-x-auto">
-        <table className="w-full text-sm">
+      <div className="bg-cm-card-raised border border-cm-border rounded-lg overflow-x-auto -mx-4 sm:mx-0">
+        <table className="w-full text-sm min-w-[600px]">
           <thead className="bg-cm-bg border-b border-cm-border">
             <tr>
               <th className="px-4 py-2 text-left text-cm-muted font-semibold">Scenario</th>

@@ -66,7 +66,7 @@ export default function OnboardingModal({ show, onComplete }: OnboardingModalPro
             animate={{ opacity: 1, x: 0 }}
             exit={{ opacity: 0, x: -50 }}
             transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            className="bg-cm-card border border-cm-border rounded-md p-8 max-w-md w-full text-center relative z-10"
+            className="bg-cm-card border border-cm-border rounded-md p-4 sm:p-8 max-w-md w-full mx-4 sm:mx-0 text-center relative z-10"
           >
             <motion.div
               initial={{ scale: 0 }}

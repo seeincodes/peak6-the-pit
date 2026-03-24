@@ -55,7 +55,7 @@ export default function ChatMessage({
 
       {/* Message bubble */}
       <div
-        className={`max-w-[80%] ${
+        className={`max-w-[90%] sm:max-w-[80%] ${
           isUser
             ? "bg-cm-primary/10 border border-cm-primary/20 rounded-2xl rounded-tr-sm px-4 py-3"
             : "cm-surface rounded-2xl rounded-tl-sm px-4 py-3"

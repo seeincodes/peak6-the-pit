@@ -44,7 +44,7 @@ export default function LevelUpModal({ show, level, title, newUnlocks, onClose }
             exit={{ scale: 0.5, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300 }}
             ref={modalRef}
-            className="bg-cm-card border border-cm-mint/20 rounded-xl p-8 text-center max-w-md relative z-10"
+            className="bg-cm-card border border-cm-mint/20 rounded-xl p-4 sm:p-8 text-center max-w-md mx-4 sm:mx-0 relative z-10"
             onClick={(e) => e.stopPropagation()}
           >
             <motion.div

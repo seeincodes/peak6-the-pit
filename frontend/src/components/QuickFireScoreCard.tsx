@@ -31,7 +31,7 @@ export default function QuickFireScoreCard({
         <h2 className="text-2xl font-bold text-cm-text">Round Complete!</h2>
       </div>
 
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="p-3 rounded-md bg-cm-bg/50 border border-cm-border/30">
           <Target size={18} className="mx-auto text-cm-primary mb-1" />
           <p className="text-2xl font-bold text-cm-text">{accuracy}%</p>

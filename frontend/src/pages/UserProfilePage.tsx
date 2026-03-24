@@ -156,7 +156,7 @@ export default function UserProfilePage() {
           </div>
 
           {/* Stats row */}
-          <div className="grid grid-cols-4 gap-3 mt-4 pt-4 border-t border-cm-border">
+          <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mt-4 pt-4 border-t border-cm-border">
             <div className="text-center">
               <div className="text-lg font-bold text-cm-text">{profile.xp_total.toLocaleString()}</div>
               <div className="text-xs text-cm-muted">XP</div>

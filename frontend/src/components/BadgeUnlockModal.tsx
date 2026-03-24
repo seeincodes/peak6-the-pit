@@ -47,7 +47,7 @@ export default function BadgeUnlockModal({ show, badges, onClose }: BadgeUnlockM
             animate={{ scale: 1, opacity: 1 }}
             exit={{ scale: 0.5, opacity: 0 }}
             transition={{ type: "spring", stiffness: 300 }}
-            className="bg-cm-card border border-cm-amber rounded-md p-8 text-center max-w-md relative z-10"
+            className="bg-cm-card border border-cm-amber rounded-md p-4 sm:p-8 text-center max-w-md mx-4 sm:mx-0 relative z-10"
             onClick={(e) => e.stopPropagation()}
           >
             <h2 id="badge-title" className="text-2xl font-bold text-cm-amber mb-4">
