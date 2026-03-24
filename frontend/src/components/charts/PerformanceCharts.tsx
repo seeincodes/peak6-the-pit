@@ -19,7 +19,7 @@ import {
 import { TrendingUp, Target, Zap, Award, Users } from "lucide-react";
 import api from "../../api/client";
 import { CHART_COLORS, tooltipStyle } from "../../theme/chartTheme";
-import { categoryColors, categoryDisplay, colors } from "../../theme/colors";
+import { categoryColors, categoryDisplay, categoryShortDisplay, colors } from "../../theme/colors";
 import RadarScoreChart from "./RadarScoreChart";
 
 interface CohortData {
@@ -266,7 +266,7 @@ export default function PerformanceCharts() {
           icon={<Award size={18} style={{ color: colors.amber }} />}
           label="Best Category"
           value={data.totals.best_category
-            ? (categoryDisplay[data.totals.best_category]?.split(" ")[0] || data.totals.best_category)
+            ? (categoryShortDisplay[data.totals.best_category] || data.totals.best_category)
             : "—"}
           color={colors.amber}
         />
